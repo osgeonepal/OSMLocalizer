@@ -1,0 +1,9 @@
+# Folders
+/__pypackages__
+/.vscode
+
+# Files
+*.csv
+*.pyc
+.pdm.toml
+localizer.env
