@@ -5,7 +5,9 @@ description = ""
 authors = [
     {name = "Aadesh-Baral", email = "elkloppiko@gmail.com"},
 ]
-dependencies = []
+dependencies = [
+    "flask>=2.2.2",
+]
 requires-python = ">=3.10"
 license = {text = "MIT"}
 
