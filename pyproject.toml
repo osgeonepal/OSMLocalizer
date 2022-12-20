@@ -1,0 +1,30 @@
+[project]
+name = ""
+version = ""
+description = ""
+authors = [
+    {name = "Aadesh-Baral", email = "elkloppiko@gmail.com"},
+]
+dependencies = [
+    "flask==2.1",
+    "sqlalchemy>=1.4.45",
+    "Werkzeug==2.1.0",
+    "flask-sqlalchemy>=2.5.1",
+    "Flask-Cors>=3.0.10",
+    "Flask-Migrate>=4.0.0",
+    "python-dotenv>=0.21.0",
+    "psycopg2>=2.9.5",
+    "pydantic>=1.10.2",
+]
+requires-python = ">=3.8"
+license = {text = "MIT"}
+
+[tool.pdm.scripts]
+start = "flask run -p 5005"
+init = "flask db init"
+migrate = "flask db migrate"
+upgrade = "flask db upgrade"
+
+[build-system]
+requires = ["pdm-pep517>=1.0.0"]
+build-backend = "pdm.pep517.api"
