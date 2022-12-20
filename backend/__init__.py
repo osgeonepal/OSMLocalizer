@@ -16,5 +16,12 @@ def create_app(config=EnvironmentConfig):
     @app.route("/")
     def system():
         return {"system": "healthy"}, 200
+    
+    from backend.models.translate import Translate, TranslateDTO
+    @app.route("/translate", methods=["GET", "POST"])
+    def translate():
+        text = Translate.get_to_translate_text()
+        return TranslateDTO.from_orm(text).dict()
+    
 
     return app
