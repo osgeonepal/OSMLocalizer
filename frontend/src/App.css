@@ -1,0 +1,29 @@
+.App-header {
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: white;
+}
+
+
+.App {
+  text-align: center;
+  min-width: 500px;
+  max-width: 500px;
+  min-height: 500px;
+  max-height: 500px;
+}
+
+h3 {
+  font-size: 1.5em;
+  margin: 0.5em;
+}
+
+.suggestion {
+  border-radius: 5px;
+  padding: 2px 5px;
+  margin-left: 10px;
+  background-color: rgb(138, 138, 138)
+}
