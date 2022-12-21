@@ -13,17 +13,20 @@ dependencies = [
     "Flask-Cors>=3.0.10",
     "Flask-Migrate>=4.0.0",
     "python-dotenv>=0.21.0",
-    "psycopg2>=2.9.5",
+    "psycopg2-binary>=2.9.5",
     "pydantic>=1.10.2",
+    "pydantic-sqlalchemy>=0.0.9",
+    "black>=22.12.0",
 ]
-requires-python = ">=3.8"
+requires-python = ">=3.10"
 license = {text = "MIT"}
 
 [tool.pdm.scripts]
-start = "flask run -p 5005"
+start = "python wsgi.py"
 init = "flask db init"
 migrate = "flask db migrate"
 upgrade = "flask db upgrade"
+help = "flask --help"
 
 [build-system]
 requires = ["pdm-pep517>=1.0.0"]

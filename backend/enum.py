@@ -1,5 +1,6 @@
 from enum import Enum
 
+
 class TextStatus(Enum):
     TO_TRANSLATE = 0
     TRANSLATED = 1
