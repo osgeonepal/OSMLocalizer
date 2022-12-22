@@ -3,8 +3,8 @@
   "name": "OSM Localizer",
   "icons": {
     "16": "favicon.ico",
-    "48": "logo192.png",
-   "128": "logo512.png"
+    "48": "favicon.ico",
+   "128": "favicon.ico"
   },
   "permissions": [],
   "manifest_version": 2,
