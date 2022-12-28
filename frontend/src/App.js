@@ -4,9 +4,28 @@ import logo from "./logo.png";
 
 function App() {
   const [textToTranslateDetails, setTextToTranslateDetails] = useState()
-  const [text, setText] = useState()
+  const [translatedText, setTranslatedText] = useState()
 
-  const fetchData = (url) => {
+  // Write a code to post the user translation to the backend i.e. http://localhost:5000/translate
+  const submitTranslation = (translation) => {
+    fetch("http://localhost:5000/translate", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        id: textToTranslateDetails.id,
+        text_ne: translation,
+        status: "TRANSLATED",
+      })
+    }).then(response => {
+      return response.json()
+    }).then(data => {
+      console.log(data)
+    })
+  }
+
+  const fetchTextToTranslate = (url) => {
     fetch(url)
       .then(response => {
         return response.json()
@@ -16,35 +35,27 @@ function App() {
       })
   }
 
-  const handleSubmit = (e) => {
+  const handleFormSubmit = (e) => {
     e.preventDefault()
-    const url = "http://localhost:5000/translate"
-    const data = { text }
-    fetch(url, {
-      method: "POST",
-      body: JSON.stringify(data),
-      headers: {
-        "Content-Type": "application/json"
-      }
+    submitTranslation(translatedText).then(() => {
+    fetchTextToTranslate("http://localhost:5000/translate")
     })
-      .then(response => {
-        return response.json()
-      })
-      .then(data => {
-        setTextToTranslateDetails(data)
-      })
   }
 
   const handleInputChange = (e) => {
-    setText(e.target.value)
+    setTranslatedText(e.target.value)
   }
 
   const onSuggestionClick = (e) => {
-    setText(e.target.innerText)
+    setTranslatedText(e.target.innerText)
+  }
+
+  const skipTranslation = () => {
+    fetchTextToTranslate("http://localhost:5000/translate")
   }
 
   useEffect(() => {
-    fetchData("http://localhost:5000/translate")
+    fetchTextToTranslate("http://localhost:5000/translate")
   }, [])
 
   return (
@@ -63,40 +74,44 @@ function App() {
               OSM LOCALIZER
             </span>
           </div>
-          <div className="translate-component">
-            <span className="translate-title">Translate:</span>
-            <span className="translate-text">
-              {textToTranslateDetails.text}
-            </span>
-            <span
-              className="info-icon"
-              data-bs-toggle="tooltip"
-              data-bs-html="true"
-              title={`Word count: ${textToTranslateDetails.count}. Click on the icon for more details.`}
-            >
-              <i class="fa fa-info-circle"></i>
-            </span>
+          <div className="translate-text-component">
+            <div className="translate-component">
+              <span className="translate-title">Translate:</span>
+              <span className="translate-text">
+                {textToTranslateDetails.text}
+              </span>
+              <span
+                className="info-icon"
+                data-bs-toggle="tooltip"
+                data-bs-html="true"
+                title={`Word count: ${textToTranslateDetails.count}. Click on the icon for more details.`}
+              >
+                <i className="fa fa-info-circle"></i>
+              </span>
+            </div>
+            <a href="https://google.com" target="_blank" className="correct-text" rel="noopener noreferrer">correct text</a>
           </div>
-          <a href="https://google.com" target="_blank" className="correct-text" rel="noopener noreferrer">correct text</a>
           <div className="translation-form">
-            <form>
+            <form onSubmit={handleFormSubmit}>
               <input
                 type="text"
                 id="user-translation"
+                value={translatedText}
+                onChange={handleInputChange}
               />
               <button type="submit">Submit translation</button>
-              <div className="suggestion-component">
-                <span>Suggestion:</span>
-                <span
-                  className="suggestion-text"
-                  onClick={onSuggestionClick}
-                >
-                  नेपाल
-                </span>
-              </div>
-              <button type="button">Skip</button>
             </form>
           </div>
+          <div className="suggestion-component">
+            <span>Suggestion:</span>
+            <span
+              className="suggestion-text"
+              onClick={onSuggestionClick}
+            >
+              नेपाल
+            </span>
+          </div>
+          <button onClick={skipTranslation} className="skip-button" type="button">Skip</button>
         </header>
       )}
     </div>
