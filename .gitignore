@@ -7,3 +7,4 @@
 *.pyc
 .pdm.toml
 localizer.env
+*.zip
