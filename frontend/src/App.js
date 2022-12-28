@@ -108,7 +108,7 @@ function App() {
               className="suggestion-text"
               onClick={onSuggestionClick}
             >
-              नेपाल
+              {textToTranslateDetails["google_translate"]}
             </span>
           </div>
           <button onClick={skipTranslation} className="skip-button" type="button">Skip</button>

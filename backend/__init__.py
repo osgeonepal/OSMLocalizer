@@ -20,6 +20,7 @@ def create_app(config=EnvironmentConfig):
 
     from backend.models.sqlalchemy.translate import Translate, TranslateDTO
     from backend.models.dtos.translate_dto import UpdateTextDTO
+    from backend.services.translate_service import TranslateService
 
     @app.route("/translate", methods=["GET", "POST"])
     def translate():
@@ -30,8 +31,10 @@ def create_app(config=EnvironmentConfig):
             return TranslateDTO.from_orm(text).dict()
         elif request.method == "POST":
             data = request.get_json()
+            if not TranslateService.is_valid_status(data["status"]):
+                return {"Invalid Data"}, 400
             translate_dto = UpdateTextDTO(**data)
-            Translate.update_from_dto(translate_dto)
+            TranslateService.update_translate(translate_dto)
             return translate_dto.dict(), 200
 
     return app

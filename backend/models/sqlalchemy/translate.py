@@ -1,5 +1,6 @@
 import datetime
 from pydantic_sqlalchemy import sqlalchemy_to_pydantic
+from sqlalchemy.sql.expression import func
 
 from backend import db
 from backend.enum import TextStatus
@@ -14,7 +15,16 @@ class TranslateHistory(db.Model):
     action = db.Column(db.Integer, nullable=False)
     action_date = db.Column(db.DateTime, default=datetime.datetime.utcnow())
 
+    def create(self):
+        """Create new entry"""
+        db.session.add(self)
+        db.session.commit()
+    
+    def save(self):
+        """Save changes to db"""
+        db.session.commit()
 
+    
 class Translate(db.Model):
     """ Describes status of text to translate """
 
@@ -39,13 +49,13 @@ class Translate(db.Model):
     def get_to_translate_text():
         return Translate.query.filter(
             Translate.status == TextStatus.TO_TRANSLATE.value
-        ).one_or_none()
+        ).order_by(func.random()).first()
 
     @staticmethod
     def get_to_validate_text():
-        return Translate.query.gilter(
+        return Translate.query.filter(
             Translate.status == TextStatus.TRANSLATED.value
-        ).one()
+        ).order_by(func.random()).first()
 
     @staticmethod
     def get_to_translate_text_as_dto():
@@ -60,7 +70,7 @@ class Translate(db.Model):
     @staticmethod
     def update_from_dto(translate_dto):
         text = Translate.get_by_id(translate_dto.id)
-        text.status = translate_dto.status
+        text.status = TextStatus[translate_dto.status].value
         text.corrected = translate_dto.corrected
         text.text_ne = translate_dto.text_ne
         text.save()
