@@ -8,7 +8,7 @@ class TranslateService():
         Translate.update_from_dto(update_dto)
         translate_history = TranslateHistory()
         translate_history.text_id = update_dto.id
-        translate_history.action = update_dto.status
+        translate_history.action = TextStatus[update_dto.status].value
         translate_history.create()
         
     @staticmethod
