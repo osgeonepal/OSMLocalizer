@@ -2,21 +2,29 @@ import React, { useEffect, useState } from "react";
 import { Form, Field } from 'react-final-form';
 import { yandexTranslator } from "../../utills/translator";
 import InputToolForm from "./inputToolForm";
+import { createChangeXML } from "../../utills/osm";
 
-// TO DO: Fetch from tags to edit
+const baseOSMJOSN = {
+    "version": "0.6",
+    "generator": "CGImap 0.8.8 (2403364 spike-06.openstreetmap.org)",
+    "copyright": "OpenStreetMap and contributors",
+    "attribution": "http://www.openstreetmap.org/copyright",
+    "license": "http://opendatacommons.org/licenses/odbl/1-0/",
+    "elements": []
+}
 const editTags = ["name", "name:en", "name:ne"]
 
 const inputComponnent = (key, value) => {
     return (
         <div className="input-group input-group-sm p-2">
             <span className="input-group-text sm" id={key}>{key}</span>
-            <Field
-                className="form-control form-control-sm"
-                name={key}
-                component="input"
-                aria-describedby={key}
-                initialValue={value}
-            />
+            <Field 
+                className="form-control form-control-sm" 
+                name={key} 
+                component="input" 
+                aria-describedby={key} 
+                initialValue={value} 
+                />
         </div>
     )
 }
@@ -25,6 +33,7 @@ const inputComponnent = (key, value) => {
 export function TagEditorForm(props) {
     const [translation, setTranslation] = useState();
     const [isLoading, setLoading] = useState(false);
+    const [changes, setChanges] = useState({});
     const yandex_access_token = ""
     const text = encodeURIComponent(props.element['tags']['name']);
     useEffect(() => {
@@ -37,9 +46,34 @@ export function TagEditorForm(props) {
         })();
     }, [text]);
 
+    const detectChange = (values) => {
+        var changedKeys = [];
+        for (const [key, value] of Object.entries(values)) {
+            if (value !== props.element['tags'][key]) {
+                changedKeys.push(key);
+            }
+        }
+        return changedKeys;
+    }
 
     const onSubmitChange = (values) => {
-        console.log(values)
+        const changedKeys = detectChange(values);
+        if (changedKeys.length > 0) {
+            let changesTmp = Object.assign({}, changes);
+            changesTmp[`${props.element.type}-${props.element.id}`] = { tags: {} };
+            for (const key of changedKeys) {
+                changesTmp[`${props.element.type}-${props.element.id}`]['tags'][key] = values[key];
+            };
+            setChanges(changesTmp);
+            const newElementTmp = Object.assign({}, props.element);
+            for (const key of changedKeys) {
+                newElementTmp['tags'][key] = values[key];
+            };
+            props.setElement(newElementTmp);
+            var osmJSON = Object.assign({}, baseOSMJOSN);
+            osmJSON['elements'].push(props.element);
+            console.log(createChangeXML([props.element]))
+        }
     }
 
 
