@@ -17,6 +17,10 @@ dependencies = [
     "pydantic>=1.10.2",
     "pydantic-sqlalchemy>=0.0.9",
     "black>=22.12.0",
+    "flask-restx>=1.0.3",
+    "geoalchemy2>=0.12.5",
+    "shapely>=2.0.0",
+    "geojson>=2.5.0",
 ]
 requires-python = ">=3.10"
 license = {text = "MIT"}
@@ -26,6 +30,8 @@ start = "python wsgi.py"
 init = "flask db init"
 migrate = "flask db migrate"
 upgrade = "flask db upgrade"
+downgrade = "flask db downgrade"
+lint = "black wsgi.py backend migrations"
 help = "flask --help"
 
 [tool.pdm.dev-dependencies]
