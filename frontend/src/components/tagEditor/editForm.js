@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { Form, Field } from 'react-final-form';
+import { yandexTranslator } from "../../utills/translator";
 import InputToolForm from "./inputToolForm";
 
-// TO DO: Fetch prom challenge tags to edit
+// TO DO: Fetch from tags to edit
 const editTags = ["name", "name:en", "name:ne"]
 
 const inputComponnent = (key, value) => {
@@ -22,6 +23,21 @@ const inputComponnent = (key, value) => {
 
 
 export function TagEditorForm(props) {
+    const [translation, setTranslation] = useState();
+    const [isLoading, setLoading] = useState(false);
+    const yandex_access_token = ""
+    const text = encodeURIComponent(props.element['tags']['name']);
+    useEffect(() => {
+        setLoading(true);
+        (async () => {
+            const data = await yandexTranslator(text, "en", "ne", yandex_access_token);
+            setTranslation(data);
+            setLoading(false);
+
+        })();
+    }, [text]);
+
+
     const onSubmitChange = (values) => {
         console.log(values)
     }
@@ -43,9 +59,11 @@ export function TagEditorForm(props) {
                             )}
                         </div>
                         <div>
-                            <p className="fs-6 mt-3">Translate suggestion:
-                                <span className="btn btn-sm btn-secondary ms-1">Translated</span>
-                            </p>
+                            {isLoading ? null : (
+                                <p className="fs-6 mt-3">Translate suggestion:
+                                    <span className="btn btn-sm btn-secondary ms-1">{translation}</span>
+                                </p>
+                            )}
                             <InputToolForm />
                         </div>
                         {/* <button className="btn btn-secondary btn-sm" type="submit">Skip</button> */}
