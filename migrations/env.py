@@ -14,17 +14,17 @@ config = context.config
 # Interpret the config file for Python logging.
 # This line sets up loggers basically.
 fileConfig(config.config_file_name)
-logger = logging.getLogger('alembic.env')
+logger = logging.getLogger("alembic.env")
 
 # add your model's MetaData object here
 # for 'autogenerate' support
 # from myapp import mymodel
 # target_metadata = mymodel.Base.metadata
 config.set_main_option(
-    'sqlalchemy.url',
-    str(current_app.extensions['migrate'].db.get_engine().url).replace(
-        '%', '%%'))
-target_db = current_app.extensions['migrate'].db
+    "sqlalchemy.url",
+    str(current_app.extensions["migrate"].db.get_engine().url).replace("%", "%%"),
+)
+target_db = current_app.extensions["migrate"].db
 
 # other values from the config, defined by the needs of env.py,
 # can be acquired:
@@ -32,8 +32,21 @@ target_db = current_app.extensions['migrate'].db
 # ... etc.
 
 
+exclude_tables = config.get_section("alembic:exclude").get("tables", "").split(",")
+
+
+def include_object(object, name, type_, reflected, compare_to):
+    """
+    Custom helper function that enables us to ignore our excluded tables in the autogen sweep
+    """
+    if type_ == "table" and name in exclude_tables:
+        return False
+    else:
+        return True
+
+
 def get_metadata():
-    if hasattr(target_db, 'metadatas'):
+    if hasattr(target_db, "metadatas"):
         return target_db.metadatas[None]
     return target_db.metadata
 
@@ -52,7 +65,10 @@ def run_migrations_offline():
     """
     url = config.get_main_option("sqlalchemy.url")
     context.configure(
-        url=url, target_metadata=get_metadata(), literal_binds=True
+        url=url,
+        target_metadata=get_metadata(),
+        literal_binds=True,
+        include_object=include_object,
     )
 
     with context.begin_transaction():
@@ -71,20 +87,21 @@ def run_migrations_online():
     # when there are no changes to the schema
     # reference: http://alembic.zzzcomputing.com/en/latest/cookbook.html
     def process_revision_directives(context, revision, directives):
-        if getattr(config.cmd_opts, 'autogenerate', False):
+        if getattr(config.cmd_opts, "autogenerate", False):
             script = directives[0]
             if script.upgrade_ops.is_empty():
                 directives[:] = []
-                logger.info('No changes in schema detected.')
+                logger.info("No changes in schema detected.")
 
-    connectable = current_app.extensions['migrate'].db.get_engine()
+    connectable = current_app.extensions["migrate"].db.get_engine()
 
     with connectable.connect() as connection:
         context.configure(
             connection=connection,
             target_metadata=get_metadata(),
             process_revision_directives=process_revision_directives,
-            **current_app.extensions['migrate'].configure_args
+            include_object=include_object,
+            **current_app.extensions["migrate"].configure_args
         )
 
         with context.begin_transaction():
