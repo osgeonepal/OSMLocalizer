@@ -2,29 +2,21 @@ import React, { useEffect, useState } from "react";
 import { Form, Field } from 'react-final-form';
 import { yandexTranslator } from "../../utills/translator";
 import InputToolForm from "./inputToolForm";
-import { createChangeXML } from "../../utills/osm";
+import { YANDEX_ACCESS_TOKEN } from '../../config';
 
-const baseOSMJOSN = {
-    "version": "0.6",
-    "generator": "CGImap 0.8.8 (2403364 spike-06.openstreetmap.org)",
-    "copyright": "OpenStreetMap and contributors",
-    "attribution": "http://www.openstreetmap.org/copyright",
-    "license": "http://opendatacommons.org/licenses/odbl/1-0/",
-    "elements": []
-}
 const editTags = ["name", "name:en", "name:ne"]
 
 const inputComponnent = (key, value) => {
     return (
-        <div className="input-group input-group-sm p-2">
+        <div className="input-group input-group-sm p-2" key={key}>
             <span className="input-group-text sm" id={key}>{key}</span>
-            <Field 
-                className="form-control form-control-sm" 
-                name={key} 
-                component="input" 
-                aria-describedby={key} 
-                initialValue={value} 
-                />
+            <Field
+                className="form-control form-control-sm"
+                name={key}
+                component="input"
+                aria-describedby={key}
+                initialValue={value}
+            />
         </div>
     )
 }
@@ -33,13 +25,11 @@ const inputComponnent = (key, value) => {
 export function TagEditorForm(props) {
     const [translation, setTranslation] = useState();
     const [isLoading, setLoading] = useState(false);
-    const [changes, setChanges] = useState({});
-    const yandex_access_token = ""
     const text = encodeURIComponent(props.element['tags']['name']);
     useEffect(() => {
         setLoading(true);
         (async () => {
-            const data = await yandexTranslator(text, "en", "ne", yandex_access_token);
+            const data = await yandexTranslator(text, "en", "ne", YANDEX_ACCESS_TOKEN);
             setTranslation(data);
             setLoading(false);
 
@@ -59,26 +49,22 @@ export function TagEditorForm(props) {
     const onSubmitChange = (values) => {
         const changedKeys = detectChange(values);
         if (changedKeys.length > 0) {
-            let changesTmp = Object.assign({}, changes);
-            changesTmp[`${props.element.type}-${props.element.id}`] = { tags: {} };
-            for (const key of changedKeys) {
-                changesTmp[`${props.element.type}-${props.element.id}`]['tags'][key] = values[key];
-            };
-            setChanges(changesTmp);
             const newElementTmp = Object.assign({}, props.element);
             for (const key of changedKeys) {
                 newElementTmp['tags'][key] = values[key];
             };
-            props.setElement(newElementTmp);
-            var osmJSON = Object.assign({}, baseOSMJOSN);
-            osmJSON['elements'].push(props.element);
-            console.log(createChangeXML([props.element]))
+            const allChangesTmp = Object.assign({}, props.allChanges);
+            allChangesTmp[`${props.element.type}-${props.element.id}`] = newElementTmp;
+            props.setAllChanges(allChangesTmp);
         }
     }
 
 
     return (
         <div>
+            <div className="p-2 pb-0 fs-6 text-secondary">
+                <span>{props.element.type}: </span> <span>{props.element.id}</span>
+            </div>
             <Form
                 onSubmit={onSubmitChange}
                 render={({ handleSubmit }) => (
