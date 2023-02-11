@@ -1,6 +1,8 @@
 from backend import db
 from datetime import datetime
+from geoalchemy2 import Geometry
 
+from backend.models.sql.enum import FeatureStatus
 
 class Feature(db.Model):
     """Describes feature"""
@@ -10,9 +12,15 @@ class Feature(db.Model):
     challenge_id = db.Column(
         db.Integer, db.ForeignKey("challenge.id"), index=True, primary_key=True
     )
-    element_type = db.Column(db.Integer, nullable=False)
-    status = db.Column(db.Integer, nullable=False)
-
+    osm_type = db.Column(db.String, nullable=False)
+    osm_id = db.Column(db.Integer, nullable=False)
+    geometry = db.Column(Geometry("POINT", srid=4326), nullable=True)
+    status = db.Column(db.Integer, nullable=False, default=FeatureStatus.TO_LOCALIZE.value)
+    last_updated = db.Column(db.DateTime, default=datetime.utcnow())
+    changeset_id = db.Column(db.Integer, nullable=True)
+    localized_by = db.Column(db.String, nullable=True)
+    validated_by = db.Column(db.String, nullable=True)
+    
     def create(self):
         """Create new entry"""
         db.session.add(self)
@@ -41,3 +49,14 @@ class Feature(db.Model):
     def get_features_by_status(challenge_id: int, status: int):
         """Get all features for a challenge by status"""
         return Feature.query.filter_by(challenge_id=challenge_id, status=status).all()
+
+    @staticmethod
+    def create_from_dto(feature_dto: dict):
+        """Create feature from dto"""
+        feature = Feature()
+        feature.osm_id = feature_dto["osm_id"]
+        feature.osm_type = feature_dto["osm_type"]
+        feature.status = feature_dto["status"]
+        feature.challenge_id = feature_dto["challenge_id"]
+        feature.geometry = feature_dto["geometry"]
+        return feature
