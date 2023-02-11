@@ -4,7 +4,6 @@ from datetime import datetime
 from geoalchemy2.elements import WKBElement
 
 
-from backend import db
 
 def convert_to_string(value):
     if value is None:

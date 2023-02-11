@@ -2,17 +2,14 @@ import math
 import geojson
 from geoalchemy2 import shape
 from shapely.geometry import box, Polygon
-from sqlalchemy import func
 from werkzeug.exceptions import BadRequest, NotFound
 
 
 from backend import db
-from backend.models.db.challenge import Challenge
-from backend.models.db.postgis import (
+from backend.models.sql.challenge import Challenge
+from backend.models.sql.postgis import (
     ST_Transform,
     ST_Area,
-    ST_SetSRID,
-    ST_GeomFromGeoJSON,
 )
 from backend.models.dtos.challenge_dto import (
     ChallengeDTO,
@@ -70,7 +67,6 @@ class ChallengeService:
             error = NotFound(f"Challenge with id {challenge_id} not found")
             error.data = {"sub_code": "challenge_not_found"}
             raise error
-        print(type(challenge.bbox))
         challenge.bbox = ChallengeService.get_bbox_geometry_as_geojson(challenge.bbox)
         return ChallengeDTO.from_orm(challenge)
 
