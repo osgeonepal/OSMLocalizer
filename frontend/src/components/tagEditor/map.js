@@ -1,11 +1,12 @@
+import React, { useEffect, useRef } from 'react';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
-import React, { useEffect, useRef } from 'react';
 
+import { MAPBOX_ACCESS_TOKEN } from '../../config';
 
 const Map = (props) => {
     const mapContainerRef = useRef(null);
-    mapboxgl.accessToken = '';
+    mapboxgl.accessToken = MAPBOX_ACCESS_TOKEN;
     useEffect(() => {
         mapContainerRef.current = new mapboxgl.Map({
             container: 'map-container',
@@ -13,26 +14,21 @@ const Map = (props) => {
             center: [props.element.lon, props.element.lat],
             zoom: 19
         });
-        // map.on('move', () => {
-        //     setLng(map.getCenter().lng.toFixed(4));
-        //     setLat(map.getCenter().lat.toFixed(4));
-        //     setZoom(map.getZoom().toFixed(2));
-        // });
         return () => mapContainerRef.current.remove();
     }
-        , []);
+        , [props.element]);
     // Add marker on the mapContainerRef
     useEffect(() => {
         new mapboxgl.Marker()
             .setLngLat([props.element.lon, props.element.lat])
             .addTo(mapContainerRef.current);
-    }, []);
+    }, [props.element]);
     return (
         <div>
-            <div 
-                id="map-container" 
-                className='map-container' 
-                style={{ height: "40vh", width: "100%" }} 
+            <div
+                id="map-container"
+                className='map-container'
+                style={{ height: "40vh", width: "100%" }}
             />
 
         </div>
