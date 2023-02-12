@@ -1,11 +1,13 @@
 import math
 import geojson
+import requests
 from geoalchemy2 import shape
-from shapely.geometry import box, Polygon
+from shapely.geometry import box, Polygon, Point
 from werkzeug.exceptions import BadRequest, NotFound
 
 
 from backend import db
+from backend.models.sql.enum import ChallengeStatus, TranslateEngine
 from backend.models.sql.challenge import Challenge
 from backend.models.sql.postgis import (
     ST_Transform,
@@ -18,11 +20,13 @@ from backend.models.dtos.challenge_dto import (
     CreateChallengeDTO,
     UpdateChallengeDTO,
 )
+from backend.services.overpass_service import Overpass
+
 
 # max area allowed for passed in bbox, calculation shown to help future maintenance
 # Total area of challenge to be allowed is 100 sq km. So max area of bbox is 100*100, 2 for square meter
 MAX_AREA = math.pow(100 * 100, 2)
-
+OSM_NOMINATIM_SERVER_URL = "https://nominatim.openstreetmap.org"
 
 class ChallengeService:
     """Service class for Challenge model"""
@@ -31,20 +35,25 @@ class ChallengeService:
     def create_challenge(challenge_dto: CreateChallengeDTO) -> ChallengeDTO:
         """Create new challenge"""
         bbox = list(map(float, challenge_dto.bbox.split(",")))
-        bbox_polygon = ChallengeService.make_polygon_from_bbox(bbox)
+        bbox_polygon, centroid = ChallengeService.make_polygon_from_bbox(bbox)
+        country = ChallengeService.get_country_from_coordinates(centroid.y , centroid.x)
         challenge = Challenge(
             name=challenge_dto.name,
             description=challenge_dto.description,
-            due_date=challenge_dto.due_date,
-            status=challenge_dto.status,
-            centroid=challenge_dto.centroid,
+            country=country,
+            status=ChallengeStatus[challenge_dto.status.upper()].value,
+            to_language=challenge_dto.to_language,
+            bbox=f"SRID=4326;{bbox_polygon.wkt}",
+            centroid=f"SRID=4326;{centroid.wkt}",
+            overpass_query=challenge_dto.overpass_query,
             language_tags=challenge_dto.language_tags,
-            feature_tags=challenge_dto.feature_tags,
-            country=challenge_dto.country,
+            due_date=challenge_dto.due_date,
+            translate_engine=TranslateEngine[challenge_dto.translate_engine.upper()].value,
+            api_key=challenge_dto.api_key,
         )
-        challenge.bbox = f"SRID=4326;{bbox_polygon.wkt}"
+        ChallengeService.get_features_from_overpass(challenge, challenge_dto.overpass_query)
         challenge.create()
-        return challenge.as_dto()
+        return True
 
     @staticmethod
     def update_challenge(
@@ -103,14 +112,15 @@ class ChallengeService:
 
     # Code taken from hotosm/tasking-manager
     @staticmethod
-    def make_polygon_from_bbox(bbox: list, srid: int = 4326) -> Polygon:
+    def make_polygon_from_bbox(bbox: list, srid: int = 4326) -> tuple((Polygon, Point)):
         """make a shapely Polygon in SRID 4326 from bbox and srid"""
         try:
             polygon = box(bbox[0], bbox[1], bbox[2], bbox[3])
             geometry = shape.from_shape(polygon, srid)
             geom_4326 = db.engine.execute(ST_Transform(geometry, 4326)).scalar()
             polygon = shape.to_shape(geom_4326)
-
+            # Get centroid of polygon
+            centroid = polygon.centroid
         except Exception as e:
             error = BadRequest()
             error.data = {
@@ -126,7 +136,7 @@ class ChallengeService:
                 "subcode": "invalid_request",
             }
             raise error
-        return polygon
+        return polygon, centroid
 
     @staticmethod
     def _get_area_sqm(polygon: Polygon) -> float:
@@ -148,3 +158,29 @@ class ChallengeService:
             return None
         bbox_geojson = db.engine.execute(bbox.ST_AsGeoJSON()).scalar()
         return geojson.loads(bbox_geojson)
+
+    @staticmethod
+    def get_country_from_coordinates(lat, lng):
+        """Helper which returns the country from the centroid"""
+        url = "{0}/reverse?format=jsonv2&lat={1}&lon={2}&accept-language=en".format(
+            OSM_NOMINATIM_SERVER_URL, lat, lng
+        )
+        try:
+            country_info = requests.get(url).json()  # returns a dict
+            if country_info["address"].get("country") is not None:
+               return [country_info["address"]["country"]][0]
+        except (KeyError, AttributeError, requests.exceptions.ConnectionError):
+            pass
+        return None
+
+    @staticmethod
+    def get_features_from_overpass(challenge: Challenge, query) -> None:
+        """Attach features to challenge"""
+        overpass = Overpass()
+        nodes = overpass.get_nodes(query)
+        feature_count = 1
+        for node in nodes:
+            feature = Overpass.node_to_features(node, feature_count)
+            challenge.features.append(feature)
+            feature_count += 1
+        

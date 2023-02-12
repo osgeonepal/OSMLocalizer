@@ -35,7 +35,7 @@ class Challenge(db.Model):
         lazy="dynamic",
         cascade="all, delete, delete-orphan",
     )
-    translate_engine = db.Column(db.String, nullable=True)
+    translate_engine = db.Column(db.Integer, nullable=True)
     api_key = db.Column(db.String, nullable=True)
 
     def create(self):
@@ -64,13 +64,11 @@ class Challenge(db.Model):
             last_updated=self.last_updated,
             centroid=self.centroid,
             language_tags=self.language_tags,
-            feature_tags=self.feature_tags,
             country=self.country,
         )
         challenge_dto.bbox = json.loads(
             db.engine.execute(self.bbox.ST_AsGeoJSON()).scalar()
         )
-        print(type(challenge_dto.bbox))
         return challenge_dto
 
     @staticmethod

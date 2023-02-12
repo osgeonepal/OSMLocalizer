@@ -24,7 +24,9 @@ class Challenge(Resource):
     def post(self):
         """Create new challenge"""
         challenge_dto = CreateChallengeDTO(**self.api.payload)
-        return jsonify(ChallengeService.create_challenge(challenge_dto).dict())
+        if ChallengeService.create_challenge(challenge_dto):
+            return {"success": "yes"}, 200
+        return {"success": "no"}, 400
 
 class ChallengeList(Resource):
     """Challenge list resource"""

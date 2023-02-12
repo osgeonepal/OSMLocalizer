@@ -13,7 +13,7 @@ class Feature(db.Model):
         db.Integer, db.ForeignKey("challenge.id"), index=True, primary_key=True
     )
     osm_type = db.Column(db.String, nullable=False)
-    osm_id = db.Column(db.Integer, nullable=False)
+    osm_id = db.Column(db.BigInteger, nullable=False)
     geometry = db.Column(Geometry("POINT", srid=4326), nullable=True)
     status = db.Column(db.Integer, nullable=False, default=FeatureStatus.TO_LOCALIZE.value)
     last_updated = db.Column(db.DateTime, default=datetime.utcnow())
