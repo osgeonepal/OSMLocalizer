@@ -15,7 +15,7 @@ class Challenge(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, nullable=False)
     description = db.Column(db.String, nullable=True)
-    country = db.Column(db.String, nullable=False)
+    country = db.Column(db.String, nullable=True)
     status = db.Column(db.Integer, nullable=False)
     to_language = db.Column(db.String, nullable=False)
     
@@ -57,17 +57,20 @@ class Challenge(db.Model):
         challenge_dto = ChallengeDTO(
             id=self.id,
             name=self.name,
-            description=self.description,
-            due_date=self.due_date,
             status=self.status,
+            description=self.description,
+            country=self.country,
+            to_language=self.to_language,
+            due_date=self.due_date,
             created=self.created,
             last_updated=self.last_updated,
-            centroid=self.centroid,
             language_tags=self.language_tags,
-            country=self.country,
         )
         challenge_dto.bbox = json.loads(
             db.engine.execute(self.bbox.ST_AsGeoJSON()).scalar()
+        )
+        challenge_dto.centroid=json.loads(
+            db.engine.execute(self.centroid.ST_AsGeoJSON()).scalar()
         )
         return challenge_dto
 

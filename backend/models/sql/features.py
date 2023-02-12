@@ -1,6 +1,7 @@
 from backend import db
 from datetime import datetime
 from geoalchemy2 import Geometry
+import json
 
 from backend.models.sql.enum import FeatureStatus
 
@@ -35,20 +36,30 @@ class Feature(db.Model):
         db.session.delete(self)
         db.session.commit()
 
+    def as_geojson(self):
+        """Convert to geojson"""
+        return {
+            "type": "Feature",
+            "id": self.id,
+            "properties": {
+                "osm_type": self.osm_type,
+                "challenge_id": self.challenge_id,
+                "osm_id": self.osm_id,
+                "status": self.status,
+                "changeset_id": self.changeset_id,
+                "localized_by": self.localized_by,
+                "validated_by": self.validated_by,
+                "last_updated": self.last_updated.strftime("%Y-%m-%d %H:%M:%S"),
+            },
+            "geometry": json.loads(
+            db.engine.execute(self.geometry.ST_AsGeoJSON()).scalar()
+        ),
+        }
+
     @staticmethod
     def get_by_id(feature_id: int, challenge_id: int):
         """Get feature by id""" ""
         return Feature.query.get(feature_id, challenge_id)
-
-    @staticmethod
-    def get_all_challenge_features(challenge_id: int):
-        """Get all features for a challenge"""
-        return Feature.query.filter_by(challenge_id=challenge_id).all()
-
-    @staticmethod
-    def get_features_by_status(challenge_id: int, status: int):
-        """Get all features for a challenge by status"""
-        return Feature.query.filter_by(challenge_id=challenge_id, status=status).all()
 
     @staticmethod
     def create_from_dto(feature_dto: dict):

@@ -44,15 +44,15 @@ class ChallengeDTO(BaseModel):
     id: int
     name: str
     description: str
-    due_date: datetime
     status: int
+    country: str
+    to_language: str
+    due_date: datetime
     created: datetime
     last_updated: datetime
     bbox: Optional[dict]
     centroid: Optional[str] = None
     language_tags: list
-    feature_tags: list
-    country: str
 
     class Config:
         orm_mode = True

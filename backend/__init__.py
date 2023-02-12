@@ -21,8 +21,10 @@ def create_app(config=EnvironmentConfig):
 
 
     from backend.api.challenge import Challenge, ChallengeList
+    from backend.api.feature import FeatureRestAPI
 
     api.add_resource(Challenge, "/challenge", "/challenge/<int:challenge_id>/")
     api.add_resource(ChallengeList, "/challenges/")
+    api.add_resource(FeatureRestAPI, "/challenge/<int:challenge_id>/features/")
 
     return app

@@ -76,8 +76,7 @@ class ChallengeService:
             error = NotFound(f"Challenge with id {challenge_id} not found")
             error.data = {"sub_code": "challenge_not_found"}
             raise error
-        challenge.bbox = ChallengeService.get_bbox_geometry_as_geojson(challenge.bbox)
-        return ChallengeDTO.from_orm(challenge)
+        return challenge.as_dto()
 
     @staticmethod
     def get_all_challenges() -> ChallengeListDTO:
