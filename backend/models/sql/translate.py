@@ -3,7 +3,7 @@ from pydantic_sqlalchemy import sqlalchemy_to_pydantic
 from sqlalchemy.sql.expression import func
 
 from backend import db
-from backend.enum import TextStatus
+from backend.models.sql.enum import TextStatus
 
 
 class TranslateHistory(db.Model):

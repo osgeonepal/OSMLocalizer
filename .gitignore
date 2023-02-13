@@ -1,6 +1,7 @@
 # Folders
 /__pypackages__
 /.vscode
+/tests
 
 # Files
 *.csv

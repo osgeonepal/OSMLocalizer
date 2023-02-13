@@ -4,7 +4,6 @@ from datetime import datetime
 from geoalchemy2.elements import WKBElement
 
 
-from backend import db
 
 def convert_to_string(value):
     if value is None:
@@ -16,14 +15,15 @@ class CreateChallengeDTO(BaseModel):
     """Create Challenge DTO for creating new challenge"""
 
     name: constr(min_length=1, max_length=100)
-    description: Optional[str] = None
+    description: constr(min_length=1, max_length=1000)
+    status: str
+    to_language: str
+    overpass_query: str
+    language_tags: str
+    bbox: list
+    translate_engine: str
+    api_key: str
     due_date: Optional[str] = None
-    status: int
-    bbox: Optional[str] = None
-    centroid: Optional[str] = None
-    language_tags: list
-    feature_tags: list
-    country: str
 
     class Config:
         orm_mode = True
@@ -44,15 +44,15 @@ class ChallengeDTO(BaseModel):
     id: int
     name: str
     description: str
-    due_date: datetime
     status: int
+    country: str
+    to_language: str
+    due_date: datetime
     created: datetime
     last_updated: datetime
     bbox: Optional[dict]
     centroid: Optional[str] = None
     language_tags: list
-    feature_tags: list
-    country: str
 
     class Config:
         orm_mode = True

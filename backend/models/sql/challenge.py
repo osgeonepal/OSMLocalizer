@@ -4,7 +4,7 @@ from sqlalchemy.dialects.postgresql import ARRAY
 from geoalchemy2 import Geometry
 from flask import json
 
-from backend.models.db.features import Feature
+from backend.models.sql.features import Feature
 from backend.models.dtos.challenge_dto import ChallengeDTO
 
 
@@ -15,24 +15,28 @@ class Challenge(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, nullable=False)
     description = db.Column(db.String, nullable=True)
-    due_date = db.Column(
-        db.DateTime, nullable=False, default=datetime.utcnow() + timedelta(days=7)
-    )
+    country = db.Column(db.String, nullable=True)
     status = db.Column(db.Integer, nullable=False)
-    created = db.Column(db.DateTime, default=datetime.utcnow())
-    last_updated = db.Column(db.DateTime, default=datetime.utcnow())
+    to_language = db.Column(db.String, nullable=False)
+    
     bbox = db.Column(Geometry("POLYGON", srid=4326), nullable=True)
     centroid = db.Column(Geometry("POINT", srid=4326), nullable=True)
+    overpass_query = db.Column(db.String, nullable=True)
     language_tags = db.Column(ARRAY(db.String), nullable=False)
-    feature_tags = db.Column(ARRAY(db.String), nullable=False)
-    country = db.Column(db.String, nullable=False)
-
+    
+    due_date = db.Column(
+        db.DateTime, nullable=False, default=datetime.utcnow() + timedelta(days=30)
+    )
+    created = db.Column(db.DateTime, default=datetime.utcnow())
+    last_updated = db.Column(db.DateTime, default=datetime.utcnow())
     features = db.relationship(
         Feature,
         backref="challenge",
         lazy="dynamic",
         cascade="all, delete, delete-orphan",
     )
+    translate_engine = db.Column(db.Integer, nullable=True)
+    api_key = db.Column(db.String, nullable=True)
 
     def create(self):
         """Create new entry"""
@@ -53,20 +57,21 @@ class Challenge(db.Model):
         challenge_dto = ChallengeDTO(
             id=self.id,
             name=self.name,
-            description=self.description,
-            due_date=self.due_date,
             status=self.status,
+            description=self.description,
+            country=self.country,
+            to_language=self.to_language,
+            due_date=self.due_date,
             created=self.created,
             last_updated=self.last_updated,
-            centroid=self.centroid,
             language_tags=self.language_tags,
-            feature_tags=self.feature_tags,
-            country=self.country,
         )
         challenge_dto.bbox = json.loads(
             db.engine.execute(self.bbox.ST_AsGeoJSON()).scalar()
         )
-        print(type(challenge_dto.bbox))
+        challenge_dto.centroid=json.loads(
+            db.engine.execute(self.centroid.ST_AsGeoJSON()).scalar()
+        )
         return challenge_dto
 
     @staticmethod

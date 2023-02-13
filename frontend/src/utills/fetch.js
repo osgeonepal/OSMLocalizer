@@ -42,13 +42,16 @@ export function fetchLocalJSONAPI(endpoint, token, method = 'GET', language = 'e
     language = 'en',
   ) {
     const url = new URL(endpoint, API_URL);
+    const headers = {
+      'Content-Type': 'application/json',
+      'Accept-Language': language.replace('-', '_'),
+    };
+    if (token) {
+      headers['Authorization'] = `Token ${token}`;
+    }
     return fetch(url, {
       method: method,
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept-Language': language.replace('-', '_'),
-        Authorization: `Token ${token}`,
-      },
+      headers: headers,
       body: payload,
     })
       .then(handleErrors)
