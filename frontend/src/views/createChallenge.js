@@ -4,7 +4,7 @@ import { FormTabs } from "../components/challengeEdit/formTabs";
 import { MetadataForm } from "../components/challengeEdit/challengeMetadata";
 import { TasksForm } from "../components/challengeEdit/challengeTasks";
 import { TranslationForm } from "../components/challengeEdit/translationForm";
-
+import { pushToLocalJSONAPI } from "../utills/fetch";
 
 const renderForm = (option, challengeInfo, setChallengeInfo) => {
     switch (option) {
@@ -24,6 +24,9 @@ const CreateChallenge = () => {
     const [option, setOption] = useState('Description');
     const [challengeInfo, setChallengeInfo] = useState({});
 
+    const onSubmit = (values) => {
+        pushToLocalJSONAPI('challenge/', values);
+    }
     return (
         <div className="row border p-4 m-4 gap-5 bg-light">
             <div className="col-3">
@@ -31,7 +34,7 @@ const CreateChallenge = () => {
             </div>
             <div className="col-6 justify-content-right">
                 <Form
-                    onSubmit={() => console.log(challengeInfo)}
+                    onSubmit={() => onSubmit(JSON.stringify(challengeInfo))}
                     render={({ handleSubmit }) => (
                         <form onSubmit={handleSubmit}>
                             {renderForm(option, challengeInfo, setChallengeInfo)}

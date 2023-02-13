@@ -19,8 +19,8 @@ class CreateChallengeDTO(BaseModel):
     status: str
     to_language: str
     overpass_query: str
-    language_tags: list
-    bbox: str
+    language_tags: str
+    bbox: list
     translate_engine: str
     api_key: str
     due_date: Optional[str] = None

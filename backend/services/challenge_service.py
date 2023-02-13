@@ -34,9 +34,13 @@ class ChallengeService:
     @staticmethod
     def create_challenge(challenge_dto: CreateChallengeDTO) -> ChallengeDTO:
         """Create new challenge"""
-        bbox = list(map(float, challenge_dto.bbox.split(",")))
-        bbox_polygon, centroid = ChallengeService.make_polygon_from_bbox(bbox)
+        bbox = challenge_dto.bbox
+        # Reverse bbox to str
+        bbox_str = f"{bbox[0]}, {bbox[1]}, {bbox[2]}, {bbox[3]}"
+        bbox_polygon, centroid = ChallengeService.make_polygon_from_bbox(challenge_dto.bbox)
         country = ChallengeService.get_country_from_coordinates(centroid.y , centroid.x)
+        overpass_query = challenge_dto.overpass_query.replace("{{bbox}}", f"({bbox_str})")
+        language_tags = [tag.strip() for tag in challenge_dto.language_tags.split(",")]
         challenge = Challenge(
             name=challenge_dto.name,
             description=challenge_dto.description,
@@ -45,13 +49,13 @@ class ChallengeService:
             to_language=challenge_dto.to_language,
             bbox=f"SRID=4326;{bbox_polygon.wkt}",
             centroid=f"SRID=4326;{centroid.wkt}",
-            overpass_query=challenge_dto.overpass_query,
-            language_tags=challenge_dto.language_tags,
+            overpass_query=overpass_query,
+            language_tags=language_tags,
             due_date=challenge_dto.due_date,
             translate_engine=TranslateEngine[challenge_dto.translate_engine.upper()].value,
             api_key=challenge_dto.api_key,
         )
-        ChallengeService.get_features_from_overpass(challenge, challenge_dto.overpass_query)
+        ChallengeService.get_features_from_overpass(challenge, overpass_query)
         challenge.create()
         return True
 

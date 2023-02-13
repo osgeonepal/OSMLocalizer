@@ -44,7 +44,7 @@ export const MetadataForm = (props) => {
             />
             <Select 
                 label="Translate to"
-                name="translate_to"
+                name="to_language"
                 clearable={true}
                 options={languageOptions}
                 onChange={onChange}
