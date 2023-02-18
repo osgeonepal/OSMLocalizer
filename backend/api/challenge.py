@@ -28,6 +28,7 @@ class Challenge(Resource):
             return {"success": "yes"}, 200
         return {"success": "no"}, 400
 
+
 class ChallengeList(Resource):
     """Challenge list resource"""
 
