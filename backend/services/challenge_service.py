@@ -28,6 +28,7 @@ from backend.services.overpass_service import Overpass
 MAX_AREA = math.pow(100 * 100, 2)
 OSM_NOMINATIM_SERVER_URL = "https://nominatim.openstreetmap.org"
 
+
 class ChallengeService:
     """Service class for Challenge model"""
 
@@ -37,9 +38,13 @@ class ChallengeService:
         bbox = challenge_dto.bbox
         # Reverse bbox to str
         bbox_str = f"{bbox[0]}, {bbox[1]}, {bbox[2]}, {bbox[3]}"
-        bbox_polygon, centroid = ChallengeService.make_polygon_from_bbox(challenge_dto.bbox)
-        country = ChallengeService.get_country_from_coordinates(centroid.y , centroid.x)
-        overpass_query = challenge_dto.overpass_query.replace("{{bbox}}", f"({bbox_str})")
+        bbox_polygon, centroid = ChallengeService.make_polygon_from_bbox(
+            challenge_dto.bbox
+        )
+        country = ChallengeService.get_country_from_coordinates(centroid.y, centroid.x)
+        overpass_query = challenge_dto.overpass_query.replace(
+            "{{bbox}}", f"({bbox_str})"
+        )
         language_tags = [tag.strip() for tag in challenge_dto.language_tags.split(",")]
         challenge = Challenge(
             name=challenge_dto.name,
@@ -52,7 +57,9 @@ class ChallengeService:
             overpass_query=overpass_query,
             language_tags=language_tags,
             due_date=challenge_dto.due_date,
-            translate_engine=TranslateEngine[challenge_dto.translate_engine.upper()].value,
+            translate_engine=TranslateEngine[
+                challenge_dto.translate_engine.upper()
+            ].value,
             api_key=challenge_dto.api_key,
         )
         ChallengeService.get_features_from_overpass(challenge, overpass_query)
@@ -86,9 +93,11 @@ class ChallengeService:
     def get_all_challenges() -> ChallengeListDTO:
         """Get all challenges"""
         challenges = Challenge.get_all()
-        
+
         return ChallengeListDTO(
-            challenges=[ChallengeSummaryDTO.from_orm(challenge) for challenge in challenges]
+            challenges=[
+                ChallengeSummaryDTO.from_orm(challenge) for challenge in challenges
+            ]
         )
 
     @staticmethod
@@ -171,7 +180,7 @@ class ChallengeService:
         try:
             country_info = requests.get(url).json()  # returns a dict
             if country_info["address"].get("country") is not None:
-               return [country_info["address"]["country"]][0]
+                return [country_info["address"]["country"]][0]
         except (KeyError, AttributeError, requests.exceptions.ConnectionError):
             pass
         return None
@@ -186,4 +195,3 @@ class ChallengeService:
             feature = Overpass.node_to_features(node, feature_count)
             challenge.features.append(feature)
             feature_count += 1
-        

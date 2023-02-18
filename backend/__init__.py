@@ -19,12 +19,17 @@ def create_app(config=EnvironmentConfig):
     def system():
         return {"system": "healthy"}, 200
 
-
     from backend.api.challenge import Challenge, ChallengeList
-    from backend.api.feature import FeatureRestAPI
+    from backend.api.feature import FeatureRestAPI, FeaturesAllAPI, FeaturesByRandomAPI
 
     api.add_resource(Challenge, "/challenge/", "/challenge/<int:challenge_id>/")
     api.add_resource(ChallengeList, "/challenges/")
-    api.add_resource(FeatureRestAPI, "/challenge/<int:challenge_id>/features/")
+    api.add_resource(FeaturesAllAPI, "/challenge/<int:challenge_id>/features/")
+    api.add_resource(
+        FeatureRestAPI, "/challenge/<int:challenge_id>/feature/<int:feature_id>/"
+    )
+    api.add_resource(
+        FeaturesByRandomAPI, "/challenge/<int:challenge_id>/features/random/"
+    )
 
     return app

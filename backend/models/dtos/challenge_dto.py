@@ -4,7 +4,6 @@ from datetime import datetime
 from geoalchemy2.elements import WKBElement
 
 
-
 def convert_to_string(value):
     if value is None:
         return None
@@ -57,9 +56,8 @@ class ChallengeDTO(BaseModel):
     class Config:
         orm_mode = True
         json_encoders = {}
-        json_decoders = {
-            datetime: lambda v: datetime.fromisoformat(v)
-        }
+        json_decoders = {datetime: lambda v: datetime.fromisoformat(v)}
+
 
 class ChallengeSummaryDTO(BaseModel):
     """Challenge Summary DTO for returning challenge summary"""
@@ -79,9 +77,8 @@ class ChallengeSummaryDTO(BaseModel):
     class Config:
         orm_mode = True
         json_encoders = {}
-        json_decoders = {
-            datetime: lambda v: datetime.fromisoformat(v)
-        }
+        json_decoders = {datetime: lambda v: datetime.fromisoformat(v)}
+
 
 class ChallengeListDTO(BaseModel):
     """Challenge List DTO for returning list of challenges"""

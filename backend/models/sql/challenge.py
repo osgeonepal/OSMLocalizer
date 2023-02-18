@@ -18,12 +18,12 @@ class Challenge(db.Model):
     country = db.Column(db.String, nullable=True)
     status = db.Column(db.Integer, nullable=False)
     to_language = db.Column(db.String, nullable=False)
-    
+
     bbox = db.Column(Geometry("POLYGON", srid=4326), nullable=True)
     centroid = db.Column(Geometry("POINT", srid=4326), nullable=True)
     overpass_query = db.Column(db.String, nullable=True)
     language_tags = db.Column(ARRAY(db.String), nullable=False)
-    
+
     due_date = db.Column(
         db.DateTime, nullable=False, default=datetime.utcnow() + timedelta(days=30)
     )
@@ -69,7 +69,7 @@ class Challenge(db.Model):
         challenge_dto.bbox = json.loads(
             db.engine.execute(self.bbox.ST_AsGeoJSON()).scalar()
         )
-        challenge_dto.centroid=json.loads(
+        challenge_dto.centroid = json.loads(
             db.engine.execute(self.centroid.ST_AsGeoJSON()).scalar()
         )
         return challenge_dto
