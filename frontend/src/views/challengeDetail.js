@@ -1,31 +1,31 @@
 
 import { React, useState, useEffect } from "react";
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
 
 import { fetchLocalJSONAPI } from "../utills/fetch";
 import ChallengeInfo from '../components/challenge/challengeInfo';
-import ChallengeEditor from '../components/tagEditor';
+import {ChallengeMap} from '../components/challenge/challengeMap';
+
 
 export default function ChallengeDetailView() {
     const [challenge, setChallenge] = useState({});
+    const [isChallenegeLoaded, setIsChallengeLoaded] = useState(false);
     useEffect(() => {
-        fetchLocalJSONAPI("challenge/10/").then((data) => {
+        fetchLocalJSONAPI("challenge/1/").then((data) => {
             setChallenge(data);
+            setIsChallengeLoaded(true);
         });
     }, [])
 
     return (
         <div>
-            <Row>
-                <Col>
+            {isChallenegeLoaded? <div className="row">
+                <div className="col-6">
                     <ChallengeInfo challenge={challenge} />
-                </Col>
-                <Col className="col-5">
-                    <ChallengeEditor />
-                </Col>
-            </Row>
-
+                </div>
+                <div className="col-6">
+                </div>
+            </div> : <div>Loading...</div>
+            }
         </div>
     );
 };

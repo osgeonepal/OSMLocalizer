@@ -7,21 +7,22 @@ import Header from "./components/header";
 import ChallengeDetailView from "./views/challengeDetail";
 import ChallengesView from "./views/challenges";
 import CreateChallengeView from "./views/createChallenge";
+import {LocalizeChallengeView} from "./views/localizeChallenge";
 
 function App() {
 
   return (
     <div>
-      <Container>
         < BrowserRouter >
         <Header path="/*" />
-        <Routes>
-            <Route path="/" element={<ChallengeDetailView />} />
-            <Route path="/challenges" element={<ChallengesView />} />
-            <Route path="/create" element={<CreateChallengeView />} />
-          </Routes>
+          <Container>
+            <Routes>
+              <Route path="/" element={<LocalizeChallengeView />} />
+              <Route path="/challenges" element={<ChallengesView />} />
+              <Route path="/create" element={<CreateChallengeView />} />
+            </Routes>
+          </Container>
         </BrowserRouter>
-      </Container>
     </div>
    
   );
