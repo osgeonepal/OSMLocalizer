@@ -5,6 +5,9 @@ import json
 
 from backend.models.sql.enum import FeatureStatus
 
+def timestamp():
+    return datetime.utcnow()
+
 class Feature(db.Model):
     """Describes feature"""
 
@@ -17,7 +20,7 @@ class Feature(db.Model):
     osm_id = db.Column(db.BigInteger, nullable=False)
     geometry = db.Column(Geometry("POINT", srid=4326), nullable=True)
     status = db.Column(db.Integer, nullable=False, default=FeatureStatus.TO_LOCALIZE.value)
-    last_updated = db.Column(db.DateTime, default=datetime.utcnow())
+    last_updated = db.Column(db.DateTime, default=timestamp)
     changeset_id = db.Column(db.Integer, nullable=True)
     localized_by = db.Column(db.String, nullable=True)
     validated_by = db.Column(db.String, nullable=True)

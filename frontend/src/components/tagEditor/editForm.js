@@ -112,7 +112,7 @@ export function TagEditorForm(props) {
                         </div>
                         <div>
                             <button className="btn btn-secondary btn-sm"
-                                onClick={()=>props.onDone()}
+                                onClick={()=>props.onSkip()}
                             >
                                 Skip
                             </button>

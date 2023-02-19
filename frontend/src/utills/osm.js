@@ -92,7 +92,7 @@ export function closeChangeset(changesetId) {
     });
 };
 
-export function uploadToOSM(changes, comment, reviewEdits) {
+export async function uploadToOSM(changes, comment, reviewEdits) {
     createChangeset(comment, reviewEdits).then((changesetId) => {
         uploadChanges(changes, changesetId).then(() => {
             closeChangeset(changesetId);
