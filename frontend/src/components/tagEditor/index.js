@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-import { fetchExternalJSONAPI, fetchLocalJSONAPI } from "../../utills/fetch";
+import { fetchExternalJSONAPI, fetchLocalJSONAPI, pushToLocalJSONAPI } from "../../utills/fetch";
 import Map from './map';
 import { TagEditorForm } from './editForm';
 import { getUserDetails } from '../../utills/osm';
@@ -16,15 +16,18 @@ export default function TagEditor() {
     const [isLoading, setLoading] = useState(true);
     const [isUploading, setUploading] = useState(false);
     const [feature, setFeature] = useState();
+    const [changedFeatures, setChangedFeatures] = useState([]);
+
+    const getFeature = async () => {
+        const url = (feature ? `challenge/${challenge_id}/feature/${feature.nearby.id}/?nearby=true` :
+            `challenge/${challenge_id}/features/random/?nearby=true`);
+        const data = await fetchLocalJSONAPI(url)
+        setFeature(data);
+    }
+
 
     useEffect(() => {
-        const url = (feature ? `challenge/${challenge_id}/feature/${feature.nearby.id}/?nearby=true` :
-                `challenge/${challenge_id}/features/random/?nearby=true`);
-        (async () => {
-            setLoading(true);
-            const data = await fetchLocalJSONAPI(url)
-            setFeature(data);
-        })();
+        getFeature();
     }, []);
 
     useEffect(() => {
@@ -48,24 +51,41 @@ export default function TagEditor() {
 
     }, []);
 
-    const onUpload = (changeset_comment, reviewEdits) => {
-        setUploading(true)
-        uploadToOSM(Object.values(allChanges), changeset_comment, reviewEdits)
-            .then(
-                setUploading(false),
-                setAllChanges({})
-            )
+    const changeFeatureStatus = async (featureIds, status) => {
+        const payload = {
+            featureIds: featureIds,
+            status: status
+        }
+        pushToLocalJSONAPI(
+            `challenge/${challenge_id}/feature/`,
+            JSON.stringify(payload),
+        )
     }
 
-    const onDone = () => {
-        const url = (feature ? `challenge/${challenge_id}/feature/${feature.nearby.id}/?nearby=true` :
-                `challenge/${challenge_id}/features/random/?nearby=true`);
-        (async () => {
-            setLoading(true);
-            const data = await fetchLocalJSONAPI(url)
-            setFeature(data);
-        })();
+
+    const onUpload = async (changeset_comment, reviewEdits) => {
+        setUploading(true)
+        await uploadToOSM(Object.values(allChanges), changeset_comment, reviewEdits)
+        await changeFeatureStatus(changedFeatures, "LOCALIZED")
+        setAllChanges({})
+        setUploading(false)
+        setChangedFeatures([])
+        getFeature();
     }
+
+    const onDone = async () => {
+        setLoading(true);
+        await changeFeatureStatus([feature.feature.properties.id], "TO_UPLOAD");
+        setChangedFeatures([...changedFeatures, feature.feature.properties.id]);
+        getFeature();
+    }
+
+    const onSkip = async () => {
+        setLoading(true);
+        await changeFeatureStatus([feature.feature.properties.id], "SKIPPED");
+        getFeature()
+    }
+
 
     return (
         <div className=''>
@@ -79,6 +99,7 @@ export default function TagEditor() {
                             setElement={setElement}
                             setAllChanges={setAllChanges}
                             onDone={onDone}
+                            onSkip={onSkip}
                         />
                     </div>
                     <div className='col-4 p-0 border border-start-0 border-secondary-subtle'>

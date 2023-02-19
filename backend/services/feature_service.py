@@ -1,5 +1,7 @@
+from datetime import datetime, timedelta
+
 from backend.models.sql.features import Feature
-from backend.models.dtos.feature_dto import NearbyFeatureDTO
+from backend.models.sql.enum import FeatureStatus
 
 
 class FeatureService:
@@ -55,9 +57,30 @@ class FeatureService:
             nearby_feature = Feature.get_nearby(feature.id, feature.challenge_id) 
         return {"feature": feature.as_geojson(), "nearby": nearby_feature if nearby else None}
 
-
-    # @staticmethod
-    # def get_nearby_features(feature_id: int, challenge_id: int):
-    #     """Get nearby features for a feature"""
-    #     feature = FeatureService.get_feature_by_id(feature_id, challenge_id)
-    #     Feature.query.filter_by(challenge_id=challenge_id)
+    @staticmethod
+    def update_feature(feature_ids: list, challenge_id: int, status: int):
+        """Update the status of a feature"""
+        features = Feature.query.filter(
+            Feature.id.in_(feature_ids), Feature.challenge_id == challenge_id
+        ).all()
+        for feature in features:
+            if feature.status in [FeatureStatus.TO_LOCALIZE.value, FeatureStatus.TO_UPLOAD.value]:
+                feature.status = FeatureStatus[status].value
+                feature.last_updated = datetime.utcnow()
+                feature.update()
+            
+        return {"status": "success"}
+    
+    @staticmethod
+    def reset_expired_tasks(challenge_id: int):
+        """Reset tasks that have been changed but not uploaded for more than 30 minutes"""
+        features = Feature.query.filter(
+            Feature.challenge_id == challenge_id, 
+            Feature.status == FeatureStatus.TO_UPLOAD.value,
+            Feature.last_updated < datetime.utcnow() - timedelta(minutes=30)
+        ).all()
+        for feature in features:
+            feature.status = FeatureStatus.TO_LOCALIZE.value
+            feature.last_updated = datetime.utcnow()
+            feature.update()
+    
