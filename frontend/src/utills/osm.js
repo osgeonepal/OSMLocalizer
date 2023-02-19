@@ -32,8 +32,8 @@ export function getUserDetails() {
     });
 }
 
-export function createChangeset(comment) {
-    const changeset = createChnagesetJSON(comment);
+export function createChangeset(comment, reviewEdits) {
+    const changeset = createChnagesetJSON(comment, reviewEdits);
     return new Promise((resolve, reject) => {
         auth.xhr({
             method: 'PUT',
@@ -92,8 +92,8 @@ export function closeChangeset(changesetId) {
     });
 };
 
-export function uploadToOSM(changes, comment) {
-    createChangeset(comment).then((changesetId) => {
+export function uploadToOSM(changes, comment, reviewEdits) {
+    createChangeset(comment, reviewEdits).then((changesetId) => {
         uploadChanges(changes, changesetId).then(() => {
             closeChangeset(changesetId);
         });
@@ -101,7 +101,7 @@ export function uploadToOSM(changes, comment) {
 };
 
 
-export function createChnagesetJSON(comment) {
+export function createChnagesetJSON(comment, reviewEdits) {
     // create osm changeset xml string
     const hashtags = comment?.split(" ").filter((word) => word.startsWith('#')).join(';');
     const changeset = `
@@ -110,6 +110,7 @@ export function createChnagesetJSON(comment) {
             <tag k="created_by" v="OSMLocalizer"/>
             <tag k="comment" v="${comment}"/>
             ${hashtags?`<tag k="hashtags" v="${hashtags}"/>`: ""}
+            ${reviewEdits?`<tag k="review_edits" v="yes"/>`: ""}
         </changeset>
     </osm>
     `;
@@ -117,7 +118,6 @@ export function createChnagesetJSON(comment) {
 };
 
 export function createChangeXML(elements, changesetId) {
-    // TODO: Add changeset id
     let changeXML = '<osmChange version="0.6" generator="OSMLocalizer"><create/> <modify>';
     // eslint-disable-next-line
     for (const [key, value] of Object.entries(elements)) {

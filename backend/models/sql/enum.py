@@ -5,6 +5,10 @@ class FeatureStatus(Enum):
     TO_LOCALIZE = 0
     LOCALIZED = 1
     VALIDATED = 2
+    CHANGED = 3
+    ALREADY_LOCALIZED = 4
+    DUPLICATE = 5
+    TOO_HARD = 6
 
 
 class ChallengeStatus(Enum):

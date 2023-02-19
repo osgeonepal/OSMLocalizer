@@ -1,6 +1,14 @@
 import React, { useState } from 'react';
 import { inputTools } from "../../utills/translator";
 
+export const alertComponent = () => {
+    return (
+        <div className="alert alert-success position-fixed bottom-0 end-0 p-2 m-2">
+            Text copied to clipboard
+        </div>
+    )
+}
+
 export default function InputToolForm() {
     const [transliterate, setTransliterate] = useState([]);
     const [isExpanded, setExpanded] = useState(false);
@@ -13,13 +21,6 @@ export default function InputToolForm() {
         setExpanded(!isExpanded);
     }
 
-    const alertComponent = () => {
-        return (
-            <div className="alert alert-success position-fixed bottom-0 end-0 p-2 m-2">
-                Text copied to clipboard
-            </div>
-        )
-    }
 
     const handleCopy = (e) => {
         navigator.clipboard.writeText(e.target.innerText);

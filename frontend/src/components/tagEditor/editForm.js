@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Form, Field } from 'react-final-form';
 import { yandexTranslator } from "../../utills/translator";
-import InputToolForm from "./inputToolForm";
+import InputToolForm, {alertComponent} from "./inputToolForm";
 import { YANDEX_ACCESS_TOKEN } from '../../config';
 
 const editTags = ["name", "name:en", "name:ne"]
@@ -25,7 +25,9 @@ const inputComponnent = (key, value) => {
 export function TagEditorForm(props) {
     const [translation, setTranslation] = useState();
     const [isLoading, setLoading] = useState(false);
-    const text = encodeURIComponent(props.element['tags']['name']);
+    const [isCopied, setCopied] = useState(false);
+    const name = props.element['tags']['name']? "name" : "name:en";
+    const text = encodeURIComponent(props.element['tags'][name]);
     useEffect(() => {
         setLoading(true);
         (async () => {
@@ -46,7 +48,10 @@ export function TagEditorForm(props) {
         return changedKeys;
     }
 
+
     const onSubmitChange = (values) => {
+        async function updateElement() {
+        
         const changedKeys = detectChange(values);
         if (changedKeys.length > 0) {
             const newElementTmp = Object.assign({}, props.element);
@@ -58,7 +63,19 @@ export function TagEditorForm(props) {
             props.setAllChanges(allChangesTmp);
         }
     }
+    updateElement().then(() => {
+        props.onDone()});
+    }
 
+    const handleCopy = (e) => {
+        navigator.clipboard.writeText(e.target.innerText);
+        setCopied(true);
+        setTimeout(() => {
+            setCopied(false);
+        }
+            , 1200);
+
+    }
 
     return (
         <div>
@@ -67,7 +84,7 @@ export function TagEditorForm(props) {
             </div>
             <Form
                 onSubmit={onSubmitChange}
-                render={({ handleSubmit }) => (
+                render={({ handleSubmit, pristine }) => (
                     <form
                         className=""
                         onSubmit={handleSubmit}
@@ -81,13 +98,32 @@ export function TagEditorForm(props) {
                         <div>
                             {isLoading ? null : (
                                 <p className="fs-6 mt-3">Translate suggestion:
-                                    <span className="btn btn-sm btn-secondary ms-1">{translation}</span>
+                                    <span
+                                        onClick={(e) =>handleCopy(e) }
+                                        className="btn btn-sm btn-dark ms-1"
+                                    >
+                                        {translation}
+                                    </span>
                                 </p>
+                                
                             )}
+                            {isCopied ? alertComponent() : null}
                             <InputToolForm />
                         </div>
-                        {/* <button className="btn btn-secondary btn-sm" type="submit">Skip</button> */}
-                        <button className="btn btn-secondary btn-sm" type="submit">Done</button>
+                        <div>
+                            <button className="btn btn-secondary btn-sm"
+                                onClick={()=>props.onDone()}
+                            >
+                                Skip
+                            </button>
+                            <button 
+                                className="btn btn-primary btn-sm ms-2"
+                                type="submit"
+                                disabled={pristine}
+                            >
+                                Done
+                            </button>
+                        </div>
                     </form>
                 )}
             />
