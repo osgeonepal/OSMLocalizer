@@ -15,7 +15,7 @@ const menuItems = [
 function BasicExample() {
   return (
     <>
-      <nav className='navbar navbar-expand-lg bg-body-tertiary'>
+      <nav className='navbar navbar-expand-lg bg-body-tertiary border-bottom mb-4'>
         <div className='container'>
               <Link className="navbar-brand" to='/' key='/'>
                       OSM Localizer
