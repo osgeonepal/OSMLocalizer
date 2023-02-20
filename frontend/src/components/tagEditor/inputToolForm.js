@@ -33,14 +33,14 @@ export default function InputToolForm() {
     }
 
     return (
-        <div>
-            <p
+        <div className='p-2 pt-0'>
+            <div
                 className="text-decoration-none fw-bold"
                 onClick={handleExpand}
                 role="button"
             >
                 {isExpanded ? "▼" : "►"} Input tool
-            </p>
+            </div>
             <div className={isExpanded ? "p-2 ps-3" : "d-none"}>
                 <input
                     className="form-control form-control-sm"

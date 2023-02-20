@@ -1,6 +1,5 @@
 import React from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Container from "react-bootstrap/Container";
 
 import "./App.css";
 import Header from "./components/header";
@@ -15,13 +14,13 @@ function App() {
     <div>
         < BrowserRouter >
         <Header path="/*" />
-          <Container>
+          <div className="container">
             <Routes>
               <Route path="/" element={<LocalizeChallengeView />} />
               <Route path="/challenges" element={<ChallengesView />} />
               <Route path="/create" element={<CreateChallengeView />} />
             </Routes>
-          </Container>
+          </div>
         </BrowserRouter>
     </div>
    
