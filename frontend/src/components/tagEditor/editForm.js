@@ -82,6 +82,9 @@ export function TagEditorForm(props) {
             <div className="p-2 pb-0 fs-6 text-secondary">
                 <span>{props.element.type}: </span> <span>{props.element.id}</span>
             </div>
+            {/* <div className="p-2 pb-0 fs-6 text-secondary fw-bold">
+                Edit
+            </div> */}
             <Form
                 onSubmit={onSubmitChange}
                 render={({ handleSubmit, pristine }) => (
@@ -95,29 +98,29 @@ export function TagEditorForm(props) {
                             }
                             )}
                         </div>
-                        <div>
+                        <div className="border border-secondary-subtle rounded overflow-y-auto">
                             {isLoading ? null : (
-                                <p className="fs-6 mt-3">Translate suggestion:
+                                <div className="fs-6 mt-1 p-2">Suggestion:
                                     <span
                                         onClick={(e) =>handleCopy(e) }
                                         className="btn btn-sm btn-dark ms-1"
                                     >
                                         {translation}
                                     </span>
-                                </p>
+                                </div>
                                 
                             )}
                             {isCopied ? alertComponent() : null}
                             <InputToolForm />
                         </div>
-                        <div>
-                            <button className="btn btn-secondary btn-sm"
+                        <div className="p-4">
+                            <button className="btn btn-secondary"
                                 onClick={()=>props.onSkip()}
                             >
                                 Skip
                             </button>
                             <button 
-                                className="btn btn-primary btn-sm ms-2"
+                                className="btn btn-primary ms-2"
                                 type="submit"
                                 disabled={pristine}
                             >

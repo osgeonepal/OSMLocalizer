@@ -1,7 +1,7 @@
-import React, {useState, useEffect} from "react";
+import React, { useState, useEffect } from "react";
 
 import ChallengeEditor from '../components/tagEditor';
-import {fetchLocalJSONAPI} from "../utills/fetch";
+import { fetchLocalJSONAPI } from "../utills/fetch";
 
 export const LocalizeChallengeView = () => {
     const [challenge, setChallenge] = useState({});
@@ -14,17 +14,17 @@ export const LocalizeChallengeView = () => {
     }, [])
     return (
         <div>
-            {isChallenegeLoaded? (
+            {isChallenegeLoaded ? (
                 <div className="row">
                     <div className="col-4">
                     </div>
                     <div className="col-8">
-                        <ChallengeEditor challenge={challenge}/>
+                        <ChallengeEditor challenge={challenge} />
                     </div>
                 </div>
-            ): <div>Loading...</div>
+            ) : <div>Loading...</div>
             }
         </div>
     );
-    }
+}
 

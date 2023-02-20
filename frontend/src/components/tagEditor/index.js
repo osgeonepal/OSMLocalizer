@@ -89,9 +89,10 @@ export default function TagEditor() {
 
     return (
         <div className=''>
+            
             {isLoading ? <div>Loading...</div> :
                 (<div className='row'>
-                    <div className='col-8 vh-90 border border-secondary-subtle p-2 pt-0'>
+                    <div className='col-8 border border-secondary-subtle p-2 pt-0'>
                         <Map element={element} />
                         <TagEditorForm
                             element={element}

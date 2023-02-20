@@ -158,7 +158,7 @@ export const SideBar = (props) => {
     const [displayUploadDialog, setDisplayUploadDialog] = useState(false);
 
     return (
-        <div className="p-2 pt-2 overflow-auto" style={{ height: "80vh" }}>
+        <div className="p-2 pt-2 overflow-auto">
             <EditorHeader
                 user={props.user}
                 isUploading={props.isUploading}
