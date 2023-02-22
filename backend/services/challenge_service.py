@@ -96,7 +96,7 @@ class ChallengeService:
 
         return ChallengeListDTO(
             challenges=[
-                ChallengeSummaryDTO.from_orm(challenge) for challenge in challenges
+               challenge.as_dto_for_summary() for challenge in challenges
             ]
         )
 

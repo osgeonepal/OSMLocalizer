@@ -56,7 +56,7 @@ class ChallengeDTO(BaseModel):
     class Config:
         orm_mode = True
         json_encoders = {}
-        json_decoders = {datetime: lambda v: datetime.fromisoformat(v)}
+        # json_decoders = {datetime: lambda v: datetime.fromisoformat(v)}
 
 
 class ChallengeSummaryDTO(BaseModel):
@@ -65,19 +65,19 @@ class ChallengeSummaryDTO(BaseModel):
     id: int
     name: str
     description: str
-    due_date: datetime
+    due_date: str
     status: int
-    created: datetime
-    last_updated: datetime
+    to_language: str
+    last_updated: str
     centroid: Optional[dict] = None
-    language_tags: list
-    feature_tags: list
     country: str
+    bbox: Optional[dict] = None
 
     class Config:
         orm_mode = True
         json_encoders = {}
-        json_decoders = {datetime: lambda v: datetime.fromisoformat(v)}
+        # json_decoders = {datetime: lambda v: datetime.fromisoformat(v)}
+        
 
 
 class ChallengeListDTO(BaseModel):
