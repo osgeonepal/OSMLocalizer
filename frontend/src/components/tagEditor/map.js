@@ -27,15 +27,16 @@ const Map = (props) => {
     const mapContainerRef = useRef(null);
     mapboxgl.accessToken = MAPBOX_ACCESS_TOKEN;
     useEffect(() => {
+        const coords = props.element?[props.element.lon, props.element.lat]: [0,0];
         mapContainerRef.current = new mapboxgl.Map({
             container: 'map-container',
             style: "mapbox://styles/mapbox/streets-v12",
-            center: [props.element.lon, props.element.lat],
+            center: [coords[0], coords[1]],
             zoom: 19,
         });
-        return () => mapContainerRef.current.remove();
+        return () => mapContainerRef.current && mapContainerRef.current.remove();
     }
-        , [props.element]);
+    , [props.element]);
     // Add marker on the mapContainerRef
     useEffect(() => {
         // Remove marker if it already exists
@@ -43,6 +44,7 @@ const Map = (props) => {
             mapContainerRef.current.removeLayer('marker');
             mapContainerRef.current.removeSource('marker');
         }
+        props.element &&
         new mapboxgl.Marker()
             .setLngLat([props.element.lon, props.element.lat])
             .addTo(mapContainerRef.current);
