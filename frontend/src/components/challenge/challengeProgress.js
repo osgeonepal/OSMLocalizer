@@ -1,4 +1,5 @@
 import React from "react";
+import {Link} from "react-router-dom";
 
 export const ChallengeProgress = (props) => {
     return (
@@ -21,9 +22,18 @@ export const ChallengeProgress = (props) => {
                 </div>
                 <div className="d-flex p-2 mt-2">
                     <div className="flex-grow-1" >
-                        <span className="badge text-wrap bg-secondary ">25 days left</span>
+                        <div className="badge border border-secondary-subtle text-secondary rounded-0 p-2">
+                            <i className="fa fa-clock-o" aria-hidden="true"></i>
+                            <span className=""> {props.challenge.due_date} days left</span>
+                        </div>
                     </div>
-                    <button className="btn btn-primary">Localize</button>
+                    <Link to={`/challenge/${props.challenge.id}`} className="">
+                        <button 
+                            className="btn btn-primary"
+                        >
+                            Localize
+                        </button>
+                    </Link>
                 </div>
         </div>
     );

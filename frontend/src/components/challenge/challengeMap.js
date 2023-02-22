@@ -13,11 +13,11 @@ export const ChallengeMap = (props)=> {
     const [features, setFeatures] = useState({});
     const [isFeaturesLoaded, setIsFeaturesLoaded] = useState(false);
     useEffect(() => {
-        fetchLocalJSONAPI("challenge/1/features/").then((data) => {
+        fetchLocalJSONAPI(`challenge/${props.challenge.id}/features/`).then((data) => {
             setFeatures(data);
             setIsFeaturesLoaded(true);
         });
-    }, [])
+    }, [props.challenge.id])
 
     const mapContainerRef = useRef(null);
     mapboxGl.accessToken = MAPBOX_ACCESS_TOKEN;
@@ -30,7 +30,7 @@ export const ChallengeMap = (props)=> {
         })
         .addControl(new mapboxGl.NavigationControl(), 'top-right')
         return () => mapContainerRef.current && mapContainerRef.current.remove();
-    }, []);
+    }, [props.challenge.id]);
     // Add challenge polygon to map
     useEffect(() => {
         mapContainerRef.current.on('load', function () {
