@@ -13,7 +13,6 @@ class FeatureRestAPI(Resource):
         return FeatureService.get_feature_by_id(feature_id, challenge_id, nearby)
     
     def post(self, challenge_id: int):
-        print(request.get_json())
         featureIds = request.get_json()['featureIds']
         status = request.get_json()['status']
         return FeatureService.update_feature(featureIds, challenge_id, status)

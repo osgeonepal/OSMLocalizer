@@ -7,10 +7,9 @@ import { getUserDetails } from '../../utills/osm';
 import { uploadToOSM } from '../../utills/osm';
 import { SideBar } from './sideBar';
 
-const challenge_id = 1;
 
-export default function TagEditor() {
-    const [element, setElement] = useState([]);
+export default function TagEditor({ challenge_id }) {
+    const [element, setElement] = useState();
     const [allChanges, setAllChanges] = useState({});
     const [user, setUser] = useState();
     const [isLoading, setLoading] = useState(true);
@@ -27,17 +26,24 @@ export default function TagEditor() {
 
 
     useEffect(() => {
-        getFeature();
-    }, []);
+        setLoading(true);
+        fetchLocalJSONAPI(`challenge/${challenge_id}/features/random/?nearby=true`)
+            .then((data) => {
+                setFeature(data);
+                setLoading(false);
+            }
+            );
+
+    }, [challenge_id]);
 
     useEffect(() => {
-        (async () => {
-            setLoading(true);
+        feature && (async () => {
+            // setLoading(true);
             const data = await fetchExternalJSONAPI(
                 `https://api.openstreetmap.org/api/0.6/${feature.feature.properties.osm_type}/${feature.feature.properties.osm_id}.json`
             );
             setElement(data["elements"][0]);
-            setLoading(false);
+            // setLoading(false);
         })();
     }, [feature]);
 
@@ -74,26 +80,29 @@ export default function TagEditor() {
     }
 
     const onDone = async () => {
-        setLoading(true);
+        // setLoading(true);
         await changeFeatureStatus([feature.feature.properties.id], "TO_UPLOAD");
         setChangedFeatures([...changedFeatures, feature.feature.properties.id]);
         getFeature();
     }
 
     const onSkip = async () => {
-        setLoading(true);
+        // setLoading(true);
         await changeFeatureStatus([feature.feature.properties.id], "SKIPPED");
         getFeature()
     }
 
 
     return (
+
         <div className=''>
-            
-            {isLoading ? <div>Loading...</div> :
-                (<div className='row'>
+            {element===undefined ? <div>Loading...</div> : (
+                <div className='row'>
                     <div className='col-8 border border-secondary-subtle p-2 pt-0'>
-                        <Map element={element} />
+                        <Map
+                            element={element}
+                            isLoading={isLoading}
+                        />
                         <TagEditorForm
                             element={element}
                             allChanges={allChanges}
@@ -111,8 +120,8 @@ export default function TagEditor() {
                             isUploading={isUploading}
                         />
                     </div>
-                </div>)
-            }
+                </div>
+            )}
         </div>
     );
 }
