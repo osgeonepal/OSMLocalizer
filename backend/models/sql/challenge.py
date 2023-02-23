@@ -6,18 +6,9 @@ from flask import json
 
 from backend.models.sql.features import Feature
 from backend.models.dtos.challenge_dto import ChallengeDTO, ChallengeSummaryDTO
+from backend.services.utills import get_last_updated
 
 
-def get_last_updated(last_updated):
-    diff = datetime.utcnow() - last_updated
-    if diff.days > 0:
-        return f"{diff.days} days ago"
-    elif diff.seconds > 3600:
-        return f"{diff.seconds // 3600} hours ago"
-    elif diff.seconds > 60:
-        return f"{diff.seconds // 60} minutes ago"
-    else:
-        return f"{diff.seconds} seconds ago"
 
 class Challenge(db.Model):
     """Describes challenge"""

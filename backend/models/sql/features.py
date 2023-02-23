@@ -1,12 +1,9 @@
 from backend import db
-from datetime import datetime
 from geoalchemy2 import Geometry
 import json
 
 from backend.models.sql.enum import FeatureStatus
-
-def timestamp():
-    return datetime.utcnow()
+from backend.services.utills import timestamp, to_strftime
 
 class Feature(db.Model):
     """Describes feature"""
@@ -52,7 +49,7 @@ class Feature(db.Model):
                 "changeset_id": self.changeset_id,
                 "localized_by": self.localized_by,
                 "validated_by": self.validated_by,
-                "last_updated": self.last_updated.strftime("%Y-%m-%d %H:%M:%S"),
+                "last_updated": to_strftime(self.last_updated),
             },
             "geometry": json.loads(
             db.engine.execute(self.geometry.ST_AsGeoJSON()).scalar()

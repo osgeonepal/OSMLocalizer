@@ -2,6 +2,7 @@ from flask import request
 from flask_restx import Resource
 
 from backend import osm, EnvironmentConfig
+from backend.services.user_service import UserService
 
 class UserAuthorizationUrlAPI(Resource):
     def get(self):
@@ -21,4 +22,8 @@ class UserTokenAPI(Resource):
             code=authorization_code,
         )
         user_info = osm.get(EnvironmentConfig.OAUTH2_USER_INFO_URL).json()
-        return user_info
+        
+        if user_info is None:
+            return {"error": "User not found"}, 404
+        
+        return UserService.login_user(user_info['user'], token['access_token']).dict()
