@@ -2,11 +2,12 @@ from datetime import datetime
 
 
 def timestamp():
-    """ Return current UTC time """
+    """Return current UTC time"""
     return datetime.utcnow()
 
+
 def to_strftime(date):
-    """ Convert date to string """
+    """Convert date to string"""
     return date.strftime("%Y-%m-%d %H:%M:%S")
 
 

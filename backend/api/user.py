@@ -4,6 +4,7 @@ from flask_restx import Resource
 from backend import osm, EnvironmentConfig
 from backend.services.user_service import UserService
 
+
 class UserAuthorizationUrlAPI(Resource):
     def get(self):
         authorization_url, state = osm.authorization_url(
@@ -11,10 +12,13 @@ class UserAuthorizationUrlAPI(Resource):
         )
         return {"url": authorization_url, "state": state}
 
+
 class UserTokenAPI(Resource):
     def get(self):
         authorization_code = request.args.get("code", None)
-        redirect_uri = request.args.get("redirect_uri", EnvironmentConfig.OAUTH2_REDIRECT_URI)
+        redirect_uri = request.args.get(
+            "redirect_uri", EnvironmentConfig.OAUTH2_REDIRECT_URI
+        )
         osm.redirect_uri = redirect_uri
         token = osm.fetch_token(
             EnvironmentConfig.OAUTH2_TOKEN_URL,
@@ -22,8 +26,8 @@ class UserTokenAPI(Resource):
             code=authorization_code,
         )
         user_info = osm.get(EnvironmentConfig.OAUTH2_USER_INFO_URL).json()
-        
+
         if user_info is None:
             return {"error": "User not found"}, 404
-        
-        return UserService.login_user(user_info['user'], token['access_token']).dict()
+
+        return UserService.login_user(user_info["user"], token["access_token"]).dict()

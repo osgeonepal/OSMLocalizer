@@ -77,7 +77,6 @@ class ChallengeSummaryDTO(BaseModel):
         orm_mode = True
         json_encoders = {}
         # json_decoders = {datetime: lambda v: datetime.fromisoformat(v)}
-        
 
 
 class ChallengeListDTO(BaseModel):

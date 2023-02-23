@@ -54,8 +54,11 @@ class FeatureService:
         """Get a random task"""
         feature = Feature.get_random_task(challenge_id)
         if nearby:
-            nearby_feature = Feature.get_nearby(feature.id, feature.challenge_id) 
-        return {"feature": feature.as_geojson(), "nearby": nearby_feature if nearby else None}
+            nearby_feature = Feature.get_nearby(feature.id, feature.challenge_id)
+        return {
+            "feature": feature.as_geojson(),
+            "nearby": nearby_feature if nearby else None,
+        }
 
     @staticmethod
     def update_feature(feature_ids: list, challenge_id: int, status: int):
@@ -64,23 +67,25 @@ class FeatureService:
             Feature.id.in_(feature_ids), Feature.challenge_id == challenge_id
         ).all()
         for feature in features:
-            if feature.status in [FeatureStatus.TO_LOCALIZE.value, FeatureStatus.TO_UPLOAD.value]:
+            if feature.status in [
+                FeatureStatus.TO_LOCALIZE.value,
+                FeatureStatus.TO_UPLOAD.value,
+            ]:
                 feature.status = FeatureStatus[status].value
                 feature.last_updated = datetime.utcnow()
                 feature.update()
-            
+
         return {"status": "success"}
-    
+
     @staticmethod
     def reset_expired_tasks(challenge_id: int):
         """Reset tasks that have been changed but not uploaded for more than 30 minutes"""
         features = Feature.query.filter(
-            Feature.challenge_id == challenge_id, 
+            Feature.challenge_id == challenge_id,
             Feature.status == FeatureStatus.TO_UPLOAD.value,
-            Feature.last_updated < datetime.utcnow() - timedelta(minutes=30)
+            Feature.last_updated < datetime.utcnow() - timedelta(minutes=30),
         ).all()
         for feature in features:
             feature.status = FeatureStatus.TO_LOCALIZE.value
             feature.last_updated = datetime.utcnow()
             feature.update()
-    

@@ -43,5 +43,4 @@ class EnvironmentConfig:
     OAUTH2_SCOPE = os.getenv("OAUTH2_SCOPE", None)
     OAUTH2_USER_INFO_URL = os.getenv("OAUTH2_USER_INFO_URL", None)
 
-
     APP_SECRET_KEY = os.getenv("APP_SECRET_KEY", None)

@@ -9,7 +9,6 @@ from backend.models.dtos.challenge_dto import ChallengeDTO, ChallengeSummaryDTO
 from backend.services.utills import get_last_updated
 
 
-
 class Challenge(db.Model):
     """Describes challenge"""
 
@@ -84,7 +83,7 @@ class Challenge(db.Model):
             description=self.description,
             country=self.country,
             to_language=self.to_language,
-            due_date=(self.due_date-datetime.utcnow()).days,
+            due_date=(self.due_date - datetime.utcnow()).days,
             last_updated=get_last_updated(self.last_updated),
         )
         challenge_dto.centroid = json.loads(
@@ -94,8 +93,7 @@ class Challenge(db.Model):
             db.engine.execute(self.bbox.ST_AsGeoJSON()).scalar()
         )
         return challenge_dto
-        
-        
+
     @staticmethod
     def get_by_id(challenge_id: int):
         """Get challenge by id"""
