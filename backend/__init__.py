@@ -43,7 +43,7 @@ def create_app(config=EnvironmentConfig):
     api.add_resource(
         FeaturesRandomAPI, "/challenge/<int:challenge_id>/features/random/"
     )
-    api.add_resource(UserAuthorizationUrlAPI, "/user/authorization_url/")
-    api.add_resource(UserTokenAPI, "/user/token/")
+    api.add_resource(UserAuthorizationUrlAPI, "/auth/url/")
+    api.add_resource(UserTokenAPI, "/auth/token/")
 
     return app
