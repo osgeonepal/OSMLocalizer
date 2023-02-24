@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useDetectClickOutside } from 'react-detect-click-outside';
 
 import { fetchLocalJSONAPI } from '../utills/fetch';
-import { setItem, getItem, removeItem } from '../utills/localStorage';
+import { setItem, removeItem } from '../utills/localStorage';
 import { useDispatch, useSelector } from 'react-redux';
 import {authActions} from '../store/store';
 

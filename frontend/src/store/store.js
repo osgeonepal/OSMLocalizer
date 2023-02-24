@@ -1,5 +1,7 @@
 import { configureStore, createSlice } from '@reduxjs/toolkit';
 
+import { getItem } from "../utills/localStorage";
+
 const initialState = {
   jwtToken: null,
   osmToken: null,
@@ -11,14 +13,14 @@ const authSlice = createSlice({
   initialState,
   reducers: {
     login(state, action) {
-        state.jwtToken = action.payload.jwtToken;
-        state.osmToken = action.payload.osmToken;
-        state.user = action.payload.user;
+      state.jwtToken = action.payload.jwtToken;
+      state.osmToken = action.payload.osmToken;
+      state.user = action.payload.user;
     },
     logout(state) {
-        state.jwtToken = null;
-        state.osmToken = null;
-        state.user = null;
+      state.jwtToken = null;
+      state.osmToken = null;
+      state.user = null;
     }
   }
 });
@@ -29,10 +31,21 @@ const store = configureStore({
   }
 });
 
-// Check local storage for user data and dispatch a login action if user exists
-const user = JSON.parse(localStorage.getItem('user'));
-if (user) {
-  store.dispatch(authSlice.actions.login(user));
+
+
+export const handleLogin = () => {
+  if (getItem("jwt_token")) {
+    store.dispatch(authSlice.actions.login({
+      jwtToken: getItem("jwt_token"),
+      osmToken: getItem("osm_token"),
+      user: {
+        username: getItem("username"),
+        user_id: getItem("user_id"),
+        role: getItem("role"),
+        picture_url: getItem("picture_url")
+      }
+    }));
+  }
 }
 
 export const authActions = authSlice.actions;

@@ -1,19 +1,18 @@
-import { osmAuth } from 'osm-auth';
-import { OSM_ACCESS_TOKEN, OAUTH_CLIENT_SECRET, OAUTH_CLIENT_ID } from '../config';
+// import { osmAuth } from 'osm-auth';
+// import { OSM_ACCESS_TOKEN, OAUTH_CLIENT_SECRET, OAUTH_CLIENT_ID } from '../config';
 
-const options = {
-    url: "https://www.openstreetmap.org",
-    client_id: OAUTH_CLIENT_ID,
-    client_secret: OAUTH_CLIENT_SECRET,
-    redirect_uri: "http//127.0.0.1/authorized",
-    access_token: OSM_ACCESS_TOKEN,
+// const options = {
+//     url: "https://www.openstreetmap.org",
+//     client_id: OAUTH_CLIENT_ID,
+//     client_secret: OAUTH_CLIENT_SECRET,
+//     redirect_uri: "http//127.0.0.1/authorized",
+//     access_token: OSM_ACCESS_TOKEN,
 
-}
+// }
 
-var auth = osmAuth(options);
 
 // create a function to return user details from osm
-export function getUserDetails() {
+export function getUserDetails(auth) {
     var options = {
         method: 'GET',
         path: '/api/0.6/user/details.json'
@@ -32,7 +31,7 @@ export function getUserDetails() {
     });
 }
 
-export function createChangeset(comment, reviewEdits) {
+export function createChangeset(auth ,comment, reviewEdits) {
     const changeset = createChnagesetJSON(comment, reviewEdits);
     return new Promise((resolve, reject) => {
         auth.xhr({
@@ -54,7 +53,7 @@ export function createChangeset(comment, reviewEdits) {
 };
 
 
-export function uploadChanges(changes, changesetId) {
+export function uploadChanges(auth, changes, changesetId) {
     const changeXML = createChangeXML(changes, changesetId);
     return new Promise((resolve, reject) => {
         auth.xhr({
@@ -76,7 +75,7 @@ export function uploadChanges(changes, changesetId) {
 };
 
 
-export function closeChangeset(changesetId) {
+export function closeChangeset(auth, changesetId) {
     return new Promise((resolve, reject) => {
         auth.xhr({
             method: 'PUT',
@@ -92,10 +91,10 @@ export function closeChangeset(changesetId) {
     });
 };
 
-export async function uploadToOSM(changes, comment, reviewEdits) {
-    createChangeset(comment, reviewEdits).then((changesetId) => {
-        uploadChanges(changes, changesetId).then(() => {
-            closeChangeset(changesetId);
+export async function uploadToOSM(auth, changes, comment, reviewEdits) {
+    createChangeset(auth, comment, reviewEdits).then((changesetId) => {
+        uploadChanges(auth, changes, changesetId).then(() => {
+            closeChangeset(auth, changesetId);
         });
     });
 };

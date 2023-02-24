@@ -27,28 +27,28 @@ const Map = (props) => {
     const mapContainerRef = useRef(null);
     mapboxgl.accessToken = MAPBOX_ACCESS_TOKEN;
     useEffect(() => {
-        const coords = props.element?[props.element.lon, props.element.lat]: [0,0];
         mapContainerRef.current = new mapboxgl.Map({
             container: 'map-container',
             style: "mapbox://styles/mapbox/streets-v12",
-            center: [coords[0], coords[1]],
+            center: [0, 0],
             zoom: 19,
         });
         return () => mapContainerRef.current && mapContainerRef.current.remove();
     }
-    , [props.element]);
-    // Add marker on the mapContainerRef
+        , []);
+
     useEffect(() => {
-        // Remove marker if it already exists
-        if (mapContainerRef.current.getLayer('marker')) {
-            mapContainerRef.current.removeLayer('marker');
-            mapContainerRef.current.removeSource('marker');
-        }
+        var marker = new mapboxgl.Marker()
         props.element &&
-        new mapboxgl.Marker()
-            .setLngLat([props.element.lon, props.element.lat])
-            .addTo(mapContainerRef.current);
+            marker.setLngLat([props.element.lon, props.element.lat])
+                .addTo(mapContainerRef.current);
+        mapContainerRef.current.jumpTo({
+            center: [props.element.lon, props.element.lat],
+        });
+        return () => marker && marker.remove();
+
     }, [props.element]);
+
     return (
         <div>
             <div

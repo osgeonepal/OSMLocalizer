@@ -1,6 +1,5 @@
 import React, { useEffect } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { useSelector, useDispatch } from "react-redux";
 
 import "./App.css";
 import Header from "./components/header";
@@ -9,8 +8,7 @@ import ChallengesView from "./views/challenges";
 import CreateChallengeView from "./views/createChallenge";
 import { LocalizeChallengeView } from "./views/localizeChallenge";
 import AuthorizedView from "./views/authorized";
-import { getItem } from "./utills/localStorage";
-import { authActions } from "./store/store";
+import { handleLogin } from "./store/store";
 
 
 
@@ -26,23 +24,8 @@ const BasicLayout = () => {
 }
 
 function App() {
-  const dispatch = useDispatch();
-  const handleLogin = (dispatch) => {
-    if (getItem("jwt_token")) {
-      dispatch(authActions.login({
-        jwtToken: getItem("jwt_token"),
-        osmToken: getItem("osm_token"),
-        user: {
-          username: getItem("username"),
-          user_id: getItem("user_id"),
-          role: getItem("role"),
-          picture_url: getItem("picture_url")
-        }
-      }));
-    }
-  }
   useEffect(() => {
-    handleLogin(dispatch);
+    handleLogin();
   }, []);
 
   return (
