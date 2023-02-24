@@ -3,6 +3,9 @@ import { useDetectClickOutside } from 'react-detect-click-outside';
 
 import { fetchLocalJSONAPI } from '../utills/fetch';
 import { setItem, getItem, removeItem } from '../utills/localStorage';
+import { useDispatch, useSelector } from 'react-redux';
+import {authActions} from '../store/store';
+
 
 const createPopup = (title = "Authentication", location) => {
     const width = 600;
@@ -36,10 +39,10 @@ const removeUserFromStore = () => {
     removeItem("user_id");
     removeItem("role");
     removeItem("picture_url");
-    window.location.reload();
+    // window.location.reload();
 }
 
-const createLoginWindow = () => {
+const createLoginWindow = (dispatch) => {
     const popup = createPopup("Login", "");
     const url = "/auth/url/";
     fetchLocalJSONAPI(url, "GET")
@@ -53,6 +56,7 @@ const createLoginWindow = () => {
                     fetchLocalJSONAPI(url, "GET")
                         .then((response) => {
                             setUserToStore(response);
+                            dispatch(authActions.login(response));
                         }
                         );
                 }
@@ -63,7 +67,7 @@ const createLoginWindow = () => {
         });
 }
 
-const UserMenu = ({ username }) => {
+const UserMenu = ({ username, dispatch }) => {
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
     const onClick = () => {
@@ -85,7 +89,10 @@ const UserMenu = ({ username }) => {
                     <li>
                         <span
                             className="dropdown-item"
-                            onClick={() => removeUserFromStore()}
+                            onClick={() => {
+                                removeUserFromStore();
+                                dispatch(authActions.logout());
+                            }}
                         >
                             Logout
                         </span>
@@ -108,16 +115,17 @@ const UserMenu = ({ username }) => {
 
 
 const Login = () => {
-    const username = getItem("username");
+    const dispatch = useDispatch();
+    const user = useSelector(state => state.auth.user);
     return (
         <div>
-            {username ? (
-                < UserMenu username={username} />
+            {user ? (
+                < UserMenu username={user.username} dispatch={dispatch} />
             ) : (
                 <button
                     className='btn btn-primary'
                     onClick={() => {
-                        createLoginWindow();
+                        createLoginWindow(dispatch);
                     }}
                 >
                     Login
