@@ -29,7 +29,7 @@ const setUserToStore = (response) => {
     setItem("user_id", user.user_id);
     setItem("role", user.role)
     setItem("picture_url", user.picture_url)
-    window.location.reload();
+    // window.location.reload();
 }
 
 const removeUserFromStore = () => {
@@ -39,10 +39,9 @@ const removeUserFromStore = () => {
     removeItem("user_id");
     removeItem("role");
     removeItem("picture_url");
-    // window.location.reload();
 }
 
-const createLoginWindow = (dispatch) => {
+const createLoginWindow = (dispatch, redirectTo) => {
     const popup = createPopup("Login", "");
     const url = "/auth/url/";
     fetchLocalJSONAPI(url, "GET")
@@ -57,8 +56,15 @@ const createLoginWindow = (dispatch) => {
                         .then((response) => {
                             setUserToStore(response);
                             dispatch(authActions.login(response));
+                            const params = new URLSearchParams({
+                                "redirectTo": redirectTo,
+                            }).toString();
+                            let redirectUri = "/authorized/?" + params;
+                            window.location.href = redirectUri;
+                            
                         }
-                        );
+                        )
+
                 }
             }
         })
@@ -114,7 +120,7 @@ const UserMenu = ({ username, dispatch }) => {
 
 
 
-const Login = () => {
+const Login = (props) => {
     const dispatch = useDispatch();
     const user = useSelector(state => state.auth.user);
     return (
@@ -125,7 +131,7 @@ const Login = () => {
                 <button
                     className='btn btn-primary'
                     onClick={() => {
-                        createLoginWindow(dispatch);
+                        createLoginWindow(dispatch, props.redirectTo);
                     }}
                 >
                     Login
