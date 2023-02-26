@@ -1,33 +1,48 @@
 import React, { useState, useEffect } from 'react';
+import { osmAuth } from 'osm-auth';
 
 import { fetchExternalJSONAPI, fetchLocalJSONAPI, pushToLocalJSONAPI } from "../../utills/fetch";
 import Map from './map';
 import { TagEditorForm } from './editForm';
-import { getUserDetails } from '../../utills/osm';
 import { uploadToOSM } from '../../utills/osm';
 import { SideBar } from './sideBar';
+import { useSelector } from 'react-redux';
+import { OAUTH_CLIENT_ID, OAUTH_CLIENT_SECRET } from '../../config';
+
 
 
 export default function TagEditor({ challenge_id }) {
     const [element, setElement] = useState();
     const [allChanges, setAllChanges] = useState({});
-    const [user, setUser] = useState();
     const [isLoading, setLoading] = useState(true);
     const [isUploading, setUploading] = useState(false);
     const [feature, setFeature] = useState();
     const [changedFeatures, setChangedFeatures] = useState([]);
+    const osm_token  = useSelector(state => state.auth.osmToken)
+    const jwt_token = useSelector(state => state.auth.jwtToken)
+
+    const options = {
+        url: "https://www.openstreetmap.org",
+        client_id: OAUTH_CLIENT_ID,
+        client_secret: OAUTH_CLIENT_SECRET,
+        redirect_uri: "http//127.0.0.1:3000/authorized",
+        access_token: osm_token,
+    
+    }
+
+    var auth = osmAuth(options);
 
     const getFeature = async () => {
-        const url = (feature ? `challenge/${challenge_id}/feature/${feature.nearby.id}/?nearby=true` :
+        const url = (feature && feature.nearby.id ? `challenge/${challenge_id}/feature/${feature.nearby.id}/?nearby=true` :
             `challenge/${challenge_id}/features/random/?nearby=true`);
-        const data = await fetchLocalJSONAPI(url)
+        const data = await fetchLocalJSONAPI(url, jwt_token)
         setFeature(data);
     }
 
 
     useEffect(() => {
         setLoading(true);
-        fetchLocalJSONAPI(`challenge/${challenge_id}/features/random/?nearby=true`)
+        fetchLocalJSONAPI(`challenge/${challenge_id}/features/random/?nearby=true`, jwt_token)
             .then((data) => {
                 setFeature(data);
                 setLoading(false);
@@ -48,15 +63,6 @@ export default function TagEditor({ challenge_id }) {
     }, [feature]);
 
 
-    useEffect(() => {
-        getUserDetails()
-            .then((response) => JSON.parse(response))
-            .then((data) => {
-                setUser(data["user"]);
-            });
-
-    }, []);
-
     const changeFeatureStatus = async (featureIds, status) => {
         const payload = {
             featureIds: featureIds,
@@ -65,13 +71,14 @@ export default function TagEditor({ challenge_id }) {
         pushToLocalJSONAPI(
             `challenge/${challenge_id}/feature/`,
             JSON.stringify(payload),
+            jwt_token
         )
     }
 
 
     const onUpload = async (changeset_comment, reviewEdits) => {
         setUploading(true)
-        await uploadToOSM(Object.values(allChanges), changeset_comment, reviewEdits)
+        await uploadToOSM(auth, Object.values(allChanges), changeset_comment, reviewEdits)
         await changeFeatureStatus(changedFeatures, "LOCALIZED")
         setAllChanges({})
         setUploading(false)
@@ -80,16 +87,13 @@ export default function TagEditor({ challenge_id }) {
     }
 
     const onDone = async () => {
-        // setLoading(true);
-        await changeFeatureStatus([feature.feature.properties.id], "TO_UPLOAD");
         setChangedFeatures([...changedFeatures, feature.feature.properties.id]);
         getFeature();
     }
 
     const onSkip = async () => {
-        // setLoading(true);
         await changeFeatureStatus([feature.feature.properties.id], "SKIPPED");
-        getFeature()
+        getFeature();
     }
 
 
@@ -114,7 +118,6 @@ export default function TagEditor({ challenge_id }) {
                     </div>
                     <div className='col-4 p-0 border border-start-0 border-secondary-subtle'>
                         <SideBar
-                            user={user}
                             allChanges={allChanges}
                             onUpload={onUpload}
                             isUploading={isUploading}

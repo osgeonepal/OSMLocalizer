@@ -95,9 +95,7 @@ class ChallengeService:
         challenges = Challenge.get_all()
 
         return ChallengeListDTO(
-            challenges=[
-               challenge.as_dto_for_summary() for challenge in challenges
-            ]
+            challenges=[challenge.as_dto_for_summary() for challenge in challenges]
         )
 
     @staticmethod

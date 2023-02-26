@@ -5,7 +5,8 @@ class FeatureStatus(Enum):
     TO_LOCALIZE = 0
     LOCALIZED = 1
     VALIDATED = 2
-    TO_UPLOAD = 3
+    LOCKED_TO_LOCALIZE = 3
+    LOCKED_TO_VALIDATE = 4
     DUPLICATE = 5
     TOO_HARD = 6
     SKIPPED = 7

@@ -1,12 +1,10 @@
 from backend import db
-from datetime import datetime
 from geoalchemy2 import Geometry
 import json
 
 from backend.models.sql.enum import FeatureStatus
+from backend.services.utills import timestamp, to_strftime
 
-def timestamp():
-    return datetime.utcnow()
 
 class Feature(db.Model):
     """Describes feature"""
@@ -19,11 +17,14 @@ class Feature(db.Model):
     osm_type = db.Column(db.String, nullable=False)
     osm_id = db.Column(db.BigInteger, nullable=False)
     geometry = db.Column(Geometry("POINT", srid=4326), nullable=True)
-    status = db.Column(db.Integer, nullable=False, default=FeatureStatus.TO_LOCALIZE.value)
+    status = db.Column(
+        db.Integer, nullable=False, default=FeatureStatus.TO_LOCALIZE.value
+    )
     last_updated = db.Column(db.DateTime, default=timestamp)
     changeset_id = db.Column(db.Integer, nullable=True)
-    localized_by = db.Column(db.String, nullable=True)
-    validated_by = db.Column(db.String, nullable=True)
+    localized_by = db.Column(db.BigInteger, db.ForeignKey("users.id", name="fk_users_localizer"), index=True)
+    validated_by = db.Column(db.BigInteger, db.ForeignKey("users.id", name="fk_users_validator"), index=True)
+    locked_by = db.Column(db.BigInteger, db.ForeignKey("users.id", name="fk_users_locker"), index=True)
     
     def create(self):
         """Create new entry"""
@@ -52,19 +53,31 @@ class Feature(db.Model):
                 "changeset_id": self.changeset_id,
                 "localized_by": self.localized_by,
                 "validated_by": self.validated_by,
-                "last_updated": self.last_updated.strftime("%Y-%m-%d %H:%M:%S"),
+                "last_updated": to_strftime(self.last_updated),
             },
             "geometry": json.loads(
-            db.engine.execute(self.geometry.ST_AsGeoJSON()).scalar()
-        ),
+                db.engine.execute(self.geometry.ST_AsGeoJSON()).scalar()
+            ),
         }
+
+    def lock_to_localize(self, user_id: int):
+        """Lock feature to localize"""
+        self.status = FeatureStatus.LOCKED_TO_LOCALIZE.value
+        self.locked_by = user_id
+        self.update()
+    
+    def lock_to_validate(self, user_id: int):
+        """Lock feature to validate"""
+        self.status = FeatureStatus.LOCKED_TO_VALIDATE.value
+        self.locked_by = user_id
+        self.update()
 
     @staticmethod
     def get_by_id(feature_id: int, challenge_id: int):
         """Get feature by id""" ""
         return Feature.query.filter_by(
-            id = feature_id, 
-            challenge_id=challenge_id).one_or_none()
+            id=feature_id, challenge_id=challenge_id
+        ).one_or_none()
 
     @staticmethod
     def create_from_dto(feature_dto: dict):
@@ -80,17 +93,19 @@ class Feature(db.Model):
     @staticmethod
     def get_random_task(challenge_id: int):
         """Get random task"""
-        return (Feature.query.filter_by(challenge_id=challenge_id)
+        return (
+            Feature.query.filter_by(challenge_id=challenge_id)
             .filter_by(status=FeatureStatus.TO_LOCALIZE.value)
             .order_by(db.func.random())
-            .first())
+            .first()
+        )
 
     @staticmethod
     def get_nearby(feature_id, challenge_id):
         """Get nearby features"""
         feature_geom = Feature.get_by_id(feature_id, challenge_id).geometry
         nearby = db.engine.execute(
-        f"""
+            f"""
             SELECT id, geometry <-> ('{feature_geom}') AS distance
             FROM feature
             WHERE challenge_id = {challenge_id}
@@ -100,5 +115,4 @@ class Feature(db.Model):
             LIMIT 1;
         """
         ).fetchall()
-        return{"id": nearby[0][0], "distance": nearby[0][1]} if nearby else None
-
+        return {"id": nearby[0][0], "distance": nearby[0][1]} if nearby else None

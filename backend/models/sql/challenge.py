@@ -6,18 +6,8 @@ from flask import json
 
 from backend.models.sql.features import Feature
 from backend.models.dtos.challenge_dto import ChallengeDTO, ChallengeSummaryDTO
+from backend.services.utills import get_last_updated
 
-
-def get_last_updated(last_updated):
-    diff = datetime.utcnow() - last_updated
-    if diff.days > 0:
-        return f"{diff.days} days ago"
-    elif diff.seconds > 3600:
-        return f"{diff.seconds // 3600} hours ago"
-    elif diff.seconds > 60:
-        return f"{diff.seconds // 60} minutes ago"
-    else:
-        return f"{diff.seconds} seconds ago"
 
 class Challenge(db.Model):
     """Describes challenge"""
@@ -48,6 +38,10 @@ class Challenge(db.Model):
     )
     translate_engine = db.Column(db.Integer, nullable=True)
     api_key = db.Column(db.String, nullable=True)
+    
+    created_by = db.Column(
+        db.BigInteger, db.ForeignKey("users.id", name="fk_users"), nullable=False
+    )
 
     def create(self):
         """Create new entry"""
@@ -93,7 +87,7 @@ class Challenge(db.Model):
             description=self.description,
             country=self.country,
             to_language=self.to_language,
-            due_date=(self.due_date-datetime.utcnow()).days,
+            due_date=(self.due_date - datetime.utcnow()).days,
             last_updated=get_last_updated(self.last_updated),
         )
         challenge_dto.centroid = json.loads(
@@ -103,8 +97,7 @@ class Challenge(db.Model):
             db.engine.execute(self.bbox.ST_AsGeoJSON()).scalar()
         )
         return challenge_dto
-        
-        
+
     @staticmethod
     def get_by_id(challenge_id: int):
         """Get challenge by id"""

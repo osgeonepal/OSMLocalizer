@@ -1,17 +1,19 @@
 import React, { useState } from "react";
 import { DEFAULT_CHANGESET_COMMENT } from '../../config';
+import { useSelector } from "react-redux";
 
 const EditorHeader = (props) => {
+    const user = useSelector((state) => state.auth.user);
     return (
         <div className='border-bottom border-secondary-subtle overflow-hidden'>
             <div className='row p-3 pb-2'>
                 <div className="col-7 d-flex justify-content-start border border-secondary-subtle p-1">
-                    {props.user ? (
+                    {user ? (
                         <div className='row '>
                             <div className="col-4">
                                 <img
-                                    src={props.user["img"]["href"]}
-                                    alt={props.user["display_name"]}
+                                    src={user["picture_url"]}
+                                    alt={user["username"]}
                                     className="img-fluid col-12"
                                 />
                             </div>
@@ -19,7 +21,7 @@ const EditorHeader = (props) => {
                                 className='col-8 d-flex align-items-center text-secondary'
                                 style={{ fontSize: "0.9rem" }}
                             >
-                                {props.user["display_name"]}
+                                {user["username"]}
                                 {/* <p>Changesets: {user["changesets"]["count"]}</p> */}
                             </div>
                         </div>
@@ -160,7 +162,6 @@ export const SideBar = (props) => {
     return (
         <div className="p-2 pt-2 overflow-auto">
             <EditorHeader
-                user={props.user}
                 isUploading={props.isUploading}
                 onUpload={props.onUpload}
                 allChanges={props.allChanges}

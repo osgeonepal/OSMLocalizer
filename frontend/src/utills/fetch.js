@@ -22,7 +22,7 @@ export function fetchLocalJSONAPI(endpoint, token, method = 'GET', language = 'e
       'Accept-Language': language.replace('-', '_'),
     };
     if (token) {
-      headers['Authorization'] = `Token ${token}`;
+      headers['Authorization'] = `Bearer ${token}`;
     }
     return fetch(url, {
       method: method,
@@ -47,7 +47,7 @@ export function fetchLocalJSONAPI(endpoint, token, method = 'GET', language = 'e
       'Accept-Language': language.replace('-', '_'),
     };
     if (token) {
-      headers['Authorization'] = `Token ${token}`;
+      headers['Authorization'] = `Bearer ${token}`;
     }
     return fetch(url, {
       method: method,
