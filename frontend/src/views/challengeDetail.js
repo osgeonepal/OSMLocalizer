@@ -3,7 +3,6 @@ import { React, useState, useEffect } from "react";
 
 import { fetchLocalJSONAPI } from "../utills/fetch";
 import ChallengeInfo from '../components/challenge/challengeInfo';
-import {ChallengeMap} from '../components/challenge/challengeMap';
 
 
 export default function ChallengeDetailView() {

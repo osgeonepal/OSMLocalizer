@@ -1,16 +1,9 @@
 import React from "react";
 
 const CompletionBar = (props) => {
-    const isDisabled = (props.isUploading || Object.keys(props.allChanges).length === 0) ? true : false;
+    // const isDisabled = (props.isUploading || Object.keys(props.allChanges).length === 0) ? true : false;
     return (
         <div className="">
-            <EditorHeader
-                user={props.user}
-                isUploading={props.isUploading}
-                allChanges={props.allChanges}
-                isDisabled={isDisabled}
-                setDisplayUploadDialog={props.setDisplayUploadDialog}
-            />
             <div className=" p-2">
                 <div className="fs-4 fw-bold text-secondary">
                     Instructions
