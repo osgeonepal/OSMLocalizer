@@ -22,9 +22,9 @@ class Feature(db.Model):
     )
     last_updated = db.Column(db.DateTime, default=timestamp)
     changeset_id = db.Column(db.Integer, nullable=True)
-    localized_by = db.Column(db.BigInteger, db.ForeignKey("users.id", name="fk_users_localizer"), index=True)
-    validated_by = db.Column(db.BigInteger, db.ForeignKey("users.id", name="fk_users_validator"), index=True)
-    locked_by = db.Column(db.BigInteger, db.ForeignKey("users.id", name="fk_users_locker"), index=True)
+    localized_by = db.Column(db.BigInteger, db.ForeignKey("users.id", name="fk_users_localizer"), index=True, default=None, nullable=True)
+    validated_by = db.Column(db.BigInteger, db.ForeignKey("users.id", name="fk_users_validator"), index=True, default=None, nullable=True)
+    locked_by = db.Column(db.BigInteger, db.ForeignKey("users.id", name="fk_users_locker"), index=True, default=None, nullable=True)
     
     def create(self):
         """Create new entry"""

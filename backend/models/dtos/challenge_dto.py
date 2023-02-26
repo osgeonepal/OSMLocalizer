@@ -1,7 +1,6 @@
 from pydantic import BaseModel, constr
 from typing import Optional
 from datetime import datetime
-from geoalchemy2.elements import WKBElement
 
 
 def convert_to_string(value):
@@ -20,9 +19,10 @@ class CreateChallengeDTO(BaseModel):
     overpass_query: str
     language_tags: str
     bbox: list
-    translate_engine: str
-    api_key: str
+    translate_engine: Optional[str]
+    api_key: Optional[str]
     due_date: Optional[str] = None
+    created_by: int
 
     class Config:
         orm_mode = True
