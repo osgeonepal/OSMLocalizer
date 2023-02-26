@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import {useSelector} from "react-redux";
+
 import { Form } from "react-final-form";
 import { FormTabs } from "../components/challengeEdit/formTabs";
 import { MetadataForm } from "../components/challengeEdit/challengeMetadata";
@@ -23,9 +25,10 @@ const renderForm = (option, challengeInfo, setChallengeInfo) => {
 const CreateChallenge = () => {
     const [option, setOption] = useState('Description');
     const [challengeInfo, setChallengeInfo] = useState({});
+    const jwt_token = useSelector(state => state.auth.jwtToken);
 
     const onSubmit = (values) => {
-        pushToLocalJSONAPI('challenge/', values);
+        pushToLocalJSONAPI('challenge/', values, jwt_token);
     }
     return (
         <div className="row border p-4 m-4 gap-5 bg-light">

@@ -15,7 +15,6 @@ from backend.models.sql.postgis import (
 )
 from backend.models.dtos.challenge_dto import (
     ChallengeDTO,
-    ChallengeSummaryDTO,
     ChallengeListDTO,
     CreateChallengeDTO,
     UpdateChallengeDTO,
@@ -25,7 +24,7 @@ from backend.services.overpass_service import Overpass
 
 # max area allowed for passed in bbox, calculation shown to help future maintenance
 # Total area of challenge to be allowed is 100 sq km. So max area of bbox is 100*100, 2 for square meter
-MAX_AREA = math.pow(100 * 100, 2)
+MAX_AREA = math.pow(100 * 200, 2)
 OSM_NOMINATIM_SERVER_URL = "https://nominatim.openstreetmap.org"
 
 
@@ -37,7 +36,7 @@ class ChallengeService:
         """Create new challenge"""
         bbox = challenge_dto.bbox
         # Reverse bbox to str
-        bbox_str = f"{bbox[0]}, {bbox[1]}, {bbox[2]}, {bbox[3]}"
+        bbox_str = f"{bbox[1]}, {bbox[0]}, {bbox[3]}, {bbox[2]}"
         bbox_polygon, centroid = ChallengeService.make_polygon_from_bbox(
             challenge_dto.bbox
         )
@@ -57,11 +56,13 @@ class ChallengeService:
             overpass_query=overpass_query,
             language_tags=language_tags,
             due_date=challenge_dto.due_date,
-            translate_engine=TranslateEngine[
+            created_by=challenge_dto.created_by,
+        )
+        if challenge_dto.translate_engine:
+            challenge.translate_engine=TranslateEngine[
                 challenge_dto.translate_engine.upper()
             ].value,
-            api_key=challenge_dto.api_key,
-        )
+            challenge.api_key=challenge_dto.api_key,
         ChallengeService.get_features_from_overpass(challenge, overpass_query)
         challenge.create()
         return True

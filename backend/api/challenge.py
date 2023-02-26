@@ -3,7 +3,7 @@ from flask import jsonify
 
 from backend.services.challenge_service import ChallengeService
 from backend.models.dtos.challenge_dto import CreateChallengeDTO, UpdateChallengeDTO
-
+from backend.services.user_service import auth
 
 class Challenge(Resource):
     """Challenge resource"""
@@ -21,8 +21,11 @@ class Challenge(Resource):
         """Delete challenge by id"""
         return ChallengeService.delete_challenge(challenge_id)
 
+    @auth.login_required
     def post(self):
         """Create new challenge"""
+        current_user = auth.current_user()
+        self.api.payload["created_by"] = current_user
         challenge_dto = CreateChallengeDTO(**self.api.payload)
         if ChallengeService.create_challenge(challenge_dto):
             return {"success": "yes"}, 200
