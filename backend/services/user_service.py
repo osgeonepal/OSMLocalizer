@@ -14,7 +14,7 @@ auth = HTTPTokenAuth(scheme="Bearer")
 @auth.verify_token
 def verify_token(token):
     try:
-        data = jwt.decode(token, current_app.config["SECRET_KEY"], algorithms=["HS256"])
+        data = jwt.decode(token, current_app.config["APP_SECRET_KEY"], algorithms=["HS256"])
     except:
         return False
     user_id = data.get("user_id")

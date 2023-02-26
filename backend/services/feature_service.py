@@ -1,5 +1,6 @@
 from datetime import datetime, timedelta
 
+from backend.errors import NotFound
 from backend.models.sql.features import Feature
 from backend.models.sql.enum import FeatureStatus
 
@@ -41,18 +42,25 @@ class FeatureService:
         }
 
     @staticmethod
-    def get_feature_by_id(feature_id: int, challenge_id, nearby: bool = False):
+    def get_feature_to_localize(feature_id: int, challenge_id,  user_id: int, nearby: bool = False):
         """Get a feature by id"""
-
         feature = FeatureService.get_by_id(feature_id, challenge_id)
+        if feature.status != FeatureStatus.TO_LOCALIZE.value:
+            feature = Feature.get_random_task(challenge_id)
+        if not feature:
+            raise NotFound("No feature to localize")
+        feature.lock_to_localize(user_id)
         if nearby:
             nearby_feature = Feature.get_nearby(feature.id, feature.challenge_id)
         return {"feature": feature.as_geojson(), "nearby": nearby_feature}
 
     @staticmethod
-    def get_random_task(challenge_id: int, nearby: bool = False):
+    def get_random_task(challenge_id: int, user_id, nearby: bool = False):
         """Get a random task"""
         feature = Feature.get_random_task(challenge_id)
+        if not feature:
+            raise NotFound("NO_FEATURES_TO_LOCALIZE")
+        feature.lock_to_localize(user_id)
         if nearby:
             nearby_feature = Feature.get_nearby(feature.id, feature.challenge_id)
         return {
@@ -61,7 +69,7 @@ class FeatureService:
         }
 
     @staticmethod
-    def update_feature(feature_ids: list, challenge_id: int, status: int):
+    def update_feature(feature_ids: list, challenge_id: int, status: int, user_id: int):
         """Update the status of a feature"""
         features = Feature.query.filter(
             Feature.id.in_(feature_ids), Feature.challenge_id == challenge_id
@@ -69,11 +77,17 @@ class FeatureService:
         for feature in features:
             if feature.status in [
                 FeatureStatus.TO_LOCALIZE.value,
-                FeatureStatus.TO_UPLOAD.value,
+                FeatureStatus.LOCKED_TO_LOCALIZE.value,
+                FeatureStatus.LOCKED_TO_VALIDATE.value,
             ]:
                 feature.status = FeatureStatus[status].value
                 feature.last_updated = datetime.utcnow()
-                feature.update()
+            if status == "LOCALIZED":
+                feature.localized_by = user_id
+            if status == "VALIDATED":
+                feature.validated_by = user_id
+            feature.locked_by = None
+            feature.update()
 
         return {"status": "success"}
 
@@ -82,10 +96,17 @@ class FeatureService:
         """Reset tasks that have been changed but not uploaded for more than 30 minutes"""
         features = Feature.query.filter(
             Feature.challenge_id == challenge_id,
-            Feature.status == FeatureStatus.TO_UPLOAD.value,
+            Feature.status in [
+                FeatureStatus.LOCKED_TO_LOCALIZE.value,
+                FeatureStatus.LOCKED_TO_VALIDATE.value,
+            ],
             Feature.last_updated < datetime.utcnow() - timedelta(minutes=30),
         ).all()
         for feature in features:
-            feature.status = FeatureStatus.TO_LOCALIZE.value
+            if feature.status == FeatureStatus.LOCKED_TO_LOCALIZE.value:
+                feature.status = FeatureStatus.TO_LOCALIZE.value
+            if feature.status == FeatureStatus.LOCKED_TO_VALIDATE.value:
+                feature.status = FeatureStatus.LOCALIZED.value
+            feature.locked_by = None
             feature.last_updated = datetime.utcnow()
             feature.update()

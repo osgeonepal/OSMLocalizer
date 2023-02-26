@@ -18,7 +18,8 @@ export default function TagEditor({ challenge_id }) {
     const [isUploading, setUploading] = useState(false);
     const [feature, setFeature] = useState();
     const [changedFeatures, setChangedFeatures] = useState([]);
-    const osm_token  = useSelector(state => state.auth.osm_token)
+    const osm_token  = useSelector(state => state.auth.osmToken)
+    const jwt_token = useSelector(state => state.auth.jwtToken)
 
     const options = {
         url: "https://www.openstreetmap.org",
@@ -32,16 +33,16 @@ export default function TagEditor({ challenge_id }) {
     var auth = osmAuth(options);
 
     const getFeature = async () => {
-        const url = (feature ? `challenge/${challenge_id}/feature/${feature.nearby.id}/?nearby=true` :
+        const url = (feature && feature.nearby.id ? `challenge/${challenge_id}/feature/${feature.nearby.id}/?nearby=true` :
             `challenge/${challenge_id}/features/random/?nearby=true`);
-        const data = await fetchLocalJSONAPI(url)
+        const data = await fetchLocalJSONAPI(url, jwt_token)
         setFeature(data);
     }
 
 
     useEffect(() => {
         setLoading(true);
-        fetchLocalJSONAPI(`challenge/${challenge_id}/features/random/?nearby=true`)
+        fetchLocalJSONAPI(`challenge/${challenge_id}/features/random/?nearby=true`, jwt_token)
             .then((data) => {
                 setFeature(data);
                 setLoading(false);
@@ -70,6 +71,7 @@ export default function TagEditor({ challenge_id }) {
         pushToLocalJSONAPI(
             `challenge/${challenge_id}/feature/`,
             JSON.stringify(payload),
+            jwt_token
         )
     }
 
@@ -85,16 +87,13 @@ export default function TagEditor({ challenge_id }) {
     }
 
     const onDone = async () => {
-        // setLoading(true);
-        await changeFeatureStatus([feature.feature.properties.id], "TO_UPLOAD");
         setChangedFeatures([...changedFeatures, feature.feature.properties.id]);
         getFeature();
     }
 
     const onSkip = async () => {
-        // setLoading(true);
         await changeFeatureStatus([feature.feature.properties.id], "SKIPPED");
-        getFeature()
+        getFeature();
     }
 
 

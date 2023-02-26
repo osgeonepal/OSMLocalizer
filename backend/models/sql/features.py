@@ -22,9 +22,10 @@ class Feature(db.Model):
     )
     last_updated = db.Column(db.DateTime, default=timestamp)
     changeset_id = db.Column(db.Integer, nullable=True)
-    localized_by = db.Column(db.String, nullable=True)
-    validated_by = db.Column(db.String, nullable=True)
-
+    localized_by = db.Column(db.BigInteger, db.ForeignKey("users.id", name="fk_users_localizer"), index=True)
+    validated_by = db.Column(db.BigInteger, db.ForeignKey("users.id", name="fk_users_validator"), index=True)
+    locked_by = db.Column(db.BigInteger, db.ForeignKey("users.id", name="fk_users_locker"), index=True)
+    
     def create(self):
         """Create new entry"""
         db.session.add(self)
@@ -58,6 +59,18 @@ class Feature(db.Model):
                 db.engine.execute(self.geometry.ST_AsGeoJSON()).scalar()
             ),
         }
+
+    def lock_to_localize(self, user_id: int):
+        """Lock feature to localize"""
+        self.status = FeatureStatus.LOCKED_TO_LOCALIZE.value
+        self.locked_by = user_id
+        self.update()
+    
+    def lock_to_validate(self, user_id: int):
+        """Lock feature to validate"""
+        self.status = FeatureStatus.LOCKED_TO_VALIDATE.value
+        self.locked_by = user_id
+        self.update()
 
     @staticmethod
     def get_by_id(feature_id: int, challenge_id: int):
