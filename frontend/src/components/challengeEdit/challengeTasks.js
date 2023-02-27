@@ -79,7 +79,7 @@ export const TasksForm = (props)=>{
                 type="text"
                 placeholder="tags"
                 onChange={onInputChange}
-                defaultValue={props.challengeInfo.languageTags}
+                defaultValue={props.challengeInfo.language_tags}
             />
         </div>
 

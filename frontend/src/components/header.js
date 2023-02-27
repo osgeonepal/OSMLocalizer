@@ -1,35 +1,47 @@
-import { Link, Outlet } from 'react-router-dom';
+import { NavLink, Outlet } from 'react-router-dom';
 import Login from './login';
+import logo from '../assets/icons/logo.png';
+
+const marker = new Image(40, 40);
+marker.src = logo;
 
 const menuItems = [
   {
-    label: 'challenges',
+    label: 'CHALLENGES',
     link: 'challenges',
   },
   {
-    label: 'create',
+    label: 'CREATE',
     link: 'create'
   }
 ];
 
 
 function BasicExample() {
+  const navClass = 'nav-link ps-0 pe-0 ms-3 me-3';
+  const navClassActive = navClass +' border-bottom border-2 border-primary active';
   return (
     <>
       <nav className='navbar navbar-expand-lg bg-body-tertiary border-bottom mb-4'>
         <div className='container'>
-          <Link className="navbar-brand" to='/' key='/'>
-            OSM Localizer
-          </Link>
-          <div className='navbar-toggle' aria-controls="basic-navbar-nav" />
-          <div className='navbar-collapse' id="basic-navbar-nav">
-            <div className="nav me-auto">
+          <NavLink className="navbar-brand d-flex align-items-center" to='/' key='/'>
+            <img src={logo} alt='OSM Localizer' style={{width: "35px", height: "35px", borderRadius: "50%"}} className="me-1"/>
+            <span className='fs-4'>OSM Localizer</span>
+          </NavLink>
+          <div className='collapse navbar-collapse' id="navbarNav">
+            <ul className="navbar-nav">
               {menuItems.map((item) => (
-                <Link className="nav-link" to={"/" + item.link} key={item.link}>
-                  {item.label}
-                </Link>
+                <li className="nav-item">
+                  <NavLink 
+                    className={({ isActive }) =>isActive ? navClassActive : navClass} 
+                    to={"/" + item.link} 
+                    key={item.link} 
+                  >
+                    <span className='pb-1'>{item.label}</span>
+                  </NavLink>
+                </li>
               ))}
-            </div>
+            </ul>
           </div>
           <div>
             <Login />

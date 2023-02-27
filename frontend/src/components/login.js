@@ -73,7 +73,7 @@ const createLoginWindow = (dispatch, redirectTo) => {
         });
 }
 
-const UserMenu = ({ username, dispatch }) => {
+const UserMenu = ({ username, user_picture, dispatch }) => {
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
     const onClick = () => {
@@ -82,14 +82,16 @@ const UserMenu = ({ username, dispatch }) => {
     const ref = useDetectClickOutside({ onTriggered: () => setIsDropdownOpen(false) });
     return (
         isDropdownOpen ? (
-            <div className="dropdown" ref={ref}>
-                <button
-                    className="btn btn-outline-secondary dropdown-toggle"
-                    onClick={() => onClick()}
-                >
-                    {username}
-                </button>
-                <ul className="dropdown-menu d-flex flex-column">
+            <div className="dropdown" ref={ref} style={{cursor: "pointer"}}>
+                <span className="dropdown-toggle">
+                    <img
+                        className='me-1'
+                        src={user_picture} alt="img"
+                        style={{width: "35px", height: "35px", borderRadius: "50%"}}
+                    />
+                    <span onClick={onClick}> {username} </span>
+                </span>
+                <ul className="dropdown-menu d-flex flex-column mt-1 p-1 rounded-0">
                     {/* <li><a className="dropdown-item" href="#">Action</a></li>
                 <li><a className="dropdown-item" href="#">Another action</a></li> */}
                     <li>
@@ -106,13 +108,16 @@ const UserMenu = ({ username, dispatch }) => {
                 </ul>
             </div>
         ) : (
-            <div className="dropdown">
-                <button
-                    className="btn btn-secondary dropdown-toggle"
-                    onClick={onClick}
-                >
-                    {username}
-                </button>
+            <div className="dropdown" style={{cursor: "pointer"}}>
+                <span className="dropdown-toggle">
+                    <img
+                        className='me-1'
+                        src={user_picture} alt="img"
+                        style={{width: "35px", height: "35px", borderRadius: "50%"}}
+                    />
+                    <span onClick={onClick}> {username} </span>
+                </span>
+                
             </div>
         )
     );
@@ -126,7 +131,7 @@ const Login = (props) => {
     return (
         <div>
             {user ? (
-                < UserMenu username={user.username} dispatch={dispatch} />
+                < UserMenu username={user.username} user_picture={user.picture_url} dispatch={dispatch} />
             ) : (
                 <button
                     className='btn btn-primary'
