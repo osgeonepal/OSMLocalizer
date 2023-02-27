@@ -9,7 +9,6 @@ import "mapbox-gl/dist/mapbox-gl.css";
 import { MAPBOX_ACCESS_TOKEN } from "../../config";
 
 export const DrawPolygon = (props)=>{
-    // Add a map container and let users draw a polygon in the map and return polygon geojson
     const mapContainerRef = useRef(null);
     mapboxGl.accessToken = MAPBOX_ACCESS_TOKEN;
     useEffect(() => {
@@ -42,32 +41,6 @@ export const DrawPolygon = (props)=>{
         }
     }, [props]);
 
-    // useEffect(() => {
-    //     mapContainerRef.current.on('load', function () {
-    //     if (props.bbox) {
-    //         // Add a new layer to the map with aoi which can change if aoi chnage just update the layer
-    //         if (mapContainerRef.current.getLayer('aoi')) {
-    //             mapContainerRef.current.removeLayer('aoi');
-    //             mapContainerRef.current.removeSource('aoi');
-    //         }
-    //         mapContainerRef.current.addLayer({
-    //             'id': 'aoi',
-    //             'type': 'fill',
-    //             'source': {
-    //                 'type': 'geojson',
-    //                 'data': bboxPolygon(props.bbox)
-    //             },
-    //             'layout': {},
-    //             'paint': {
-    //                 'fill-color': '#088',
-    //                 'fill-opacity': 0.8
-    //             }
-    //         });
-    //         const screenWidth = window.innerWidth;
-    //         mapContainerRef.current.fitBounds(props.bbox, { padding: screenWidth / 12, animate: false })
-    //     }});
-    // }, [props.bbox]);
-
     return (
         <div>
             < p className="form-label fw-bold text-secondary">Bounding Box</p>
@@ -75,7 +48,8 @@ export const DrawPolygon = (props)=>{
                 id="map-container"
                 className='map-container'
                 style={{ height: "40vh", width: "100%" }}
-            />
+            >
+            </div>
         </div>
     );
 }

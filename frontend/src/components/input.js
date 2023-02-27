@@ -67,7 +67,7 @@ export const Checkbox = (props) => {
                     checked={props.value === option.value}
                     onChange={(e)=>props.onChange(e)}
                 />
-                <label htmlFor={option.value} className="btn btn-sm btn-outline-primary">{option.label}</label>
+                <label htmlFor={option.value} className="btn btn-sm btn-outline-dark">{option.label}</label>
             </div>
         );
     }

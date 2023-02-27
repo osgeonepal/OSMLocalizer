@@ -48,7 +48,7 @@ export const MetadataForm = (props) => {
                 clearable={true}
                 options={languageOptions}
                 onChange={onChange}
-                value={props.challengeInfo.translate_to}
+                value={props.challengeInfo.to_language}
             />
             <Checkbox 
                 label="Status:"
