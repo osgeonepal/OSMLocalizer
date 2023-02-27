@@ -30,6 +30,7 @@ const CreateChallenge = () => {
     const onSubmit = (values) => {
         pushToLocalJSONAPI('challenge/', values, jwt_token);
     }
+    
     return (
         <div className="row border p-4 m-4 gap-5 bg-light">
             <div className="col-3">
@@ -41,7 +42,7 @@ const CreateChallenge = () => {
                     render={({ handleSubmit }) => (
                         <form onSubmit={handleSubmit}>
                             {renderForm(option, challengeInfo, setChallengeInfo)}
-                            <button className="btn btn-info mt-2" type="submit" >Create</button>
+                            <button className="btn btn-primary mt-2" type="submit" >Create</button>
                         </form>
                     )}
                 />

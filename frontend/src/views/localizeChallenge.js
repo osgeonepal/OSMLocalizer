@@ -21,7 +21,7 @@ export const LocalizeChallengeView = () => {
                     <div className="col-4">
                     </div>
                     <div className="col-8">
-                        <ChallengeEditor challenge_id={challenge.id} />
+                        <ChallengeEditor challenge_id={challenge.id} challengeTags={challenge.language_tags} />
                     </div>
                 </div>
             ) : <div>Loading...</div>

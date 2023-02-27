@@ -23,7 +23,7 @@ export const OverpassQuery = (props) => {
                 </span>
             </div>
             <button 
-                className="btn btn-sm btn-info"
+                className="btn btn-sm btn-primary"
                 onClick={props.onQueryTest}
             >
                 Test query
@@ -57,16 +57,17 @@ export const TasksForm = (props)=>{
         <div>
             <DrawPolygon
                 box={props.challengeInfo.bbox}
-                onChange={onDrawPolygon} 
+                onChange={onDrawPolygon}
+                mapContainer={props.mapContainer}
             />
-            <Input
+            {/* <Input
                 name="bbox"
                 label="Bounding Box"
                 type="text"
                 placeholder="bbox"
                 onChange={onInputChange}
                 defaultValue={props.challengeInfo.bbox}
-            />
+            /> */}
             <OverpassQuery
                 onChange={onInputChange}
                 onQueryTest={onQueryTest}

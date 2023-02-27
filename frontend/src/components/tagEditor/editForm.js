@@ -4,8 +4,6 @@ import { yandexTranslator } from "../../utills/translator";
 import InputToolForm, { alertComponent } from "./inputToolForm";
 import { YANDEX_ACCESS_TOKEN } from '../../config';
 
-const editTags = ["name", "name:en", "name:ne"]
-
 const inputComponnent = (key, value) => {
     return (
         <div className="input-group input-group-sm p-2" key={key}>
@@ -98,7 +96,7 @@ export function TagEditorForm(props) {
                         }}
                     >
                         <div className="border border-secondary-subtle p-2 m-2 rounded">
-                            {editTags.map((key) => {
+                            {props.tags.map((key) => {
                                 return inputComponnent(key, props.element['tags'][key])
                             }
                             )}

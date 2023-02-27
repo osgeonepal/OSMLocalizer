@@ -11,7 +11,7 @@ import { OAUTH_CLIENT_ID, OAUTH_CLIENT_SECRET } from '../../config';
 
 
 
-export default function TagEditor({ challenge_id }) {
+export default function TagEditor({ challenge_id, challengeTags }) {
     const [element, setElement] = useState();
     const [allChanges, setAllChanges] = useState({});
     const [isLoading, setLoading] = useState(true);
@@ -114,6 +114,7 @@ export default function TagEditor({ challenge_id }) {
                             setAllChanges={setAllChanges}
                             onDone={onDone}
                             onSkip={onSkip}
+                            tags={challengeTags}
                         />
                     </div>
                     <div className='col-4 p-0 border border-start-0 border-secondary-subtle'>
