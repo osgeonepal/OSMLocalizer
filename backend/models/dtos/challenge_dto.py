@@ -43,7 +43,7 @@ class ChallengeDTO(BaseModel):
     id: int
     name: str
     description: str
-    status: int
+    status: str
     country: str
     to_language: str
     due_date: datetime
@@ -52,6 +52,7 @@ class ChallengeDTO(BaseModel):
     bbox: Optional[dict]
     centroid: Optional[str] = None
     language_tags: list
+    translate_engine: Optional[str] = None
 
     class Config:
         orm_mode = True

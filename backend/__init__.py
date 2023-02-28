@@ -28,6 +28,7 @@ def create_app(config=EnvironmentConfig):
     from backend.api.challenge import Challenge, ChallengeList
     from backend.api.feature import FeatureRestAPI, FeaturesAllAPI, FeaturesRandomAPI
     from backend.api.user import UserAuthorizationUrlAPI, UserTokenAPI
+    from backend.api.translate import TranslateTextAPI
 
     api.add_resource(Challenge, "/challenge/", "/challenge/<int:challenge_id>/")
     api.add_resource(ChallengeList, "/challenges/")
@@ -45,5 +46,7 @@ def create_app(config=EnvironmentConfig):
     )
     api.add_resource(UserAuthorizationUrlAPI, "/auth/url/")
     api.add_resource(UserTokenAPI, "/auth/token/")
+    
+    api.add_resource(TranslateTextAPI, "/challenge/<int:challenge_id>/translate/")
 
     return app

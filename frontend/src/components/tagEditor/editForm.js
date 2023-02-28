@@ -1,8 +1,6 @@
-import React, { useEffect, useState } from "react";
 import { Form, Field } from 'react-final-form';
-import { yandexTranslator } from "../../utills/translator";
-import InputToolForm, { alertComponent } from "./inputToolForm";
-import { YANDEX_ACCESS_TOKEN } from '../../config';
+import InputToolForm from "./inputToolForm";
+import TranslateComponent  from "./translate";
 
 const inputComponnent = (key, value) => {
     return (
@@ -18,23 +16,9 @@ const inputComponnent = (key, value) => {
     )
 }
 
-
 export function TagEditorForm(props) {
-    const [translation, setTranslation] = useState();
-    const [isLoading, setLoading] = useState(false);
-    const [isCopied, setCopied] = useState(false);
-
-    useEffect(() => {
-        const name = props.element['tags']['name'] ? "name" : "name:en";
-        const text = encodeURIComponent(props.element['tags'][name]);
-        setLoading(true);
-        (async () => {
-            const data = await yandexTranslator(text, "en", "ne", YANDEX_ACCESS_TOKEN);
-            setTranslation(data);
-            setLoading(false);
-
-        })();
-    }, [props.element]);
+    const name = props.element['tags']['name'] ? "name" : "name:en";
+    const text = encodeURIComponent(props.element['tags'][name]);
 
     const detectChange = (values) => {
         var changedKeys = [];
@@ -45,7 +29,6 @@ export function TagEditorForm(props) {
         }
         return changedKeys;
     }
-
 
     const onSubmitChange = (values) => {
         async function updateElement() {
@@ -63,16 +46,6 @@ export function TagEditorForm(props) {
         updateElement().then(() => {
             props.onDone()
         });
-    }
-
-    const handleCopy = (e) => {
-        navigator.clipboard.writeText(e.target.innerText);
-        setCopied(true);
-        setTimeout(() => {
-            setCopied(false);
-        }
-            , 1200);
-
     }
 
     return (
@@ -102,18 +75,13 @@ export function TagEditorForm(props) {
                             )}
                         </div>
                         <div className="border border-secondary-subtle rounded overflow-y-auto">
-                            {isLoading ? null : (
-                                <div className="fs-6 mt-1 p-2">Suggestion:
-                                    <span
-                                        onClick={(e) => handleCopy(e)}
-                                        className="btn btn-sm btn-dark ms-1"
-                                    >
-                                        {translation}
-                                    </span>
-                                </div>
-
-                            )}
-                            {isCopied ? alertComponent() : null}
+                            {props.translateEngine ? (
+                                <TranslateComponent
+                                    text={text}
+                                    translateEngine={props.translateEngine}
+                                    challenge_id={props.challenge_id}
+                                />
+                            ) : null}
                             <InputToolForm />
                         </div>
                         <div className="p-4">
