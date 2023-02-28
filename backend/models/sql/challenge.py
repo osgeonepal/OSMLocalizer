@@ -4,6 +4,7 @@ from sqlalchemy.dialects.postgresql import ARRAY
 from geoalchemy2 import Geometry
 from flask import json
 
+from backend.models.sql.enum import ChallengeStatus, TranslateEngine
 from backend.models.sql.features import Feature
 from backend.models.dtos.challenge_dto import ChallengeDTO, ChallengeSummaryDTO
 from backend.services.utills import get_last_updated
@@ -62,7 +63,7 @@ class Challenge(db.Model):
         challenge_dto = ChallengeDTO(
             id=self.id,
             name=self.name,
-            status=self.status,
+            status=ChallengeStatus(self.status).name,
             description=self.description,
             country=self.country,
             to_language=self.to_language,
@@ -70,6 +71,7 @@ class Challenge(db.Model):
             created=self.created,
             last_updated=self.last_updated,
             language_tags=self.language_tags,
+            translate_engine=TranslateEngine(self.translate_engine).name,
         )
         challenge_dto.bbox = json.loads(
             db.engine.execute(self.bbox.ST_AsGeoJSON()).scalar()

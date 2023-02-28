@@ -10,7 +10,7 @@ class Challenge(Resource):
 
     def get(self, challenge_id: int):
         """Get challenge by id"""
-        return jsonify(ChallengeService.get_challenge_by_id(challenge_id).dict())
+        return jsonify(ChallengeService.get_challenge_as_dto(challenge_id).dict())
 
     def patch(self, challenge_id: int):
         """Update existing challenge"""

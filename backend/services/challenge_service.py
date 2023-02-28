@@ -81,13 +81,18 @@ class ChallengeService:
         return ChallengeDTO.from_orm(challenge)
 
     @staticmethod
-    def get_challenge_by_id(challenge_id: int) -> ChallengeDTO:
-        """Get challenge by id"""
+    def get_challenge_by_id(challenge_id)-> Challenge:
         challenge = Challenge.get_by_id(challenge_id)
         if not challenge:
             error = NotFound(f"Challenge with id {challenge_id} not found")
             error.data = {"sub_code": "challenge_not_found"}
             raise error
+        return challenge
+    
+    @staticmethod
+    def get_challenge_as_dto(challenge_id: int) -> ChallengeDTO:
+        """Get challenge by id"""
+        challenge = ChallengeService.get_challenge_by_id(challenge_id)
         return challenge.as_dto()
 
     @staticmethod
