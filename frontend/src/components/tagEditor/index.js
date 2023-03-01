@@ -1,14 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { osmAuth } from 'osm-auth';
+import { useSelector } from 'react-redux';
 
 import { fetchExternalJSONAPI, fetchLocalJSONAPI, pushToLocalJSONAPI } from "../../utills/fetch";
 import Map from './map';
 import { TagEditorForm } from './editForm';
 import { uploadToOSM } from '../../utills/osm';
 import { SideBar } from './sideBar';
-import { useSelector } from 'react-redux';
 import { OAUTH_CLIENT_ID, OAUTH_CLIENT_SECRET } from '../../config';
-
 
 
 export default function TagEditor({ challenge_id, challengeTags, translateEngine }) {
@@ -48,7 +47,6 @@ export default function TagEditor({ challenge_id, challengeTags, translateEngine
                 setLoading(false);
             }
             );
-
     }, [challenge_id, jwt_token]);
 
     useEffect(() => {
@@ -91,8 +89,8 @@ export default function TagEditor({ challenge_id, challengeTags, translateEngine
         getFeature();
     }
 
-    const onSkip = async () => {
-        await changeFeatureStatus([feature.feature.properties.id], "SKIPPED");
+    const onSkip = async (status) => {
+        await changeFeatureStatus([feature.feature.properties.id], status);
         getFeature();
     }
 

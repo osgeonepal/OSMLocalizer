@@ -23,6 +23,7 @@ const NavBarSmall = () => {
   const [showMenu, setShowMenu] = useState(false);
   const navClass = 'nav-link ps-0 pe-0 ms-3 me-3';
   const navClassActive = navClass + ' border-bottom border-2 border-primary active';
+  // canvasClass = setShowMenu
   return (
     <div>
       <button className={"navbar-toggler"}
@@ -31,31 +32,39 @@ const NavBarSmall = () => {
         <span className={"navbar-toggler-icon"}></span>
       </button>
       {showMenu ?
-        <div className="offcanvas offcanvas-start show">
-          <div className="offcanvas-header">
-            <h5 className="offcanvas-title" id="offcanvasNavbarLabel">Offcanvas</h5>
-            <button type="button" className="btn btn-close" onClick={() => setShowMenu(false)}></button>
-          </div>
-          <div className="offcanvas-body">
-            <ul className="navbar-nav justify-content-end flex-grow-1 pe-3">
-              {menuItems.map((item) => (
-                <li className="nav-item" key={item.link}>
-                  <NavLink
-                    className={({ isActive }) => isActive ? navClassActive : navClass}
-                    to={"/" + item.link}
-                  >
-                    <span onClick={() => setShowMenu(false)} className='pb-1'>{item.label}</span>
-                  </NavLink>
-                </li>
-              ))}
-              <div className='nav-item'>
-                <div className={navClass}>
-                  <Login />
+        <>
+          <div className="offcanvas offcanvas-start show">
+
+            <div className="offcanvas-header">
+              <h5 className="offcanvas-title">Offcanvas</h5>
+              <button
+                className="btn btn-close"
+                onClick={() => setShowMenu(false)}
+              >
+              </button>
+            </div>
+            <div className="offcanvas-body">
+              <ul className="navbar-nav justify-content-end flex-grow-1 pe-3">
+                {menuItems.map((item) => (
+                  <li className="nav-item" key={item.link}>
+                    <NavLink
+                      className={({ isActive }) => isActive ? navClassActive : navClass}
+                      to={"/" + item.link}
+                    >
+                      <span onClick={() => setShowMenu(false)} className='pb-1'>{item.label}</span>
+                    </NavLink>
+                  </li>
+                ))}
+                <div className='nav-item'>
+                  <div className={navClass}>
+                    <Login />
+                  </div>
                 </div>
-              </div>
-            </ul>
+              </ul>
+            </div>
           </div>
-        </div> : null}
+          <div className='offcanvas-backdrop fade show'></div>
+        </> : null}
     </div>
   )
 }
