@@ -2,6 +2,23 @@ import React, { useState } from "react";
 import { DEFAULT_CHANGESET_COMMENT } from '../../config';
 import { useSelector } from "react-redux";
 
+export const UploadSuccess = (props) => {
+    return (
+        <div className="alert alert-success position-fixed start-50 top-0 p-2 m-2">
+            <br />
+            <span>Hurray! Changeset uploaded successfully.</span>
+            &nbsp;
+            <span 
+                className="btn btn-sm btn-close btn-outline-success"
+                onClick={() => props.setUploaded(false)}
+            />
+            <br />
+            <br />
+        </div>
+    )
+}
+
+
 const EditorHeader = (props) => {
     const user = useSelector((state) => state.auth.user);
     return (
@@ -40,7 +57,7 @@ const EditorHeader = (props) => {
                         className="btn btn-secondary ms-2"
                         type="submit"
                         disabled={props.isDisabled}
-                        onClick={()=>props.setDisplayUploadDialog(true)}
+                        onClick={() => props.setDisplayUploadDialog(true)}
                     >
                         {props.isUploading ? <i className="fa fa-spinner fa-spin"></i> : (
                             <div>
@@ -58,9 +75,24 @@ const EditorHeader = (props) => {
 const UploadDialog = (props) => {
     const [changesetComment, setChangesetComment] = useState(DEFAULT_CHANGESET_COMMENT);
     const [reviewEdits, setReviewEdits] = useState(false);
+    const [isUploaded, setUploaded] = useState(false);
+
     const onChangesetComment = (e) => {
-        setChangesetComment( e.target.value)
+        setChangesetComment(e.target.value)
     }
+
+    const onUpload = () => {
+        async function upload() {
+            await props.onUpload(changesetComment, reviewEdits);
+            setUploaded(true);
+            setTimeout(() => {
+                setUploaded(false);
+                props.setDisplayUploadDialog(false);
+            }, 1200);
+        }
+        upload();
+    }
+
     return (
         <div className="border-bottom border-secondary-subtle pb-4">
             <div className="text-secondary fw-bold pb-2 d-block text-center">
@@ -99,20 +131,21 @@ const UploadDialog = (props) => {
                 </div>
             </div>
             <div className="d-flex justify-content-evenly">
-                <button  
+                <button
                     className="btn btn-secondary"
-                    onClick={()=>props.setDisplayUploadDialog(false)}
+                    onClick={() => props.setDisplayUploadDialog(false)}
                 >
                     Cancel
                 </button>
                 <button
                     className="btn btn-primary"
                     disabled={props.isDisabled}
-                    onClick={()=>props.onUpload(changesetComment, reviewEdits)}
+                    onClick={() => onUpload()}
                 >
-                    {props.isUploading ? <i className="fa fa-spinner fa-spin"></i>: "Upload"}
+                    {props.isUploading ? <i className="fa fa-spinner fa-spin"></i> : "Upload"}
                 </button>
             </div>
+            {isUploaded ? <UploadSuccess setUploaded={setUploaded} /> : null}
         </div>
     )
 }
@@ -175,7 +208,7 @@ export const SideBar = (props) => {
                     isDisabled={isDisabled}
                     setDisplayUploadDialog={setDisplayUploadDialog}
                 />
-                ) : null
+            ) : null
             }
             <Changes
                 allChanges={props.allChanges}

@@ -1,6 +1,9 @@
+import React, { useState } from 'react';
 import { Form, Field } from 'react-final-form';
+import { useDetectClickOutside } from 'react-detect-click-outside';
+
 import InputToolForm from "./inputToolForm";
-import TranslateComponent  from "./translate";
+import TranslateComponent from "./translate";
 
 const inputComponnent = (key, value) => {
     return (
@@ -12,6 +15,70 @@ const inputComponnent = (key, value) => {
                 component="input"
                 initialValue={value ? value : ""}
             />
+        </div>
+    )
+}
+
+const SkipDropdown = (props) => {
+    const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+    const ref = useDetectClickOutside({ onTriggered: () => setIsDropdownOpen(false) });
+
+    const skipOptions = [
+        { label: "Already Localized", value: "ALREADY_LOCALIZED" },
+        { label: "Too hard", value: "TOO_HARD" },
+        { label: "Duplicate/Invalid", value: "INVALID_DATA" },
+        { label: "Other", value: "OTHER" }
+    ];
+
+    const onClick = (status) => {
+        setIsDropdownOpen(!isDropdownOpen);
+        props.onSkip(status);
+    }
+
+    const DropDownItem = (props) => {
+        return (
+            <li className='border border-bottom border-secondary-subtle'>
+                <span
+                    className="dropdown-item"
+                    onClick={() => {
+                        props.onClick(props.value);
+                    }}
+                >
+                    {props.label}
+                </span>
+            </li>
+        )
+    }
+
+    return (
+        <div className="dropup" ref={ref} style={{ cursor: "pointer" }}>
+            <span
+                className="btn btn-secondary dropdown-toggle show"
+                onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+            >
+                Skip
+            </span>
+            {isDropdownOpen ? (
+                <ul
+                    className="dropdown-menu show d-flex flex-column mt-1 p-1 rounded-0"
+                    style={{
+                        position: "absolute",
+                        inset: "auto auto 0px 0px",
+                        margin: "0px",
+                        transform: "translate3d(0px, -40px, 0px)"
+                    }}
+                >
+                    {skipOptions.map((option) => (
+                        <DropDownItem
+                            key={option.value}
+                            label={option.label}
+                            value={option.value}
+                            onClick={onClick}
+                        />
+                    ))}
+
+                </ul>
+            ) : null}
         </div>
     )
 }
@@ -53,9 +120,6 @@ export function TagEditorForm(props) {
             <div className="p-2 pb-0 fs-6 text-secondary">
                 <span>{props.element.type}: </span> <span>{props.element.id}</span>
             </div>
-            {/* <div className="p-2 pb-0 fs-6 text-secondary fw-bold">
-                Edit
-            </div> */}
             <Form
                 onSubmit={onSubmitChange}
                 render={({ handleSubmit, pristine, form }) => (
@@ -84,15 +148,13 @@ export function TagEditorForm(props) {
                             ) : null}
                             <InputToolForm />
                         </div>
-                        <div className="p-4">
-                            <button className="btn btn-secondary"
-                                onClick={() => {
+                        <div className="p-4 d-flex">
+                            <SkipDropdown
+                                onSkip={(value) => {
                                     form.reset({});
-                                    props.onSkip();
+                                    props.onSkip(value);
                                 }}
-                            >
-                                Skip
-                            </button>
+                            />
                             <button
                                 className="btn btn-primary ms-2"
                                 type="submit"
