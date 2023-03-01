@@ -2,7 +2,6 @@ import overpy
 from shapely.geometry import Point
 from geoalchemy2 import shape
 
-
 from backend import db
 from backend.models.sql.features import Feature
 from backend.models.sql.postgis import ST_Transform
@@ -34,8 +33,7 @@ class Overpass:
     @staticmethod
     def node_to_features(node: overpy.Node, feature_id) -> Feature:
         feature = Feature()
-        feature.id = feature_id
-        feature.osm_id = node.id
+        feature.id = node.id
         feature.osm_type = "node"
         feature.status = FeatureStatus.TO_LOCALIZE.value
         geometry = Overpass.coordinates_to_point(float(node.lon), float(node.lat))

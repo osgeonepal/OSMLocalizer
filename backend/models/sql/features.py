@@ -10,12 +10,11 @@ class Feature(db.Model):
     """Describes feature"""
 
     __tablename__ = "feature"
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.BigInteger, primary_key=True)
     challenge_id = db.Column(
         db.Integer, db.ForeignKey("challenge.id"), index=True, primary_key=True
     )
     osm_type = db.Column(db.String, nullable=False)
-    osm_id = db.Column(db.BigInteger, nullable=False)
     geometry = db.Column(Geometry("POINT", srid=4326), nullable=True)
     status = db.Column(
         db.Integer, nullable=False, default=FeatureStatus.TO_LOCALIZE.value
@@ -48,7 +47,6 @@ class Feature(db.Model):
                 "id": self.id,
                 "osm_type": self.osm_type,
                 "challenge_id": self.challenge_id,
-                "osm_id": self.osm_id,
                 "status": self.status,
                 "changeset_id": self.changeset_id,
                 "localized_by": self.localized_by,
@@ -83,7 +81,6 @@ class Feature(db.Model):
     def create_from_dto(feature_dto: dict):
         """Create feature from dto"""
         feature = Feature()
-        feature.osm_id = feature_dto["osm_id"]
         feature.osm_type = feature_dto["osm_type"]
         feature.status = feature_dto["status"]
         feature.challenge_id = feature_dto["challenge_id"]

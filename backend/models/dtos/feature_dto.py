@@ -6,7 +6,6 @@ from typing import Optional
 class CreateFeatureDTO(BaseModel):
     challenge_id: int
     osm_type: str
-    osm_id: int
     geometry: str
     status: str
 
@@ -15,7 +14,6 @@ class FeatureDTO(BaseModel):
     id: int
     challenge_id: int
     osm_type: str
-    osm_id: int
     geometry: str
     status: str
     changeset_id: int

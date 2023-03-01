@@ -8,7 +8,7 @@ export const UploadSuccess = (props) => {
             <br />
             <span>Hurray! Changeset uploaded successfully.</span>
             &nbsp;
-            <span 
+            <span
                 className="btn btn-sm btn-close btn-outline-success"
                 onClick={() => props.setUploaded(false)}
             />
@@ -150,7 +150,21 @@ const UploadDialog = (props) => {
     )
 }
 
-const Changes = (props) => {
+const ChangesCard = ({change, onDelete, onElementClick}) => {
+    const key = `${change.type}-${change.id}`
+    return (
+        <div className="bg-light d-flex p-1 align-items-center" style={{ fontSize: "0.9rem" }}>
+            <div className="flex-grow-1 fw-bold" style={{cursor:"pointer"}} onClick={()=>onElementClick(key)}>
+                <span className="text-primary">{change.tags.name}</span>
+            </div>
+            <span className="btn btn-sm btn-secondary ps-2">
+                <i className="fa fa-trash text-danger" onClick={()=>onDelete(key)}></i>
+            </span>
+        </div>
+    )
+}
+
+const ChangesTab = (props) => {
     const height = props.displayUploadDialog ? "40%" : "85%";
     return (
         <div className="overflow-auto" style={{ height: height }}>
@@ -162,27 +176,16 @@ const Changes = (props) => {
                     <div className="text-secondary">
                         {Object.keys(props.allChanges).map((key, index) => {
                             return (
-                                <div key={index}>
-                                    {[props.allChanges[key]].map((change, index) => {
-                                        return (
-                                            <div className="bg-light d-flex p-1 align-items-center" key={index} style={{ fontSize: "0.9rem" }}>
-                                                <div className="flex-grow-1 fw-bold">
-                                                    <span className="text-secondary">{change.type}: </span>
-                                                    <span className="text-primary">{change.id}</span>
-                                                </div>
-                                                <span className="btn btn-sm btn-secondary ps-2">
-                                                    <i className="fa fa-trash text-danger" aria-hidden="true"></i>
-                                                </span>
-                                            </div>
-                                        )
-                                    })}
-                                </div>
-                            )
-                        }
+                                <ChangesCard
+                                    change={props.allChanges[key]}
+                                    key={index}
+                                    onDelete={props.onDelete}
+                                    onElementClick={props.onElementClick}
+                                />
+                            )}
                         )}
                     </div>
                 )}
-
             </div>
         </div>
     )
@@ -210,9 +213,11 @@ export const SideBar = (props) => {
                 />
             ) : null
             }
-            <Changes
+            <ChangesTab
                 allChanges={props.allChanges}
                 displayUploadDialog={displayUploadDialog}
+                onDelete={props.onDelete}
+                onElementClick={props.onElementClick}
             />
         </div>
     )
