@@ -116,13 +116,25 @@ export function createChnagesetJSON(comment, reviewEdits) {
     return changeset;
 };
 
+const escapeXML = (str) => {
+    const replaceMap = {
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&apos;'
+    };
+    return str.replace(/[&<>"']/g, (char) => replaceMap[char]);
+};
+
+
 export function createChangeXML(elements, changesetId) {
     let changeXML = '<osmChange version="0.6" generator="OSMLocalizer"><create/> <modify>';
     // eslint-disable-next-line
     for (const [key, value] of Object.entries(elements)) {
         changeXML += `<${value.type} id="${value.id}" changeset="${changesetId}" lon="${value.lon}" lat="${value.lat}" version="${value.version}">`;
         for (const [tag_key, tag_value] of Object.entries(value.tags)) {
-            changeXML += `<tag k="${tag_key}" v="${tag_value}"/>`;
+            changeXML += `<tag k="${tag_key}" v="${escapeXML(tag_value)}"/>`;
         }
         changeXML += `</${value.type}>`;
     }
