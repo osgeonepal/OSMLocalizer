@@ -16,8 +16,7 @@ export default function TagEditor({ challenge_id, challengeTags, translateEngine
     const [isLoading, setLoading] = useState(true);
     const [isUploading, setUploading] = useState(false);
     const [feature, setFeature] = useState();
-    const [changedFeatures, setChangedFeatures] = useState([]);
-    const osm_token  = useSelector(state => state.auth.osmToken)
+    const osm_token = useSelector(state => state.auth.osmToken)
     const jwt_token = useSelector(state => state.auth.jwtToken)
 
     const options = {
@@ -26,7 +25,7 @@ export default function TagEditor({ challenge_id, challengeTags, translateEngine
         client_secret: OAUTH_CLIENT_SECRET,
         redirect_uri: "http//127.0.0.1:3000/authorized",
         access_token: osm_token,
-    
+
     }
 
     var auth = osmAuth(options);
@@ -53,7 +52,7 @@ export default function TagEditor({ challenge_id, challengeTags, translateEngine
         feature && (async () => {
             // setLoading(true);
             const data = await fetchExternalJSONAPI(
-                `https://api.openstreetmap.org/api/0.6/${feature.feature.properties.osm_type}/${feature.feature.properties.osm_id}.json`
+                `https://api.openstreetmap.org/api/0.6/${feature.feature.properties.osm_type}/${feature.feature.properties.id}.json`
             );
             setElement(data["elements"][0]);
             // setLoading(false);
@@ -75,17 +74,16 @@ export default function TagEditor({ challenge_id, challengeTags, translateEngine
 
 
     const onUpload = async (changeset_comment, reviewEdits) => {
+        const changedFeatures = Object.keys(allChanges).map((key) => allChanges[key].id);
         setUploading(true)
         await uploadToOSM(auth, Object.values(allChanges), changeset_comment, reviewEdits)
         await changeFeatureStatus(changedFeatures, "LOCALIZED")
         setAllChanges({})
         setUploading(false)
-        setChangedFeatures([])
         getFeature();
     }
 
     const onDone = async () => {
-        setChangedFeatures([...changedFeatures, feature.feature.properties.id]);
         getFeature();
     }
 
@@ -94,11 +92,22 @@ export default function TagEditor({ challenge_id, challengeTags, translateEngine
         getFeature();
     }
 
+    const onDelete = (key) => {
+        const newAllChanges = { ...allChanges };
+        delete newAllChanges[key];
+        setAllChanges(newAllChanges);
+    }
+
+    const onElementClick = (key) => {
+        const clickedElement = allChanges[key];
+        setElement(clickedElement);
+    }
+
 
     return (
 
         <div className=''>
-            {element===undefined ? <div>Loading...</div> : (
+            {element === undefined ? <div>Loading...</div> : (
                 <div className='row'>
                     <div className='col-8 border border-secondary-subtle p-2 pt-0'>
                         <Map
@@ -122,6 +131,8 @@ export default function TagEditor({ challenge_id, challengeTags, translateEngine
                             allChanges={allChanges}
                             onUpload={onUpload}
                             isUploading={isUploading}
+                            onDelete={onDelete}
+                            onElementClick={onElementClick}
                         />
                     </div>
                 </div>

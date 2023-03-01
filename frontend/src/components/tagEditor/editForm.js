@@ -86,6 +86,7 @@ const SkipDropdown = (props) => {
 export function TagEditorForm(props) {
     const name = props.element['tags']['name'] ? "name" : "name:en";
     const text = encodeURIComponent(props.element['tags'][name]);
+    const elementKey = `${props.element.type}-${props.element.id}`;
 
     const detectChange = (values) => {
         var changedKeys = [];
@@ -106,7 +107,7 @@ export function TagEditorForm(props) {
                     newElementTmp['tags'][key] = values[key];
                 };
                 const allChangesTmp = Object.assign({}, props.allChanges);
-                allChangesTmp[`${props.element.type}-${props.element.id}`] = newElementTmp;
+                allChangesTmp[elementKey] = newElementTmp;
                 props.setAllChanges(allChangesTmp);
             }
         }
@@ -158,7 +159,7 @@ export function TagEditorForm(props) {
                             <button
                                 className="btn btn-primary ms-2"
                                 type="submit"
-                                disabled={pristine}
+                                disabled={pristine && !Object.keys(props.allChanges).includes(elementKey) }
                             >
                                 Done
                             </button>
