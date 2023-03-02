@@ -1,8 +1,8 @@
-import React, { useEffect, useRef } from 'react';
-import mapboxgl from 'mapbox-gl';
-import 'mapbox-gl/dist/mapbox-gl.css';
+import React, { useEffect, useRef } from "react";
+import mapboxgl from "mapbox-gl";
+import "mapbox-gl/dist/mapbox-gl.css";
 
-import { MAPBOX_ACCESS_TOKEN } from '../../config';
+import { MAPBOX_ACCESS_TOKEN } from "../../config";
 
 // const osm_style = {
 //     version: 8,
@@ -24,40 +24,38 @@ import { MAPBOX_ACCESS_TOKEN } from '../../config';
 // }
 
 const Map = (props) => {
-    const mapContainerRef = useRef(null);
-    mapboxgl.accessToken = MAPBOX_ACCESS_TOKEN;
-    useEffect(() => {
-        mapContainerRef.current = new mapboxgl.Map({
-            container: 'map-container',
-            style: "mapbox://styles/mapbox/streets-v12",
-            center: [0, 0],
-            zoom: 19,
-        });
-        return () => mapContainerRef.current && mapContainerRef.current.remove();
-    }
-        , []);
+  const mapContainerRef = useRef(null);
+  mapboxgl.accessToken = MAPBOX_ACCESS_TOKEN;
+  useEffect(() => {
+    mapContainerRef.current = new mapboxgl.Map({
+      container: "map-container",
+      style: "mapbox://styles/mapbox/streets-v12",
+      center: [0, 0],
+      zoom: 19,
+    });
+    return () => mapContainerRef.current && mapContainerRef.current.remove();
+  }, []);
 
-    useEffect(() => {
-        var marker = new mapboxgl.Marker()
-        props.element &&
-            marker.setLngLat([props.element.lon, props.element.lat])
-                .addTo(mapContainerRef.current);
-        mapContainerRef.current.jumpTo({
-            center: [props.element.lon, props.element.lat],
-        });
-        return () => marker && marker.remove();
+  useEffect(() => {
+    var marker = new mapboxgl.Marker();
+    props.element &&
+      marker
+        .setLngLat([props.element.lon, props.element.lat])
+        .addTo(mapContainerRef.current);
+    mapContainerRef.current.jumpTo({
+      center: [props.element.lon, props.element.lat],
+    });
+    return () => marker && marker.remove();
+  }, [props.element]);
 
-    }, [props.element]);
-
-    return (
-        <div>
-            <div
-                id="map-container"
-                className='map-container'
-                style={{ height: "35vh", width: "100%" }}
-            />
-
-        </div>
-    );
+  return (
+    <div>
+      <div
+        id="map-container"
+        className="map-container"
+        style={{ height: "35vh", width: "100%" }}
+      />
+    </div>
+  );
 };
 export default Map;

@@ -2,35 +2,33 @@ import React from "react";
 import { Input, Select } from "../input";
 
 const translateEngineOptions = [
-    { value: null, label: "---" },
-    { value: "GOOGLE", label: "Google" },
-    { value: "MICROSOFT", label: "Microsoft" },
-    { value: "YANDEX", label: "Yandex" },
-    { value: "CUSTOM", label: "Custom" },
+  { value: null, label: "---" },
+  { value: "GOOGLE", label: "Google" },
+  { value: "MICROSOFT", label: "Microsoft" },
+  { value: "YANDEX", label: "Yandex" },
+  { value: "CUSTOM", label: "Custom" },
 ];
 
-
 export const TranslationForm = (props) => {
-    const onInputChange = (e) => {
-        props.setChallengeInfo({
-            ...props.challengeInfo,
-            [e.target.name]: e.target.value
-        })
-    }
+  const onInputChange = (e) => {
+    props.setChallengeInfo({
+      ...props.challengeInfo,
+      [e.target.name]: e.target.value,
+    });
+  };
 
-    return (
-        <div>
-            <div className="form-group">
-                <Select
-                    name="translate_engine"
-                    label="Translate Engine"
-                    options={translateEngineOptions}
-                    onChange={onInputChange}
-                    value={props.challengeInfo.translate_engine}
-                />
-
-            </div>
-            {/* {props.challengeInfo.translateEngine === "custom" && (
+  return (
+    <div>
+      <div className="form-group">
+        <Select
+          name="translate_engine"
+          label="Translate Engine"
+          options={translateEngineOptions}
+          onChange={onInputChange}
+          value={props.challengeInfo.translate_engine}
+        />
+      </div>
+      {/* {props.challengeInfo.translateEngine === "custom" && (
                 <div className="form-group">
                     <p className="form-label">Custom Translate Engine</p>
                     <label className="form-label">Endpoint URL</label>
@@ -61,16 +59,14 @@ export const TranslationForm = (props) => {
                 </div>
             )} */}
 
-                < Input
-                    name="api_key"
-                    label="API Key"
-                    type="text"
-                    placeholder="API Key"
-                    onChange={onInputChange}
-                    defaultValue={props.challengeInfo.api_key}
-                />
-        </div>
-
-    )
-
-}
+      <Input
+        name="api_key"
+        label="API Key"
+        type="text"
+        placeholder="API Key"
+        onChange={onInputChange}
+        defaultValue={props.challengeInfo.api_key}
+      />
+    </div>
+  );
+};

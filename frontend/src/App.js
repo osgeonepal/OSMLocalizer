@@ -15,12 +15,10 @@ const BasicLayout = () => {
   return (
     <>
       <Header />
-      <div className="container">
-
-      </div>
+      <div className="container"></div>
     </>
   );
-}
+};
 
 function App() {
   useEffect(() => {
@@ -28,18 +26,18 @@ function App() {
   }, []);
 
   return (
-
-    <BrowserRouter >
+    <BrowserRouter>
       <Header path="/*" />
       <div className="container">
-        <Routes >
+        <Routes>
           <Route path="/*" element={<BasicLayout />} />
           <Route path="/" element={<ChallengesView />} />
           <Route path="/challenges" element={<ChallengesView />} />
           <Route path="/create" element={<CreateChallengeView />} />
-          <Route path="/challenge/:id"
+          <Route
+            path="/challenge/:id"
             element={
-              <PrivateRoute >
+              <PrivateRoute>
                 <LocalizeChallengeView />
               </PrivateRoute>
             }
@@ -49,7 +47,6 @@ function App() {
         </Routes>
       </div>
     </BrowserRouter>
-
   );
-};
+}
 export default App;
