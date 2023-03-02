@@ -37,6 +37,17 @@ class UpdateChallengeDTO(BaseModel):
     status: int
 
 
+class ChallengeStatsDTO(BaseModel):
+    total: int
+    localized: int
+    validated: int
+    skipped: int
+    already_localized: int
+    too_hard: int
+    invalid_data: int
+    to_localize: int
+
+
 class ChallengeDTO(BaseModel):
     """Challenge DTO for returning challenge"""
 
@@ -53,6 +64,7 @@ class ChallengeDTO(BaseModel):
     centroid: Optional[str] = None
     language_tags: list
     translate_engine: Optional[str] = None
+    stats: Optional[ChallengeStatsDTO] = None
 
     class Config:
         orm_mode = True
@@ -72,7 +84,9 @@ class ChallengeSummaryDTO(BaseModel):
     last_updated: str
     centroid: Optional[dict] = None
     country: str
+    created: str
     bbox: Optional[dict] = None
+    stats: Optional[ChallengeStatsDTO] = None
 
     class Config:
         orm_mode = True

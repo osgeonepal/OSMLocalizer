@@ -4,7 +4,6 @@ from backend.errors import NotFound
 from backend.models.sql.features import Feature
 from backend.models.sql.enum import FeatureStatus
 
-
 class FeatureService:
     """Contains all services related to features"""
 
@@ -96,13 +95,14 @@ class FeatureService:
     @staticmethod
     def reset_expired_tasks(challenge_id: int):
         """Reset tasks that have been changed but not uploaded for more than 30 minutes"""
+        print(datetime.utcnow() - timedelta(minutes=30))
         features = Feature.query.filter(
             Feature.challenge_id == challenge_id,
             Feature.status
-            in [
+            in (
                 FeatureStatus.LOCKED_TO_LOCALIZE.value,
                 FeatureStatus.LOCKED_TO_VALIDATE.value,
-            ],
+            ),
             Feature.last_updated < datetime.utcnow() - timedelta(minutes=30),
         ).all()
         for feature in features:
