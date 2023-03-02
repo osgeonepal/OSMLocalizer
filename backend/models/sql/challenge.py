@@ -43,6 +43,7 @@ class Challenge(db.Model):
     )
     translate_engine = db.Column(db.Integer, nullable=True)
     api_key = db.Column(db.String, nullable=True)
+    feature_instructions = db.Column(db.String(255), nullable=True)
 
     created_by = db.Column(
         db.BigInteger, db.ForeignKey("users.id", name="fk_users"), nullable=False
@@ -76,6 +77,7 @@ class Challenge(db.Model):
             last_updated=self.last_updated,
             language_tags=self.language_tags,
             translate_engine=TranslateEngine(self.translate_engine).name,
+            feature_instructions=self.feature_instructions,
         )
         challenge_dto.bbox = json.loads(
             db.engine.execute(self.bbox.ST_AsGeoJSON()).scalar()

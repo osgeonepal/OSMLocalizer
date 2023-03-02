@@ -23,6 +23,7 @@ class CreateChallengeDTO(BaseModel):
     api_key: Optional[str]
     due_date: Optional[str] = None
     created_by: int
+    feature_instructions: Optional[str] = None
 
     class Config:
         orm_mode = True
@@ -65,6 +66,7 @@ class ChallengeDTO(BaseModel):
     language_tags: list
     translate_engine: Optional[str] = None
     stats: Optional[ChallengeStatsDTO] = None
+    feature_instructions: Optional[str] = None
 
     class Config:
         orm_mode = True
