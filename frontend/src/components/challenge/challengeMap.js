@@ -32,7 +32,8 @@ export const ChallengeMap = (props) => {
     }).addControl(new mapboxGl.NavigationControl(), "top-right");
     return () => mapContainerRef.current && mapContainerRef.current.remove();
   }, [props.challenge.id]);
-  // Add challenge polygon to map
+
+  
   useEffect(() => {
     mapContainerRef.current.on("load", function () {
       if (mapContainerRef.current.getLayer("challenge-polygon")) {

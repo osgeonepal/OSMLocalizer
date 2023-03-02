@@ -35,7 +35,7 @@ export default function InputToolForm() {
         onClick={handleExpand}
         role="button"
       >
-        {isExpanded ? "▼" : "►"} Input tool
+        {isExpanded ? "▼" : "►"} Transliterate
       </div>
       <div className={isExpanded ? "p-2 ps-3" : "d-none"}>
         <input
@@ -59,3 +59,4 @@ export default function InputToolForm() {
     </div>
   );
 }
+                                                                         

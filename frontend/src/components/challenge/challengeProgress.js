@@ -62,7 +62,7 @@ export const ChallengeProgress = (props) => {
         <Link to={`/challenge/${props.challenge.id}`} className="">
           <button
             className="btn btn-primary"
-            isDisabled={props.challenge.stats.to_localize === 0}
+            disabled={props.challenge.stats.to_localize === 0}
           >
             Localize
           </button>

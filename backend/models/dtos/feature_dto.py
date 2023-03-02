@@ -16,7 +16,6 @@ class FeatureDTO(BaseModel):
     osm_type: str
     geometry: str
     status: str
-    changeset_id: int
     localized_by: str
     validated_by: str
     last_updated: datetime

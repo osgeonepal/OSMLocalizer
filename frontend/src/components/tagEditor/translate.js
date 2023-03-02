@@ -37,9 +37,13 @@ const TranslateComponent = (props) => {
           Suggestion:
           <span
             onClick={(e) => handleCopy(e)}
-            className="btn btn-sm btn-dark ms-1"
           >
-            {translation}
+            <span className="btn btn-sm btn-dark ms-1">
+              {translation}
+            </span>
+          </span>
+          <span className="bg-light p-1 ms-2">
+            <i className="fa fa-clone" aria-hidden="true"></i>
           </span>
         </div>
       )}
