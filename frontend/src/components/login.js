@@ -57,8 +57,9 @@ const createLoginWindow = (dispatch, redirectTo) => {
                             setUserToStore(response);
                             dispatch(authActions.login(response));
                             const params = new URLSearchParams({
-                                "redirectTo": redirectTo,
+                                "redirectTo": redirectTo? redirectTo : "/",
                             }).toString();
+                            
                             let redirectUri = "/authorized/?" + params;
                             window.location.href = redirectUri;
                             
