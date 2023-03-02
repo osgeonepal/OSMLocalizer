@@ -2,6 +2,7 @@ from datetime import datetime, timedelta
 
 from backend.errors import NotFound
 from backend.models.sql.features import Feature
+from backend.services.challenge_service import ChallengeService
 from backend.models.sql.enum import FeatureStatus
 
 class FeatureService:
@@ -89,21 +90,20 @@ class FeatureService:
                 feature.validated_by = user_id
             feature.locked_by = None
             feature.update()
-
+        challenge = ChallengeService.get_challenge_by_id(challenge_id)
+        challenge.last_updated = datetime.utcnow()
         return {"status": "success"}
 
     @staticmethod
     def reset_expired_tasks(challenge_id: int):
         """Reset tasks that have been changed but not uploaded for more than 30 minutes"""
-        print(datetime.utcnow() - timedelta(minutes=30))
         features = Feature.query.filter(
             Feature.challenge_id == challenge_id,
-            Feature.status
-            in (
+            Feature.status.in_((
                 FeatureStatus.LOCKED_TO_LOCALIZE.value,
                 FeatureStatus.LOCKED_TO_VALIDATE.value,
-            ),
-            Feature.last_updated < datetime.utcnow() - timedelta(minutes=30),
+            )),
+            Feature.last_updated > (datetime.utcnow() - timedelta(minutes=30)),
         ).all()
         for feature in features:
             if feature.status == FeatureStatus.LOCKED_TO_LOCALIZE.value:
