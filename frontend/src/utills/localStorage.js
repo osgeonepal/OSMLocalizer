@@ -7,35 +7,34 @@
  * if the key does not exist or localStorage fails.
  */
 function getItem(key) {
-    try {
-      return localStorage.getItem(key) || null;
-    } catch (err) {
-      console.warn('Could not read from localStorage.');
-      return null;
-    }
+  try {
+    return localStorage.getItem(key) || null;
+  } catch (err) {
+    console.warn("Could not read from localStorage.");
+    return null;
   }
-  
-  /**
-   * Wraps localStorage.setItem in a try/catch.
-   */
-  function setItem(key, value) {
-    try {
-      localStorage.setItem(key, value);
-    } catch (err) {
-      console.warn('Could not write to localStorage.');
-    }
+}
+
+/**
+ * Wraps localStorage.setItem in a try/catch.
+ */
+function setItem(key, value) {
+  try {
+    localStorage.setItem(key, value);
+  } catch (err) {
+    console.warn("Could not write to localStorage.");
   }
-  
-  /**
-   * Wraps localStorage.removeItem in a try/catch.
-   */
-  function removeItem(key) {
-    try {
-      localStorage.removeItem(key);
-    } catch (err) {
-      console.warn('Could not delete from localStorage.');
-    }
+}
+
+/**
+ * Wraps localStorage.removeItem in a try/catch.
+ */
+function removeItem(key) {
+  try {
+    localStorage.removeItem(key);
+  } catch (err) {
+    console.warn("Could not delete from localStorage.");
   }
-  
-  export { getItem, setItem, removeItem };
-  
+}
+
+export { getItem, setItem, removeItem };
