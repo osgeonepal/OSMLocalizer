@@ -46,7 +46,7 @@ def create_app(config=EnvironmentConfig):
     )
     api.add_resource(UserAuthorizationUrlAPI, "/auth/url/")
     api.add_resource(UserTokenAPI, "/auth/token/")
-    
+
     api.add_resource(TranslateTextAPI, "/challenge/<int:challenge_id>/translate/")
 
     return app

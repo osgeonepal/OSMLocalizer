@@ -59,10 +59,10 @@ class ChallengeService:
             created_by=challenge_dto.created_by,
         )
         if challenge_dto.translate_engine:
-            challenge.translate_engine=TranslateEngine[
-                challenge_dto.translate_engine.upper()
-            ].value,
-            challenge.api_key=challenge_dto.api_key,
+            challenge.translate_engine = (
+                TranslateEngine[challenge_dto.translate_engine.upper()].value,
+            )
+            challenge.api_key = (challenge_dto.api_key,)
         ChallengeService.get_features_from_overpass(challenge, overpass_query)
         challenge.create()
         return True
@@ -81,14 +81,14 @@ class ChallengeService:
         return ChallengeDTO.from_orm(challenge)
 
     @staticmethod
-    def get_challenge_by_id(challenge_id)-> Challenge:
+    def get_challenge_by_id(challenge_id) -> Challenge:
         challenge = Challenge.get_by_id(challenge_id)
         if not challenge:
             error = NotFound(f"Challenge with id {challenge_id} not found")
             error.data = {"sub_code": "challenge_not_found"}
             raise error
         return challenge
-    
+
     @staticmethod
     def get_challenge_as_dto(challenge_id: int) -> ChallengeDTO:
         """Get challenge by id"""

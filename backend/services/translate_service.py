@@ -2,8 +2,8 @@ import requests
 
 from backend.models.sql.enum import TranslateEngine
 
-class TranslateService():
-    
+
+class TranslateService:
     @staticmethod
     def translate_from_google(text, language, api_key):
         """Translate text from google"""
@@ -15,7 +15,7 @@ class TranslateService():
         }
         response = requests.get(url, params=params)
         return response.json()["data"]["translations"][0]["translatedText"]
-    
+
     @staticmethod
     def translate_from_yandex(text, language, api_key):
         """Translate text from yandex"""
@@ -27,7 +27,7 @@ class TranslateService():
         }
         response = requests.get(url, params=params)
         return response.json()["text"][0]
-    
+
     @staticmethod
     def translate_from_microsoft(text, language, api_key):
         """Translate text from microsoft"""
@@ -54,9 +54,10 @@ class TranslateService():
             elif api == TranslateEngine.YANDEX.value:
                 return TranslateService.translate_from_yandex(text, language, api_key)
             elif api == TranslateEngine.MICROSOFT.value:
-                return TranslateService.translate_from_microsoft(text, language, api_key)
+                return TranslateService.translate_from_microsoft(
+                    text, language, api_key
+                )
             else:
                 raise Exception("Unknown API")
         except Exception as e:
             raise Exception(f"Error translating text: {e}")
-    

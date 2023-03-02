@@ -4,6 +4,7 @@ from backend.services.feature_service import FeatureService
 from backend.services.user_service import auth
 from backend.errors import NotFound
 
+
 class FeaturesAllAPI(Resource):
     def get(self, challenge_id: int):
         return FeatureService.get_all_features_as_geojson(challenge_id)
@@ -16,7 +17,9 @@ class FeatureRestAPI(Resource):
         nearby = request.args.get("nearby")
         FeatureService.reset_expired_tasks(challenge_id)
         try:
-            feature = FeatureService.get_feature_to_localize(feature_id, challenge_id, current_user, nearby)
+            feature = FeatureService.get_feature_to_localize(
+                feature_id, challenge_id, current_user, nearby
+            )
             return feature
         except NotFound as e:
             e.to_dict()
@@ -26,7 +29,9 @@ class FeatureRestAPI(Resource):
         current_user = auth.current_user()
         featureIds = request.get_json()["featureIds"]
         status = request.get_json()["status"]
-        return FeatureService.update_feature(featureIds, challenge_id, status, current_user)
+        return FeatureService.update_feature(
+            featureIds, challenge_id, status, current_user
+        )
 
 
 class FeaturesRandomAPI(Resource):

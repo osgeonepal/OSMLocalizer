@@ -42,7 +42,9 @@ class FeatureService:
         }
 
     @staticmethod
-    def get_feature_to_localize(feature_id: int, challenge_id,  user_id: int, nearby: bool = False):
+    def get_feature_to_localize(
+        feature_id: int, challenge_id, user_id: int, nearby: bool = False
+    ):
         """Get a feature by id"""
         feature = FeatureService.get_by_id(feature_id, challenge_id)
         if feature.status != FeatureStatus.TO_LOCALIZE.value:
@@ -96,7 +98,8 @@ class FeatureService:
         """Reset tasks that have been changed but not uploaded for more than 30 minutes"""
         features = Feature.query.filter(
             Feature.challenge_id == challenge_id,
-            Feature.status in [
+            Feature.status
+            in [
                 FeatureStatus.LOCKED_TO_LOCALIZE.value,
                 FeatureStatus.LOCKED_TO_VALIDATE.value,
             ],

@@ -39,7 +39,7 @@ class Challenge(db.Model):
     )
     translate_engine = db.Column(db.Integer, nullable=True)
     api_key = db.Column(db.String, nullable=True)
-    
+
     created_by = db.Column(
         db.BigInteger, db.ForeignKey("users.id", name="fk_users"), nullable=False
     )
