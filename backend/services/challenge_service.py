@@ -93,7 +93,7 @@ class ChallengeService:
     def get_challenge_as_dto(challenge_id: int) -> ChallengeDTO:
         """Get challenge by id"""
         challenge = ChallengeService.get_challenge_by_id(challenge_id)
-        return challenge.as_dto()
+        return challenge.as_dto(stats=True)
 
     @staticmethod
     def get_all_challenges() -> ChallengeListDTO:
@@ -101,7 +101,9 @@ class ChallengeService:
         challenges = Challenge.get_all()
 
         return ChallengeListDTO(
-            challenges=[challenge.as_dto_for_summary() for challenge in challenges]
+            challenges=[
+                challenge.as_dto_for_summary(stats=True) for challenge in challenges
+            ]
         )
 
     @staticmethod

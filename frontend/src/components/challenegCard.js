@@ -2,6 +2,7 @@ import React from "react";
 // import { Link } from "react-router-dom";
 
 const ChallengeCard = ({ challenge, onChallengeClick, detailView }) => {
+  const progress = Math.round((challenge.stats.total-challenge.stats.to_localize) / challenge.stats.total * 100, 2);
   const cardClass = detailView
     ? "col-xs-10 col-sm-8 col-md-5 col-lg-5 card overflow-hidden"
     : "col-xs-10 col-sm-8 col-md-4 col-lg-3 card overflow-hidden";
@@ -38,12 +39,12 @@ const ChallengeCard = ({ challenge, onChallengeClick, detailView }) => {
           <div
             className="progress-bar"
             role="progressbar"
-            style={{ width: "25%" }}
+            style={{ width: progress+"%" }}
           ></div>
         </div>
         <div className="text-dark pt-2" style={{ fontSize: "0.8rem" }}>
-          25%
-          <span className="text-muted"> (25 out of 100 Localized)</span>
+          {progress}%
+          <span className="text-muted"> ({challenge.stats.localized} out of {challenge.stats.total} Localized)</span>
         </div>
       </div>
     </div>
