@@ -10,6 +10,7 @@ def to_strftime(date):
     """Convert date to string"""
     return date.strftime("%Y-%m-%d %H:%M:%S")
 
+
 def to_strfdate(date):
     """Convert date to string"""
     return date.strftime("%Y-%m-%d")

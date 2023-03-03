@@ -35,12 +35,8 @@ const TranslateComponent = (props) => {
       {isLoading ? null : (
         <div className="fs-6 mt-1 p-2">
           Suggestion:
-          <span
-            onClick={(e) => handleCopy(e)}
-          >
-            <span className="btn btn-sm btn-dark ms-1">
-              {translation}
-            </span>
+          <span onClick={(e) => handleCopy(e)}>
+            <span className="btn btn-sm btn-dark ms-1">{translation}</span>
           </span>
           <span className="bg-light p-1 ms-2">
             <i className="fa fa-clone" aria-hidden="true"></i>
