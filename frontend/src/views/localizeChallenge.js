@@ -34,6 +34,7 @@ export const LocalizeChallengeView = () => {
               challengeTags={challenge.language_tags}
               translateEngine={challenge.translate_engine}
               nearbyTask={nearbyTask}
+              translate_to={challenge.to_language}
             />
           </div>
         </div>

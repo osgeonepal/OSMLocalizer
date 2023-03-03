@@ -9,16 +9,16 @@ export const alertComponent = () => {
   );
 };
 
-export default function InputToolForm() {
+export default function InputToolForm({ translate_to }) {
   const [transliterate, setTransliterate] = useState([]);
-  const [isExpanded, setExpanded] = useState(false);
   const [isCopied, setCopied] = useState(false);
   async function getInputToolSuggestions(text) {
-    await inputTools(text, "ne").then((data) => setTransliterate(data));
+    text !== "" &&
+      (await inputTools(text, translate_to).then((data) =>
+        setTransliterate(data)
+      ));
+    text === "" && setTransliterate([]);
   }
-  const handleExpand = () => {
-    setExpanded(!isExpanded);
-  };
 
   const handleCopy = (e) => {
     navigator.clipboard.writeText(e.target.innerText);
@@ -29,25 +29,24 @@ export default function InputToolForm() {
   };
 
   return (
-    <div className="p-2 pt-0">
-      <div
-        className="text-decoration-none fw-bold"
-        onClick={handleExpand}
-        role="button"
-      >
-        {isExpanded ? "▼" : "►"} Transliterate
-      </div>
-      <div className={isExpanded ? "p-2 ps-3" : "d-none"}>
+    <div className="p-2 pt-1 pb-1">
+      <div className="input-group input-group-sm p-2 pt-1">
+        <span className="input-group-text sm bg-secondary text-light">
+          Transliterate
+        </span>
         <input
           className="form-control form-control-sm"
+          component="input"
           onChange={(e) => getInputToolSuggestions(e.target.value)}
         />
+      </div>
+      <div className={"p-2 pt-1 ps-3"}>
         <div className="d-flex flex-wrap justify-content-center">
           {transliterate.map((item, index) => (
             <span
               style={{ cursor: "pointer" }}
               onClick={(e) => handleCopy(e)}
-              className=" text-bg-dark m-1 p-1 rounded"
+              className=" text-bg-dark ms-1 me-1 p-1 rounded"
               key={index}
             >
               {item}

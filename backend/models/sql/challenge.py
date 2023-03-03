@@ -76,7 +76,9 @@ class Challenge(db.Model):
             created=self.created,
             last_updated=self.last_updated,
             language_tags=self.language_tags,
-            translate_engine=TranslateEngine(self.translate_engine).name,
+            translate_engine=TranslateEngine(self.translate_engine).name
+            if self.translate_engine
+            else None,
             feature_instructions=self.feature_instructions,
         )
         challenge_dto.bbox = json.loads(
