@@ -33,7 +33,6 @@ export const ChallengeMap = (props) => {
     return () => mapContainerRef.current && mapContainerRef.current.remove();
   }, [props.challenge.id]);
 
-  
   useEffect(() => {
     mapContainerRef.current.on("load", function () {
       if (mapContainerRef.current.getLayer("challenge-polygon")) {

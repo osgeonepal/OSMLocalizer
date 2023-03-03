@@ -38,20 +38,19 @@ const EditorHeader = (props) => {
                 style={{ fontSize: "0.9rem" }}
               >
                 {user["username"]}
-                {/* <p>Changesets: {user["changesets"]["count"]}</p> */}
               </div>
             </div>
           ) : null}
         </div>
         <div className="col-5 d-flex justify-content-end align-items-center">
           {/* <div>
-                        <button className="btn btn-secondary">
-                            <i className="fa fa-undo " aria-hidden="true"></i>
-                        </button>
-                        <button className="btn btn-secondary">
-                            <i className="fa fa-repeat" aria-hidden="true"></i>
-                        </button>
-                    </div> */}
+                <button className="btn btn-secondary">
+                    <i className="fa fa-undo " aria-hidden="true"></i>
+                </button>
+                <button className="btn btn-secondary">
+                    <i className="fa fa-repeat" aria-hidden="true"></i>
+                </button>
+            </div> */}
           <button
             className="btn btn-secondary ms-2"
             type="submit"

@@ -37,7 +37,21 @@ const NavBarSmall = () => {
         <>
           <div className="offcanvas offcanvas-start show">
             <div className="offcanvas-header">
-              <h5 className="offcanvas-title">Offcanvas</h5>
+              <NavLink
+                className="navbar-brand d-flex align-items-center"
+                to="/"
+                key="/"
+              >
+                <img
+                  src={logo}
+                  alt="OSM Localizer"
+                  style={{ width: "35px", height: "35px", borderRadius: "50%" }}
+                  className="me-1"
+                />
+                <span className="fs-4" onClick={() => setShowMenu(false)}>
+                  OSM Localizer
+                </span>
+              </NavLink>
               <button
                 className="btn btn-close"
                 onClick={() => setShowMenu(false)}
@@ -108,7 +122,7 @@ function NavBar() {
   const breakpoint = 995;
   return (
     <>
-      <nav className="navbar navbar-expand-lg bg-body-tertiary border-bottom mb-4">
+      <nav className="navbar navbar-expand-lg bg-body-tertiary border-bottom App">
         <div className="container">
           <NavLink
             className="navbar-brand d-flex align-items-center"

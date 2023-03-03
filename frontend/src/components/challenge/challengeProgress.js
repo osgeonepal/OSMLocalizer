@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { Tooltip } from 'react-tooltip';
-import 'react-tooltip/dist/react-tooltip.css';
+import { Tooltip } from "react-tooltip";
+import "react-tooltip/dist/react-tooltip.css";
 
 const ProgressBar = (props) => {
   return (
@@ -14,19 +14,27 @@ const ProgressBar = (props) => {
       >
         <div className={`progress-bar bg-${props.color}`} />
       </div>
-      <Tooltip place="top" className={`bg-${props.color}`} effect="solid" id={props.label} />
+      <Tooltip
+        place="top"
+        className={`bg-${props.color}`}
+        effect="solid"
+        id={props.label}
+      />
     </>
-  )
-}
+  );
+};
 
 export const ChallengeProgress = (props) => {
   const featureStatuses = {
-    "localized": { color: "primary text-white", label: "Localized" },
-    "skipped": { color: "info text-black", label: "Skipped" },
-    "already_localized": { color: "success text-white", label: "Already Localized" },
-    "invalid_data": { color: "warning text-black", label: "Invalid Data" },
-    "too_hard": { color: "danger-subtle text-black", label: "Too Hard" },
-  }
+    localized: { color: "primary text-white", label: "Localized" },
+    skipped: { color: "info text-black", label: "Skipped" },
+    already_localized: {
+      color: "success text-white",
+      label: "Already Localized",
+    },
+    invalid_data: { color: "warning text-black", label: "Invalid Data" },
+    too_hard: { color: "danger-subtle text-black", label: "Too Hard" },
+  };
 
   return (
     <div
@@ -46,11 +54,13 @@ export const ChallengeProgress = (props) => {
               key={status}
               value={props.challenge.stats[status]}
               color={featureStatuses[status]["color"]}
-              label={featureStatuses[status]["label"] + `- (${props.challenge.stats[status]}%)`}
+              label={
+                featureStatuses[status]["label"] +
+                `- (${props.challenge.stats[status]}%)`
+              }
             />
-          )
-        }
-        )}
+          );
+        })}
       </div>
       <div className="d-flex p-2 mt-2">
         <div className="flex-grow-1">
