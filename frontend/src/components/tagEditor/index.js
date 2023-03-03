@@ -18,6 +18,7 @@ export default function TagEditor({
   challengeTags,
   translateEngine,
   nearbyTask,
+  translate_to,
 }) {
   const [element, setElement] = useState();
   const [allChanges, setAllChanges] = useState({});
@@ -136,6 +137,7 @@ export default function TagEditor({
               tags={challengeTags}
               translateEngine={translateEngine}
               challenge_id={challenge_id}
+              translate_to={translate_to}
             />
           </div>
           <div className="col-4 p-0 border border-start-0 border-secondary-subtle">

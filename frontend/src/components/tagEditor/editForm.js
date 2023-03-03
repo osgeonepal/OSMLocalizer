@@ -5,7 +5,7 @@ import { useDetectClickOutside } from "react-detect-click-outside";
 import InputToolForm from "./inputToolForm";
 import TranslateComponent from "./translate";
 
-const inputComponnent = (key, value) => {
+export const inputComponnent = (key, value) => {
   return (
     <div className="input-group input-group-sm p-2" key={key}>
       <span className="input-group-text sm" id={key}>
@@ -141,17 +141,32 @@ export function TagEditorForm(props) {
                 return inputComponnent(key, props.element["tags"][key]);
               })}
             </div>
-            <div className="border border-secondary-subtle rounded overflow-y-auto">
+            <div className="border border-secondary-subtle rounded overflow-y-auto m-2 mb-1">
               {props.translateEngine ? (
                 <TranslateComponent
                   text={text}
                   translateEngine={props.translateEngine}
                   challenge_id={props.challenge_id}
                 />
-              ) : null}
-              <InputToolForm />
+              ) : (
+                <div className="mt-1 p-2">
+                  <a
+                    className="btn btn-sm btn-secondary p-2 pt-1 pb-1"
+                    href={`https://translate.google.com/#view=home&op=translate&sl=en&tl=${props.translate_to}&text=${text}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Translate
+                    <i
+                      className="fa fa-external-link ms-1"
+                      aria-hidden="true"
+                    ></i>
+                  </a>
+                </div>
+              )}
+              <InputToolForm translate_to={props.translate_to} />
             </div>
-            <div className="p-4 d-flex">
+            <div className="p-2 ps-4 d-flex">
               <SkipDropdown
                 onSkip={(value) => {
                   form.reset({});
