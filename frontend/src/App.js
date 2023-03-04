@@ -10,6 +10,7 @@ import AuthorizedView from "./views/authorized";
 import { handleLogin } from "./store/store";
 import { LoginView } from "./views/login";
 import { PrivateRoute } from "./views/privateRoute";
+import AboutView from "./views/about";
 
 const BasicLayout = () => {
   return (
@@ -34,6 +35,7 @@ function App() {
           <Route path="/" element={<ChallengesView />} />
           <Route path="/challenges" element={<ChallengesView />} />
           <Route path="/create" element={<CreateChallengeView />} />
+          <Route path="/about" element={<AboutView />} />
           <Route
             path="/challenge/:id"
             element={

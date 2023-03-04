@@ -98,12 +98,13 @@ class FeatureService:
         """Reset tasks that have been changed but not uploaded for more than 30 minutes"""
         features = Feature.query.filter(
             Feature.challenge_id == challenge_id,
-            Feature.status
-            in [
-                FeatureStatus.LOCKED_TO_LOCALIZE.value,
-                FeatureStatus.LOCKED_TO_VALIDATE.value,
-            ],
-            Feature.last_updated < datetime.utcnow() - timedelta(minutes=30),
+            Feature.status.in_(
+                (
+                    FeatureStatus.LOCKED_TO_LOCALIZE.value,
+                    FeatureStatus.LOCKED_TO_VALIDATE.value,
+                )
+            ),
+            Feature.last_updated <= str(datetime.utcnow() - timedelta(minutes=30)),
         ).all()
         for feature in features:
             if feature.status == FeatureStatus.LOCKED_TO_LOCALIZE.value:
