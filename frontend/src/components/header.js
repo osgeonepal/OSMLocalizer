@@ -17,9 +17,10 @@ const menuItems = [
     label: "CREATE",
     link: "create",
   },
-  { 
+  {
     label: "ABOUT",
-    link: "about" },
+    link: "about",
+  },
 ];
 
 const NavBarSmall = () => {
