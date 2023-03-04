@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import "./App.css";
 import Header from "./components/header";
+import Footer from "./components/footer";
 import ChallengesView from "./views/challenges";
 import CreateChallengeView from "./views/createChallenge";
 import { LocalizeChallengeView } from "./views/localizeChallenge";
@@ -29,7 +30,7 @@ function App() {
   return (
     <BrowserRouter>
       <Header path="/*" />
-      <div className="container">
+      <div className="container App">
         <Routes>
           <Route path="/*" element={<BasicLayout />} />
           <Route path="/" element={<ChallengesView />} />
@@ -48,6 +49,7 @@ function App() {
           <Route path="/login" element={<LoginView />} />
         </Routes>
       </div>
+      <Footer path="/*" />
     </BrowserRouter>
   );
 }
