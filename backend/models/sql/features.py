@@ -20,7 +20,6 @@ class Feature(db.Model):
         db.Integer, nullable=False, default=FeatureStatus.TO_LOCALIZE.value
     )
     last_updated = db.Column(db.DateTime, default=timestamp)
-    changeset_id = db.Column(db.Integer, nullable=True)
     localized_by = db.Column(
         db.BigInteger,
         db.ForeignKey("users.id", name="fk_users_localizer"),
@@ -66,7 +65,6 @@ class Feature(db.Model):
                 "osm_type": self.osm_type,
                 "challenge_id": self.challenge_id,
                 "status": self.status,
-                "changeset_id": self.changeset_id,
                 "localized_by": self.localized_by,
                 "validated_by": self.validated_by,
                 "last_updated": to_strftime(self.last_updated),

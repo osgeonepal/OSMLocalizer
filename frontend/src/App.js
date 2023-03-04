@@ -29,7 +29,7 @@ function App() {
   return (
     <BrowserRouter>
       <Header path="/*" />
-      <div className="container">
+      <div className="container App">
         <Routes>
           <Route path="/*" element={<BasicLayout />} />
           <Route path="/" element={<ChallengesView />} />

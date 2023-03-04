@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 
 import { fetchLocalJSONAPI } from "../utills/fetch";
-import ChallengeCard from "../components/challenegCard";
+import ChallengeCard from "../components/challenge/challengeCard";
 import ChallengeInfo from "../components/challenge/challengeInfo";
 import { useViewport } from "../utills/hooks";
 

@@ -23,6 +23,7 @@ class CreateChallengeDTO(BaseModel):
     api_key: Optional[str]
     due_date: Optional[str] = None
     created_by: int
+    feature_instructions: Optional[str] = None
 
     class Config:
         orm_mode = True
@@ -35,6 +36,17 @@ class UpdateChallengeDTO(BaseModel):
     description: str
     due_date: str
     status: int
+
+
+class ChallengeStatsDTO(BaseModel):
+    total: int
+    localized: int
+    validated: int
+    skipped: int
+    already_localized: int
+    too_hard: int
+    invalid_data: int
+    to_localize: int
 
 
 class ChallengeDTO(BaseModel):
@@ -53,6 +65,8 @@ class ChallengeDTO(BaseModel):
     centroid: Optional[str] = None
     language_tags: list
     translate_engine: Optional[str] = None
+    stats: Optional[ChallengeStatsDTO] = None
+    feature_instructions: Optional[str] = None
 
     class Config:
         orm_mode = True
@@ -72,7 +86,9 @@ class ChallengeSummaryDTO(BaseModel):
     last_updated: str
     centroid: Optional[dict] = None
     country: str
+    created: str
     bbox: Optional[dict] = None
+    stats: Optional[ChallengeStatsDTO] = None
 
     class Config:
         orm_mode = True

@@ -53,7 +53,7 @@ const Map = (props) => {
       <div
         id="map-container"
         className="map-container"
-        style={{ height: "35vh", width: "100%" }}
+        style={{ height: "33vh", width: "100%" }}
       />
     </div>
   );

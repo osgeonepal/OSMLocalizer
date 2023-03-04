@@ -11,6 +11,11 @@ def to_strftime(date):
     return date.strftime("%Y-%m-%d %H:%M:%S")
 
 
+def to_strfdate(date):
+    """Convert date to string"""
+    return date.strftime("%Y-%m-%d")
+
+
 def get_last_updated(last_updated):
     diff = datetime.utcnow() - last_updated
     if diff.days > 0:
