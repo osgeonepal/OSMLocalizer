@@ -22,8 +22,8 @@ const TranslateComponent = (props) => {
     })();
   }, [props.challenge_id, jwtToken, props.text]);
 
-  const handleCopy = (e) => {
-    navigator.clipboard.writeText(e.target.innerText);
+  const handleCopy = () => {
+    navigator.clipboard.writeText(translation);
     setCopied(true);
     setTimeout(() => {
       setCopied(false);
@@ -32,17 +32,17 @@ const TranslateComponent = (props) => {
 
   return (
     <div>
-      {isLoading ? null : (
-        <div className="fs-6 mt-1 p-2">
-          Suggestion:
-          <span
-            onClick={(e) => handleCopy(e)}
-            className="btn btn-sm btn-dark ms-1"
-          >
-            {translation}
+      <div className="fs-6 mt-1 p-2 ms-2">
+        Suggestion:
+        <span onClick={(e) => handleCopy(e)}>
+          <span className="btn btn-sm btn-dark ms-1">
+            {isLoading ? "Translating..." : translation}
           </span>
-        </div>
-      )}
+          <span className="btn btn-sm btn-light">
+            <i className="fa fa-clone" aria-hidden="true"></i>
+          </span>
+        </span>
+      </div>
       {isCopied ? alertComponent() : null}
     </div>
   );

@@ -2,6 +2,7 @@ from datetime import datetime, timedelta
 
 from backend.errors import NotFound
 from backend.models.sql.features import Feature
+from backend.services.challenge_service import ChallengeService
 from backend.models.sql.enum import FeatureStatus
 
 
@@ -90,7 +91,8 @@ class FeatureService:
                 feature.validated_by = user_id
             feature.locked_by = None
             feature.update()
-
+        challenge = ChallengeService.get_challenge_by_id(challenge_id)
+        challenge.last_updated = datetime.utcnow()
         return {"status": "success"}
 
     @staticmethod

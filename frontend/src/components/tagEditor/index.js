@@ -17,6 +17,8 @@ export default function TagEditor({
   challenge_id,
   challengeTags,
   translateEngine,
+  nearbyTask,
+  translate_to,
 }) {
   const [element, setElement] = useState();
   const [allChanges, setAllChanges] = useState({});
@@ -39,8 +41,8 @@ export default function TagEditor({
   const getFeature = async () => {
     const url =
       feature && feature.nearby.id
-        ? `challenge/${challenge_id}/feature/${feature.nearby.id}/?nearby=true`
-        : `challenge/${challenge_id}/features/random/?nearby=true`;
+        ? `challenge/${challenge_id}/feature/${feature.nearby.id}/?nearby=${nearbyTask}`
+        : `challenge/${challenge_id}/features/random/?nearby=${nearbyTask}`;
     const data = await fetchLocalJSONAPI(url, jwt_token);
     setFeature(data);
   };
@@ -135,6 +137,7 @@ export default function TagEditor({
               tags={challengeTags}
               translateEngine={translateEngine}
               challenge_id={challenge_id}
+              translate_to={translate_to}
             />
           </div>
           <div className="col-4 p-0 border border-start-0 border-secondary-subtle">

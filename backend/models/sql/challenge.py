@@ -4,10 +4,14 @@ from sqlalchemy.dialects.postgresql import ARRAY
 from geoalchemy2 import Geometry
 from flask import json
 
-from backend.models.sql.enum import ChallengeStatus, TranslateEngine
+from backend.models.sql.enum import ChallengeStatus, TranslateEngine, FeatureStatus
 from backend.models.sql.features import Feature
-from backend.models.dtos.challenge_dto import ChallengeDTO, ChallengeSummaryDTO
-from backend.services.utills import get_last_updated
+from backend.models.dtos.challenge_dto import (
+    ChallengeDTO,
+    ChallengeSummaryDTO,
+    ChallengeStatsDTO,
+)
+from backend.services.utills import get_last_updated, to_strfdate
 
 
 class Challenge(db.Model):
@@ -39,6 +43,7 @@ class Challenge(db.Model):
     )
     translate_engine = db.Column(db.Integer, nullable=True)
     api_key = db.Column(db.String, nullable=True)
+    feature_instructions = db.Column(db.String(255), nullable=True)
 
     created_by = db.Column(
         db.BigInteger, db.ForeignKey("users.id", name="fk_users"), nullable=False
@@ -58,7 +63,7 @@ class Challenge(db.Model):
         db.session.delete(self)
         db.session.commit()
 
-    def as_dto(self):
+    def as_dto(self, stats=False):
         """Convert to dto"""
         challenge_dto = ChallengeDTO(
             id=self.id,
@@ -71,7 +76,10 @@ class Challenge(db.Model):
             created=self.created,
             last_updated=self.last_updated,
             language_tags=self.language_tags,
-            translate_engine=TranslateEngine(self.translate_engine).name,
+            translate_engine=TranslateEngine(self.translate_engine).name
+            if self.translate_engine
+            else None,
+            feature_instructions=self.feature_instructions,
         )
         challenge_dto.bbox = json.loads(
             db.engine.execute(self.bbox.ST_AsGeoJSON()).scalar()
@@ -79,9 +87,11 @@ class Challenge(db.Model):
         challenge_dto.centroid = json.loads(
             db.engine.execute(self.centroid.ST_AsGeoJSON()).scalar()
         )
+        if stats:
+            challenge_dto.stats = self.get_challenge_progress()
         return challenge_dto
 
-    def as_dto_for_summary(self):
+    def as_dto_for_summary(self, stats):
         challenge_dto = ChallengeSummaryDTO(
             id=self.id,
             name=self.name,
@@ -91,6 +101,7 @@ class Challenge(db.Model):
             to_language=self.to_language,
             due_date=(self.due_date - datetime.utcnow()).days,
             last_updated=get_last_updated(self.last_updated),
+            created=to_strfdate(self.created),
         )
         challenge_dto.centroid = json.loads(
             db.engine.execute(self.centroid.ST_AsGeoJSON()).scalar()
@@ -98,6 +109,8 @@ class Challenge(db.Model):
         challenge_dto.bbox = json.loads(
             db.engine.execute(self.bbox.ST_AsGeoJSON()).scalar()
         )
+        if stats:
+            challenge_dto.stats = self.get_challenge_progress()
         return challenge_dto
 
     @staticmethod
@@ -114,3 +127,30 @@ class Challenge(db.Model):
     def get_all_by_status(status: int):
         """Get all challenges by status"""
         return Challenge.query.filter_by(status=status).all()
+
+    def get_challenge_progress(self):
+        """Get challenge progress"""
+        challenge_stats_dto = ChallengeStatsDTO(
+            total=self.features.count(),
+            localized=self.features.filter_by(
+                status=FeatureStatus.LOCALIZED.value
+            ).count(),
+            skipped=self.features.filter_by(status=FeatureStatus.OTHER.value).count(),
+            already_localized=self.features.filter_by(
+                status=FeatureStatus.ALREADY_LOCALIZED.value
+            ).count(),
+            validated=self.features.filter_by(
+                status=FeatureStatus.VALIDATED.value
+            ).count(),
+            too_hard=self.features.filter_by(
+                status=FeatureStatus.TOO_HARD.value
+            ).count(),
+            invalid_data=self.features.filter_by(
+                status=FeatureStatus.INVALID_DATA.value
+            ).count(),
+            to_localize=self.features.filter_by(
+                status=FeatureStatus.TO_LOCALIZE.value
+            ).count(),
+        )
+
+        return challenge_stats_dto
