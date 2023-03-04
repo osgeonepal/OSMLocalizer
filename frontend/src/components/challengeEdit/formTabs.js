@@ -9,7 +9,7 @@ export const FormTabs = (props) => {
 
   const elements = [
     { value: "Description", required: true },
-    { value: "Tasks", required: true },
+    { value: "Features", required: true },
     { value: "Translation" },
   ];
 

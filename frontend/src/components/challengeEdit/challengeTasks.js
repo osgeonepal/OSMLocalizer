@@ -1,6 +1,5 @@
 import React from "react";
 
-import { Input } from "../input";
 import { DrawPolygon } from "./drawPolygon";
 
 export const OverpassQuery = (props) => {
@@ -13,7 +12,7 @@ export const OverpassQuery = (props) => {
         className="form-control"
         name="overpass_query"
         type="text"
-        placeholder="Overpass query"
+        placeholder="Overpass query. Please include {{bbox}} in your query inplace of bounding box"
         defaultValue={props.defaultValue}
         onChange={(e) => props.onChange(e)}
         rows="5"
@@ -57,26 +56,10 @@ export const TasksForm = (props) => {
         onChange={onDrawPolygon}
         mapContainer={props.mapContainer}
       />
-      {/* <Input
-                name="bbox"
-                label="Bounding Box"
-                type="text"
-                placeholder="bbox"
-                onChange={onInputChange}
-                defaultValue={props.challengeInfo.bbox}
-            /> */}
       <OverpassQuery
         onChange={onInputChange}
         onQueryTest={onQueryTest}
         defaultValue={props.challengeInfo.overpass_query}
-      />
-      <Input
-        name="language_tags"
-        label="Language Tags"
-        type="text"
-        placeholder="tags"
-        onChange={onInputChange}
-        defaultValue={props.challengeInfo.language_tags}
       />
     </div>
   );
