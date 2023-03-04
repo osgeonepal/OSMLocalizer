@@ -1,6 +1,5 @@
 import React from "react";
-import { Input, TextArea, Select, Checkbox } from "../input";
-import languageJson from "../../assets/json/language.json";
+import { Input, TextArea, Checkbox } from "../input";
 
 export const MetadataForm = (props) => {
   const challengeStatusOption = [
@@ -15,13 +14,6 @@ export const MetadataForm = (props) => {
       [e.target.name]: e.target.value,
     });
   };
-
-  const languageOptions = Object.keys(languageJson).map((key) => {
-    if (key === "---") {
-      return { label: key, value: "" };
-    }
-    return { label: key, value: languageJson[key] };
-  });
 
   return (
     <div>
@@ -41,13 +33,13 @@ export const MetadataForm = (props) => {
         defaultValue={props.challengeInfo.description}
         onChange={onChange}
       />
-      <Select
-        label="Translate to"
-        name="to_language"
-        clearable={true}
-        options={languageOptions}
+      <Input
+        name="language_tags"
+        label="Tags to edit"
+        type="text"
+        placeholder="Name tags separated by comma e.g. name, name:en"
         onChange={onChange}
-        value={props.challengeInfo.to_language}
+        defaultValue={props.challengeInfo.language_tags}
       />
       <Checkbox
         label="Status:"

@@ -1,5 +1,6 @@
 import React from "react";
 import { Input, Select } from "../input";
+import languageJson from "../../assets/json/language.json";
 
 const translateEngineOptions = [
   { value: null, label: "---" },
@@ -8,6 +9,13 @@ const translateEngineOptions = [
   { value: "YANDEX", label: "Yandex" },
   { value: "CUSTOM", label: "Custom" },
 ];
+
+const languageOptions = Object.keys(languageJson).map((key) => {
+  if (key === "---") {
+    return { label: key, value: "" };
+  }
+  return { label: key, value: languageJson[key] };
+});
 
 export const TranslationForm = (props) => {
   const onInputChange = (e) => {
@@ -20,6 +28,14 @@ export const TranslationForm = (props) => {
   return (
     <div>
       <div className="form-group">
+        <Select
+          label="Translate to"
+          name="to_language"
+          clearable={true}
+          options={languageOptions}
+          onChange={onInputChange}
+          value={props.challengeInfo.to_language}
+        />
         <Select
           name="translate_engine"
           label="Translate Engine"

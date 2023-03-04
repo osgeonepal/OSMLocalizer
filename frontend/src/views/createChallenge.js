@@ -17,7 +17,7 @@ const renderForm = (option, challengeInfo, setChallengeInfo) => {
           setChallengeInfo={setChallengeInfo}
         />
       );
-    case "Tasks":
+    case "Features":
       return (
         <TasksForm
           challengeInfo={challengeInfo}
