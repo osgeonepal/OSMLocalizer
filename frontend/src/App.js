@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import "./App.css";
 import Header from "./components/header";
+import Footer from "./components/footer";
 import ChallengesView from "./views/challenges";
 import CreateChallengeView from "./views/createChallenge";
 import { LocalizeChallengeView } from "./views/localizeChallenge";
@@ -10,6 +11,7 @@ import AuthorizedView from "./views/authorized";
 import { handleLogin } from "./store/store";
 import { LoginView } from "./views/login";
 import { PrivateRoute } from "./views/privateRoute";
+import AboutView from "./views/about";
 
 const BasicLayout = () => {
   return (
@@ -34,6 +36,7 @@ function App() {
           <Route path="/" element={<ChallengesView />} />
           <Route path="/challenges" element={<ChallengesView />} />
           <Route path="/create" element={<CreateChallengeView />} />
+          <Route path="/about" element={<AboutView />} />
           <Route
             path="/challenge/:id"
             element={
@@ -46,6 +49,7 @@ function App() {
           <Route path="/login" element={<LoginView />} />
         </Routes>
       </div>
+      <Footer path="/*" />
     </BrowserRouter>
   );
 }

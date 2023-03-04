@@ -106,7 +106,7 @@ class FeatureService:
                     FeatureStatus.LOCKED_TO_VALIDATE.value,
                 )
             ),
-            Feature.last_updated <= (datetime.utcnow() - timedelta(minutes=30)),
+            Feature.last_updated <= str(datetime.utcnow() - timedelta(minutes=30)),
         ).all()
         for feature in features:
             if feature.status == FeatureStatus.LOCKED_TO_LOCALIZE.value:
