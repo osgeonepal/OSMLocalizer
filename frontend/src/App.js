@@ -12,6 +12,7 @@ import { handleLogin } from "./store/store";
 import { LoginView } from "./views/login";
 import { PrivateRoute } from "./views/privateRoute";
 import AboutView from "./views/about";
+import AlternateChallengeCreate from "./views/alternateChallengeCreate";
 
 const BasicLayout = () => {
   return (
@@ -47,6 +48,7 @@ function App() {
           />
           <Route path="/authorized" element={<AuthorizedView />} />
           <Route path="/login" element={<LoginView />} />
+          <Route path="/alternate" element={<AlternateChallengeCreate />} />
         </Routes>
       </div>
       <Footer path="/*" />
