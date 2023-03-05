@@ -21,6 +21,10 @@ const menuItems = [
     label: "ABOUT",
     link: "about",
   },
+  {
+    label: "ALTERNATE",
+    link: "alternate",
+  },
 ];
 
 const NavBarSmall = () => {
