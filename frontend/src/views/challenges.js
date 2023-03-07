@@ -86,7 +86,7 @@ const ChallengesView = () => {
   }, []);
 
   return (
-    <div>
+    <div className="pt-2 pb-2">
       {/* <div>
                 <h5 className="text-primary">Challenges</h5>
             </div> */}

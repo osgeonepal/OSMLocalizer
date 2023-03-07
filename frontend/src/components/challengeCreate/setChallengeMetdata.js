@@ -48,10 +48,10 @@ export const MetadataForm = ({ challenge, setChallenge }) => {
       />
       <TextArea
         label="Task Instructions*"
-        name="task_instructions"
+        name="feature_instructions"
         type="text"
         placeholder="Task Instructions"
-        defaultValue={challenge.task_instructions}
+        defaultValue={challenge.feature_instructions}
         onChange={onInputChange}
       />
       <Input

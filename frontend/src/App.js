@@ -5,14 +5,15 @@ import "./App.css";
 import Header from "./components/header";
 import Footer from "./components/footer";
 import ChallengesView from "./views/challenges";
-import CreateChallengeView from "./views/createChallenge";
+// import CreateChallengeView from "./views/createChallenge";
 import { LocalizeChallengeView } from "./views/localizeChallenge";
 import AuthorizedView from "./views/authorized";
 import { handleLogin } from "./store/store";
 import { LoginView } from "./views/login";
-import { PrivateRoute } from "./views/privateRoute";
+import { LoggedInRoute } from "./views/privateRoute";
+import { ManagementRoute } from "./views/managementRoute";
 import AboutView from "./views/about";
-import AlternateChallengeCreate from "./views/alternateChallengeCreate";
+import CreateChallenge from "./views/createChallenge";
 
 const BasicLayout = () => {
   return (
@@ -36,19 +37,26 @@ function App() {
           <Route path="/*" element={<BasicLayout />} />
           <Route path="/" element={<ChallengesView />} />
           <Route path="/challenges" element={<ChallengesView />} />
-          <Route path="/create" element={<CreateChallengeView />} />
+          <Route
+            path="/create"
+            element={
+              <ManagementRoute>
+                <CreateChallenge />
+              </ManagementRoute>
+            }
+          />
+          <Route path="/create" element={<CreateChallenge />} />
           <Route path="/about" element={<AboutView />} />
           <Route
             path="/challenge/:id"
             element={
-              <PrivateRoute>
+              <LoggedInRoute>
                 <LocalizeChallengeView />
-              </PrivateRoute>
+              </LoggedInRoute>
             }
           />
           <Route path="/authorized" element={<AuthorizedView />} />
           <Route path="/login" element={<LoginView />} />
-          <Route path="/alternate" element={<AlternateChallengeCreate />} />
         </Routes>
       </div>
       <Footer path="/*" />

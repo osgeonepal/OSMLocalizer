@@ -29,7 +29,7 @@ class Challenge(Resource):
         self.api.payload["created_by"] = current_user
         challenge_dto = CreateChallengeDTO(**self.api.payload)
         if ChallengeService.create_challenge(challenge_dto):
-            return {"success": "yes"}, 200
+            return {"success": "yes"}, 201
         return {"success": "no"}, 400
 
 

@@ -48,7 +48,7 @@ class ChallengeService:
         challenge = Challenge(
             name=challenge_dto.name,
             description=challenge_dto.description,
-            task_instruction=challenge_dto.task_instruction,
+            feature_instructions=challenge_dto.feature_instructions,
             country=country,
             status=ChallengeStatus[challenge_dto.status.upper()].value,
             to_language=challenge_dto.to_language,
