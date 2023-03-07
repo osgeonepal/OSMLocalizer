@@ -9,6 +9,7 @@ import "mapbox-gl/dist/mapbox-gl.css";
 
 import SetChallengeBBBOX from "../components/challengeCreate/setChallengeBBOX";
 import { MetadataForm } from "../components/challengeCreate/setChallengeMetdata";
+import { TranslationForm } from "../components/challengeCreate/setChallengeTranslate";
 import { MAPBOX_ACCESS_TOKEN } from "../config";
 
 const StepButtons = ({ step, setStep, onCreate }) => {
@@ -76,7 +77,9 @@ const HandleSteps = ({
     case 2:
       return <MetadataForm challenge={challenge} setChallenge={setChallenge} />;
     case 3:
-      return <div>Review</div>;
+      return (
+        <TranslationForm challenge={challenge} setChallenge={setChallenge} />
+      );
     default:
       return (
         <SetChallengeBBBOX
@@ -180,6 +183,7 @@ const AlternateChallengeCreate = () => {
       "bbox",
       "overpass_query",
       "language_tags",
+      "to_language",
     ];
     const missingFields = [];
     requiredFields.forEach((field) => {
@@ -191,6 +195,13 @@ const AlternateChallengeCreate = () => {
       setValidationResult({
         isValid: false,
         error: `Missing required fields: ${missingFields.join(", ")}`,
+      });
+      return;
+    }
+    if (challenge.translate_engine && !challenge.api_key) {
+      setValidationResult({
+        isValid: false,
+        error: "Must provide an API key if using a translation engine",
       });
       return;
     }
