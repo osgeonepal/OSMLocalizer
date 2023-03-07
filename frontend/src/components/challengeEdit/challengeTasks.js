@@ -51,11 +51,11 @@ export const TasksForm = (props) => {
 
   return (
     <div>
-      <DrawPolygon
+      {/* <DrawPolygon
         box={props.challengeInfo.bbox}
         onChange={onDrawPolygon}
         mapContainer={props.mapContainer}
-      />
+      /> */}
       <OverpassQuery
         onChange={onInputChange}
         onQueryTest={onQueryTest}

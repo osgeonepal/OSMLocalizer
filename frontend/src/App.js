@@ -5,13 +5,13 @@ import "./App.css";
 import Header from "./components/header";
 import Footer from "./components/footer";
 import ChallengesView from "./views/challenges";
-// import CreateChallengeView from "./views/createChallenge";
+import UpdateChallengeView from "./views/updateChallenge";
 import { LocalizeChallengeView } from "./views/localizeChallenge";
 import AuthorizedView from "./views/authorized";
 import { handleLogin } from "./store/store";
 import { LoginView } from "./views/login";
 import { LoggedInRoute } from "./views/privateRoute";
-import { ManagementRoute } from "./views/managementRoute";
+import ManagementSection from "./views/managementRoute";
 import AboutView from "./views/about";
 import CreateChallenge from "./views/createChallenge";
 
@@ -37,14 +37,10 @@ function App() {
           <Route path="/*" element={<BasicLayout />} />
           <Route path="/" element={<ChallengesView />} />
           <Route path="/challenges" element={<ChallengesView />} />
-          <Route
-            path="/create"
-            element={
-              <ManagementRoute>
-                <CreateChallenge />
-              </ManagementRoute>
-            }
-          />
+          <Route path="/manage" element={<ManagementSection />}>
+            <Route path="challenge/:id" element={<UpdateChallengeView />} />
+            <Route path="challenge/create" element={<CreateChallenge />} />
+          </Route>
           <Route path="/create" element={<CreateChallenge />} />
           <Route path="/about" element={<AboutView />} />
           <Route

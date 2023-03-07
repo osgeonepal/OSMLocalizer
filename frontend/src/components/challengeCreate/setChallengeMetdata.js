@@ -16,7 +16,7 @@ export const MetadataForm = ({ challenge, setChallenge }) => {
   };
 
   return (
-    <div className="p-4">
+    <div>
       <div>
         <p className="fs-5 title text-dark fw-semibold">
           {" "}

@@ -26,7 +26,7 @@ export const TranslationForm = ({ challenge, setChallenge }) => {
   };
 
   return (
-    <div className="p-4">
+    <div>
       <div className="form-group">
         <Select
           label="Translate to"

@@ -1,6 +1,6 @@
 import React from "react";
 
-const OverpassQuery = ({ defaultValue, onChange }) => {
+export const OverpassQuery = ({ defaultValue, onChange }) => {
   const onQueryTest = () => {
     console.log("Query test");
   };
@@ -51,7 +51,7 @@ const SetChallengeBBBOX = ({
   };
 
   return (
-    <div className="p-4">
+    <div>
       <div>
         <p className="fs-5 title text-dark fw-semibold">
           {" "}

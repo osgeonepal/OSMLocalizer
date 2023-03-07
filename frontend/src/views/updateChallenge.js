@@ -36,7 +36,7 @@ const renderForm = (option, challengeInfo, setChallengeInfo) => {
   }
 };
 
-const CreateChallenge = () => {
+const UpdateChallengeView = () => {
   const [option, setOption] = useState("Description");
   const [challengeInfo, setChallengeInfo] = useState({});
   const jwt_token = useSelector((state) => state.auth.jwtToken);
@@ -67,4 +67,4 @@ const CreateChallenge = () => {
   );
 };
 
-export default CreateChallenge;
+export default UpdateChallengeView;
