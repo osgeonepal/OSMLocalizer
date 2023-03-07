@@ -5,7 +5,7 @@ export const Input = (props) => {
     <div className="p-2 pb-4">
       <label className="form-label text-secondary fw-bold">{props.label}</label>
       <input
-        className="form-control"
+        className="form-control rounded-0"
         name={props.name}
         type={props.type}
         placeholder={props.placeholder}
@@ -21,7 +21,7 @@ export const TextArea = (props) => {
     <div className="p-2 pb-4">
       <label className="form-label fw-bold text-secondary">{props.label}</label>
       <textarea
-        className="form-control"
+        className="form-control rounded-0"
         name={props.name}
         type={props.type}
         placeholder={props.placeholder}
