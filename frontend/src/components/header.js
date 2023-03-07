@@ -15,7 +15,7 @@ const menuItems = [
   },
   {
     label: "CREATE",
-    link: "create",
+    link: "manage/challenge/create",
   },
   {
     label: "ABOUT",

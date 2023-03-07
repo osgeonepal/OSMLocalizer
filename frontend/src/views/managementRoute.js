@@ -1,6 +1,5 @@
 import { useSelector } from "react-redux";
-import { Navigate, useLocation } from "react-router-dom";
-import { LoginView } from "./login";
+import { Navigate, useLocation, Outlet } from "react-router-dom";
 
 const NotAuthorized = () => {
   return (
@@ -21,7 +20,7 @@ const NotAuthorized = () => {
   );
 };
 
-export const ManagementRoute = ({ children }) => {
+const ManagementSection = () => {
   const { user } = useSelector((state) => state.auth);
   const location = useLocation();
   return (
@@ -29,10 +28,12 @@ export const ManagementRoute = ({ children }) => {
       {!user ? (
         <Navigate to="/login" state={{ from: location.pathname }} />
       ) : user.role === "1" ? (
-        children
+        <Outlet />
       ) : (
         NotAuthorized()
       )}
     </div>
   );
 };
+
+export default ManagementSection;

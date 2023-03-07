@@ -250,7 +250,7 @@ const CreateChallenge = () => {
             background: "rgba(234, 234, 234, 0.9)",
           }}
         >
-          <div>
+          <div className="p-4">
             <HandleSteps
               step={step}
               addDrawHandler={addDrawHandler}
