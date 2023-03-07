@@ -11,9 +11,7 @@ import SetChallengeBBBOX from "../components/challengeCreate/setChallengeBBOX";
 import { MetadataForm } from "../components/challengeCreate/setChallengeMetdata";
 import { MAPBOX_ACCESS_TOKEN } from "../config";
 
-
-const StepButtons = ({ step, setStep }) => {
-
+const StepButtons = ({ step, setStep, onCreate }) => {
   const onNext = () => {
     if (step < 3) {
       setStep(step + 1);
@@ -44,63 +42,68 @@ const StepButtons = ({ step, setStep }) => {
           Next
           <i className="fa fa-arrow-right ms-2"></i>
         </button>
-      )
-      }
+      )}
       {step === 3 && (
         <button
           className="btn btn-primary rounded-0 me-4"
-          onClick={() => console.log("Create")}
+          onClick={() => onCreate()}
         >
           Create
           <i className="fa fa-arrow-right ms-2"></i>
         </button>
-      )
-      }
+      )}
     </div>
   );
 };
 
-
-const HandleSteps = ({ step, addDrawHandler, removeDrawHandler, challenge, onChange }) => {
+const HandleSteps = ({
+  step,
+  addDrawHandler,
+  removeDrawHandler,
+  challenge,
+  setChallenge,
+}) => {
   switch (step) {
     case 1:
-      return <SetChallengeBBBOX
-        addDrawHandler={addDrawHandler}
-        removeDrawHandler={removeDrawHandler}
-        challenge={challenge}
-        onChange={onChange}
-      />;
+      return (
+        <SetChallengeBBBOX
+          addDrawHandler={addDrawHandler}
+          removeDrawHandler={removeDrawHandler}
+          challenge={challenge}
+          setChallenge={setChallenge}
+        />
+      );
     case 2:
-      return <MetadataForm
-        challenge={challenge}
-        onChange={onChange}
-      />;
+      return <MetadataForm challenge={challenge} setChallenge={setChallenge} />;
     case 3:
       return <div>Review</div>;
     default:
-      return <SetChallengeBBBOX
-        addDrawHandler={addDrawHandler}
-        removeDrawHandler={removeDrawHandler}
-        challenge={challenge}
-        onChange={onChange}
-      />;
+      return (
+        <SetChallengeBBBOX
+          addDrawHandler={addDrawHandler}
+          removeDrawHandler={removeDrawHandler}
+          challenge={challenge}
+          setChallenge={setChallenge}
+        />
+      );
   }
 };
-
-
-
 
 const AlternateChallengeCreate = () => {
   const mapContainer = useRef(null);
   const [mapObject, setMapObject] = useState({
     map: null,
     draw: new MapboxDraw({
-      displayControlsDefault: false
+      displayControlsDefault: false,
     }),
   });
   const [challenge, setChallenge] = useState({});
   const [bboxArea, setBboxArea] = useState(null);
   const [step, setStep] = useState(1);
+  const [validationResult, setValidationResult] = useState({
+    isValid: true,
+    error: null,
+  });
 
   mapboxgl.accessToken = MAPBOX_ACCESS_TOKEN;
 
@@ -133,12 +136,11 @@ const AlternateChallengeCreate = () => {
         const polygon = data.features[0];
         const bboxPolygon = bbox(polygon);
         // Calculate area in square kilometers
-        const areaPolygon = Math.floor(Area(polygon) / 1000000)
+        const areaPolygon = Math.floor(Area(polygon) / 1000000);
         setBboxArea(areaPolygon);
-        const bboxString = bboxPolygon.join(", ");
-        onChange("bbox", bboxString);
+        setChallenge({ ...challenge, bbox: bboxPolygon });
       }
-    };
+    }
 
     return () => {
       if (mapObject.map) {
@@ -147,7 +149,6 @@ const AlternateChallengeCreate = () => {
         mapObject.map.off("draw.delete", onDrawUpdate);
       }
     };
-
   }, [mapObject]);
 
   const addDrawHandler = () => {
@@ -156,14 +157,62 @@ const AlternateChallengeCreate = () => {
 
   const removeDrawHandler = () => {
     mapObject.draw.deleteAll();
-    onChange("bbox", null);
+    setChallenge({ ...challenge, bbox: null });
     setBboxArea(null);
   };
 
-  const onChange = (key, value) => {
-    setChallenge({ ...challenge, [key]: value })
-  }
+  const onCreate = () => {
+    validateChallenge();
+    if (validationResult.isValid) {
+      console.log("Challenge is valid");
+    } else {
+      console.log("Challenge is invalid");
+      console.log(validationResult.error);
+    }
+  };
 
+  const validateChallenge = () => {
+    const requiredFields = [
+      "name",
+      "description",
+      "task_instructions",
+      "status",
+      "bbox",
+      "overpass_query",
+      "language_tags",
+    ];
+    const missingFields = [];
+    requiredFields.forEach((field) => {
+      if (!challenge[field]) {
+        missingFields.push(field);
+      }
+    });
+    if (missingFields.length > 0) {
+      setValidationResult({
+        isValid: false,
+        error: `Missing required fields: ${missingFields.join(", ")}`,
+      });
+      return;
+    }
+    challenge.language_tags
+      .split(",")
+      .map((tag) => tag.trim())
+      .forEach((element) => {
+        if (!element.startsWith("name")) {
+          setValidationResult({
+            isValid: false,
+            error: "Language tags must start with 'name'",
+          });
+          return;
+        } else {
+          setValidationResult({
+            isValid: true,
+            error: null,
+          });
+        }
+      });
+    return;
+  };
 
   return (
     <div>
@@ -173,7 +222,7 @@ const AlternateChallengeCreate = () => {
         style={{ height: "90vh", width: "100%" }}
       >
         <div
-          className="position-absolute top-0 start-0 d-flex flex-column justify-content-between"
+          className="position-absolute top-0 start-0 d-flex flex-column justify-content-between overflow-auto"
           style={{
             zIndex: 999,
             height: "90vh",
@@ -187,21 +236,29 @@ const AlternateChallengeCreate = () => {
               addDrawHandler={addDrawHandler}
               removeDrawHandler={removeDrawHandler}
               challenge={challenge}
-              onChange={onChange}
+              setChallenge={setChallenge}
             />
           </div>
           <div>
-            <StepButtons step={step} setStep={setStep} />
+            {validationResult.isValid ? null : (
+              <div className="alert alert-danger fw-bold ps-2 pe-2">
+                {validationResult.error}
+              </div>
+            )}
+            <StepButtons step={step} setStep={setStep} onCreate={onCreate} />
           </div>
         </div>
         <div>
-          {
-            bboxArea && (
-              <div className="position-absolute bottom-0 end-0 p-4" style={{ zIndex: 999 }}>
-                <span className="bg-white p-2 fw-semibold">Area: {bboxArea} ㎢</span>
-              </div>
-            )
-          }
+          {bboxArea && (
+            <div
+              className="position-absolute bottom-0 end-0 p-4"
+              style={{ zIndex: 999 }}
+            >
+              <span className="bg-white p-2 fw-semibold">
+                Area: {bboxArea} ㎢
+              </span>
+            </div>
+          )}
         </div>
       </div>
     </div>
