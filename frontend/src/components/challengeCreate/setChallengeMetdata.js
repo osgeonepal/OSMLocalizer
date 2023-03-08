@@ -17,12 +17,6 @@ export const MetadataForm = ({ challenge, setChallenge }) => {
 
   return (
     <div>
-      <div>
-        <p className="fs-5 title text-dark fw-semibold">
-          {" "}
-          Step 2: Add challenge info
-        </p>
-      </div>
       <Input
         label="Name*"
         name="name"

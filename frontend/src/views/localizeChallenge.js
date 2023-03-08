@@ -9,7 +9,6 @@ export const LocalizeChallengeView = () => {
   const [challenge, setChallenge] = useState({});
   const [isChallenegeLoaded, setIsChallengeLoaded] = useState(false);
   const [nearbyTask, setNearbyTask] = useState(true);
-  console.log("challenge", nearbyTask);
   const { id } = useParams();
   useEffect(() => {
     fetchLocalJSONAPI(`challenge/${id}/`).then((data) => {

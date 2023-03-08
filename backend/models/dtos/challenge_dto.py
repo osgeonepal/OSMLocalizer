@@ -33,9 +33,14 @@ class UpdateChallengeDTO(BaseModel):
     """Update Challenge DTO for updating existing challenge"""
 
     name: constr(min_length=1, max_length=100)
-    description: str
-    due_date: str
-    status: int
+    description: constr(min_length=1, max_length=1000)
+    status: str
+    to_language: str
+    language_tags: str
+    translate_engine: Optional[str]
+    api_key: Optional[str]
+    due_date: Optional[str] = None
+    feature_instructions: Optional[str] = None
 
 
 class ChallengeStatsDTO(BaseModel):
@@ -63,7 +68,7 @@ class ChallengeDTO(BaseModel):
     last_updated: datetime
     bbox: Optional[dict]
     centroid: Optional[str] = None
-    language_tags: list
+    language_tags: str
     translate_engine: Optional[str] = None
     stats: Optional[ChallengeStatsDTO] = None
     feature_instructions: Optional[str] = None
