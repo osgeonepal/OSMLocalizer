@@ -73,13 +73,23 @@ class ChallengeService:
         challenge_id: int, challenge_dto: UpdateChallengeDTO
     ) -> ChallengeDTO:
         """Update existing challenge"""
-        challenge = Challenge.get_by_id(challenge_id)
+        challenge = ChallengeService.get_challenge_by_id(challenge_id)
+        language_tags = [tag.strip() for tag in challenge_dto.language_tags.split(",")]
         challenge.name = challenge_dto.name
         challenge.description = challenge_dto.description
-        challenge.due_date = challenge_dto.due_date
-        challenge.status = challenge_dto.status
+        challenge.status = ChallengeStatus[challenge_dto.status].value
+        challenge.to_language = challenge_dto.to_language
+        challenge.feature_instructions = challenge_dto.feature_instructions
+        challenge.language_tags = language_tags
+        if challenge_dto.due_date:
+            challenge.due_date = challenge_dto.due_date
+        if challenge_dto.translate_engine:
+            challenge.translate_engine = (
+                TranslateEngine[challenge_dto.translate_engine.upper()].value,
+            )
+            challenge.api_key = challenge_dto.api_key
         challenge.update()
-        return ChallengeDTO.from_orm(challenge)
+        return True
 
     @staticmethod
     def get_challenge_by_id(challenge_id) -> Challenge:

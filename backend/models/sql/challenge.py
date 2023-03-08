@@ -75,7 +75,7 @@ class Challenge(db.Model):
             due_date=self.due_date,
             created=self.created,
             last_updated=self.last_updated,
-            language_tags=self.language_tags,
+            language_tags=", ".join(self.language_tags),
             translate_engine=TranslateEngine(self.translate_engine).name
             if self.translate_engine
             else None,

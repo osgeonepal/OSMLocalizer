@@ -16,7 +16,8 @@ class Challenge(Resource):
     def patch(self, challenge_id: int):
         """Update existing challenge"""
         challenge_dto = UpdateChallengeDTO(**self.api.payload)
-        return ChallengeService.update_challenge(challenge_id, challenge_dto)
+        ChallengeService.update_challenge(challenge_id, challenge_dto)
+        return {"success": "yes"}
 
     def delete(self, challenge_id: int):
         """Delete challenge by id"""
