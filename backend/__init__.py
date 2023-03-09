@@ -1,7 +1,7 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
-from flask_restx import Api
+from flask_restful import Api
 from requests_oauthlib import OAuth2Session
 
 from backend.config import EnvironmentConfig
@@ -12,7 +12,6 @@ osm = OAuth2Session(
     scope=EnvironmentConfig.OAUTH2_SCOPE,
     redirect_uri=EnvironmentConfig.OAUTH2_REDIRECT_URI,
 )
-
 
 def create_app(config=EnvironmentConfig):
     app = Flask(__name__)
@@ -39,7 +38,7 @@ def create_app(config=EnvironmentConfig):
         methods=["GET"],
     )
     api.add_resource(
-        FeatureRestAPI, "/challenge/<int:challenge_id>/feature/", methods=["POST"]
+        FeatureRestAPI, "/challenge/<int:challenge_id>/feature/", methods=["POST"], endpoint="create_feature"
     )
     api.add_resource(
         FeaturesRandomAPI, "/challenge/<int:challenge_id>/features/random/"

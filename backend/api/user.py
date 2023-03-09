@@ -1,5 +1,5 @@
 from flask import request
-from flask_restx import Resource
+from flask_restful import Resource
 
 from backend import osm, EnvironmentConfig
 from backend.services.user_service import UserService

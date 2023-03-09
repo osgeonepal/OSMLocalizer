@@ -1,29 +1,30 @@
 import json
+from werkzeug.exceptions import HTTPException
 
 error_messages = json.load(open("backend/errors.json"))
 
-
-class BaseException(Exception):
-    # This will contain the error message, the status code and sub code
-    def __init__(self, message, status_code=None, payload=None):
-        Exception.__init__(self)
-        self.message = message
-        self.status_code = status_code
-        self.payload = payload
-
+class BaseException(HTTPException):
+    def __init__(self, message, status, sub_code):
+        self.sub_code = sub_code
+        self.message = message 
+        self.status = status
+        response = self.to_dict()
+        HTTPException.__init__(self, message, response)
+    
     def to_dict(self):
-        rv = dict(self.payload or ())
-        rv["message"] = self.message
-        return rv, self.status_code
-
+        return {
+            "message": self.message,
+            "status": self.status,
+            "sub_code": self.sub_code,
+        }, self.status
+        
 
 class NotFound(BaseException):
     def __init__(self, sub_code, message=None):
         sub_code = sub_code if sub_code else "NOT_FOUND"
         if message is None:
             message = error_messages[sub_code]
-        payload = {"sub_code": sub_code}
-        BaseException.__init__(self, message, 404, payload)
+        BaseException.__init__(self, message, 404, sub_code)
 
 
 class Unauthorized(BaseException):
@@ -31,8 +32,7 @@ class Unauthorized(BaseException):
         sub_code = sub_code if sub_code else "UNAUTHORIZED"
         if message is None:
             message = error_messages[sub_code]
-        payload = {"sub_code": sub_code}
-        BaseException.__init__(self, message, 401, payload)
+        BaseException.__init__(self, message, 401, sub_code)
 
 
 class BadRequest(BaseException):
@@ -40,8 +40,7 @@ class BadRequest(BaseException):
         sub_code = sub_code if sub_code else "BAD_REQUEST"
         if message is None:
             message = error_messages[sub_code]
-        payload = {"sub_code": sub_code}
-        BaseException.__init__(self, message, 400, payload)
+        BaseException.__init__(self, message, 400, sub_code)
 
 
 class Conflict(BaseException):
@@ -49,8 +48,7 @@ class Conflict(BaseException):
         sub_code = sub_code if sub_code else "CONFLICT"
         if message is None:
             message = error_messages[sub_code]
-        payload = {"sub_code": sub_code}
-        BaseException.__init__(self, message, 409, payload)
+        BaseException.__init__(self, message, 409, sub_code)
 
 
 class InternalServerError(BaseException):
@@ -58,17 +56,14 @@ class InternalServerError(BaseException):
         sub_code = sub_code if sub_code else "INTERNAL_SERVER_ERROR"
         if message is None:
             message = error_messages[sub_code]
-        payload = {"sub_code": sub_code}
-        BaseException.__init__(self, message, 500, payload)
-
+        BaseException.__init__(self, message, 500, sub_code)
 
 class Forbidden(BaseException):
     def __init__(self, sub_code, message=None):
         sub_code = sub_code if sub_code else "FORBIDDEN"
         if message is None:
             message = error_messages[sub_code]
-        payload = {"sub_code": sub_code}
-        BaseException.__init__(self, message, 403, payload)
+        BaseException.__init__(self, message, 403, sub_code)
 
 
 class Unauthorized(BaseException):
@@ -76,5 +71,4 @@ class Unauthorized(BaseException):
         sub_code = sub_code if sub_code else "UNAUTHORIZED"
         if message is None:
             message = error_messages[sub_code]
-        payload = {"sub_code": sub_code}
-        BaseException.__init__(self, message, 401, payload)
+        BaseException.__init__(self, message, 401, sub_code)

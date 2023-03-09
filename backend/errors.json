@@ -1,5 +1,6 @@
 {
     "NOT_FOUND": "The requested resource was not found",
+    "CHALLENGE_NOT_FOUND": "The requested challenge was not found.",
     "FORBIDDEN": "The request is not allowed",
     "UNAUTHORIZED": "The request is not authorized",
     "BAD_REQUEST": "The request is invalid",

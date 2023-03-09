@@ -1,4 +1,4 @@
-from flask_restx import Resource
+from flask_restful import Resource
 from flask import request
 from backend.services.feature_service import FeatureService
 from backend.services.user_service import auth

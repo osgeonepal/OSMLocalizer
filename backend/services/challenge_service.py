@@ -3,8 +3,7 @@ import geojson
 import requests
 from geoalchemy2 import shape
 from shapely.geometry import box, Polygon, Point
-from werkzeug.exceptions import BadRequest, NotFound
-
+from backend.errors import BadRequest, NotFound
 
 from backend import db
 from backend.models.sql.enum import ChallengeStatus, TranslateEngine
@@ -95,9 +94,7 @@ class ChallengeService:
     def get_challenge_by_id(challenge_id) -> Challenge:
         challenge = Challenge.get_by_id(challenge_id)
         if not challenge:
-            error = NotFound(f"Challenge with id {challenge_id} not found")
-            error.data = {"sub_code": "challenge_not_found"}
-            raise error
+            raise NotFound("CHALLENGE_NOT_FOUND")
         return challenge
 
     @staticmethod

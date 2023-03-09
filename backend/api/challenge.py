@@ -5,13 +5,13 @@ from backend.services.challenge_service import ChallengeService
 from backend.models.dtos.challenge_dto import CreateChallengeDTO, UpdateChallengeDTO
 from backend.services.user_service import auth
 
-
 class Challenge(Resource):
     """Challenge resource"""
 
     def get(self, challenge_id: int):
         """Get challenge by id"""
-        return jsonify(ChallengeService.get_challenge_as_dto(challenge_id).dict())
+        challenge_dto = ChallengeService.get_challenge_as_dto(challenge_id)
+        return jsonify(challenge_dto.dict())
 
     def patch(self, challenge_id: int):
         """Update existing challenge"""
