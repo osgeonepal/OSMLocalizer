@@ -1,3 +1,6 @@
+import gevent
+gevent.monkey.patch_ssl()
+
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
