@@ -18,7 +18,7 @@ def create_app(config=EnvironmentConfig):
     app = Flask(__name__)
     app.config.from_object(config)
     db.init_app(app)
-    api = Api(app)
+    api = Api(app, prefix="/api")
     CORS(app)
 
     @app.route("/")
