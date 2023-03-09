@@ -1,5 +1,4 @@
 import React, { useState, useRef, useEffect, useLayoutEffect } from "react";
-import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import mapboxgl from "mapbox-gl";
 import bbox from "@turf/bbox";
@@ -127,7 +126,7 @@ const CreateChallenge = () => {
         map: newMap,
       });
     });
-  }, []);
+  }, [mapObject]);
 
   useLayoutEffect(() => {
     if (mapObject.map) {
@@ -156,7 +155,7 @@ const CreateChallenge = () => {
         mapObject.map.off("draw.delete", onDrawUpdate);
       }
     };
-  }, [mapObject]);
+  }, [mapObject, challenge]);
 
   const addDrawHandler = () => {
     mapObject.draw.changeMode("draw_polygon");
