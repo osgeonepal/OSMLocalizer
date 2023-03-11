@@ -4,6 +4,7 @@ import json
 
 from backend.models.sql.enum import FeatureStatus
 from backend.services.utills import timestamp, to_strftime
+from backend.errors import NotFound
 
 
 class Feature(db.Model):
@@ -89,9 +90,12 @@ class Feature(db.Model):
     @staticmethod
     def get_by_id(feature_id: int, challenge_id: int):
         """Get feature by id""" ""
-        return Feature.query.filter_by(
+        feature = Feature.query.filter_by(
             id=feature_id, challenge_id=challenge_id
         ).one_or_none()
+        if feature is None:
+            raise NotFound("FEATURE_NOT_FOUND")
+        return feature
 
     @staticmethod
     def create_from_dto(feature_dto: dict):

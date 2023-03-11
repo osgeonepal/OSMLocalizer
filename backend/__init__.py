@@ -13,6 +13,7 @@ osm = OAuth2Session(
     redirect_uri=EnvironmentConfig.OAUTH2_REDIRECT_URI,
 )
 
+
 def create_app(config=EnvironmentConfig):
     app = Flask(__name__)
     app.config.from_object(config)
@@ -38,7 +39,10 @@ def create_app(config=EnvironmentConfig):
         methods=["GET"],
     )
     api.add_resource(
-        FeatureRestAPI, "/challenge/<int:challenge_id>/feature/", methods=["POST"], endpoint="create_feature"
+        FeatureRestAPI,
+        "/challenge/<int:challenge_id>/feature/",
+        methods=["POST"],
+        endpoint="create_feature",
     )
     api.add_resource(
         FeaturesRandomAPI, "/challenge/<int:challenge_id>/features/random/"

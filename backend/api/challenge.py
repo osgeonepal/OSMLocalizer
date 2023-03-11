@@ -5,6 +5,7 @@ from backend.services.challenge_service import ChallengeService
 from backend.models.dtos.challenge_dto import CreateChallengeDTO, UpdateChallengeDTO
 from backend.services.user_service import auth
 
+
 class Challenge(Resource):
     """Challenge resource"""
 

@@ -148,20 +148,10 @@ class ChallengeService:
             # Get centroid of polygon
             centroid = polygon.centroid
         except Exception as e:
-            error = BadRequest()
-            error.data = {
-                "message": f"error making polygon: {e}",
-                "subcode": "invalid_request",
-            }
-            raise error
+            raise BadRequest(message=f"error making polygon: {e}")
 
         if not ChallengeService.validate_bbox_area(polygon):
-            error = BadRequest()
-            error.data = {
-                "message": "challenge bbox area exceeds maximum allowed",
-                "subcode": "invalid_request",
-            }
-            raise error
+            raise BadRequest(message="Challenge bbox area exceeds maximum allowed")
         return polygon, centroid
 
     @staticmethod
