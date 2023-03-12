@@ -2,6 +2,8 @@
     "NOT_FOUND": "The requested resource was not found",
     "CHALLENGE_NOT_FOUND": "The requested challenge was not found.",
     "FEATURE_NOT_FOUND": "The requested feature was not found.",
+    "USER_NOT_FOUND": "The requested user was not found.",
+    "NO_TRANSLATE_ENGINE": "No translation engine is set for the challenge.",
     "FORBIDDEN": "The request is not allowed",
     "UNAUTHORIZED": "The request is not authorized",
     "BAD_REQUEST": "The request is invalid",

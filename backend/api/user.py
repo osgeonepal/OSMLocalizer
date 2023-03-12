@@ -3,6 +3,7 @@ from flask_restful import Resource
 
 from backend import osm, EnvironmentConfig
 from backend.services.user_service import UserService
+from backend.errors import NotFound
 
 
 class UserAuthorizationUrlAPI(Resource):
@@ -28,6 +29,5 @@ class UserTokenAPI(Resource):
         user_info = osm.get(EnvironmentConfig.OAUTH2_USER_INFO_URL).json()
 
         if user_info is None:
-            return {"error": "User not found"}, 404
-
+            raise NotFound("USER_NOT_FOUND")
         return UserService.login_user(user_info["user"], token["access_token"]).dict()

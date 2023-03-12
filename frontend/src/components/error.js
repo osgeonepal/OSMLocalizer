@@ -10,10 +10,15 @@ const errorMessages = {
     title: "Something went wrong",
     message: "We are sorry, something went wrong. Please try again later.",
   },
+  CHALLENGE_NOT_FOUND: {
+    title: "Challenge not found",
+    message: "We are sorry, the challenge you are looking for does not exist.",
+  },
 };
 
 const ShowError = ({ error, setError }) => {
   const navigate = useNavigate();
+  console.log(error);
   Object.keys(errorMessages).includes(error) || (error = "OTHER");
   const { title, message } = errorMessages[error];
   return (

@@ -1,6 +1,7 @@
 import requests
 
 from backend.models.sql.enum import TranslateEngine
+from backend.errors import NotFound, BadRequest
 
 
 class TranslateService:
@@ -46,18 +47,18 @@ class TranslateService:
         return response.json()[0]["translations"][0]["text"]
 
     @staticmethod
-    def translate_text(text, language, api, api_key):
+    def translate_text(text, language, engine, api_key):
         """Translate text from api"""
         try:
-            if api == TranslateEngine.GOOGLE.value:
+            if engine == TranslateEngine.GOOGLE.value:
                 return TranslateService.translate_from_google(text, language, api_key)
-            elif api == TranslateEngine.YANDEX.value:
+            elif engine == TranslateEngine.YANDEX.value:
                 return TranslateService.translate_from_yandex(text, language, api_key)
-            elif api == TranslateEngine.MICROSOFT.value:
+            elif engine == TranslateEngine.MICROSOFT.value:
                 return TranslateService.translate_from_microsoft(
                     text, language, api_key
                 )
             else:
-                raise Exception("Unknown API")
+                raise NotFound("NO_TRANSLATE_ENGINE")
         except Exception as e:
-            raise Exception(f"Error translating text: {e}")
+            raise BadRequest(message=f"Error translating text: {e}")

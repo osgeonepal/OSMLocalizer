@@ -119,7 +119,9 @@ class ChallengeService:
         """Get all challenges by status"""
         challenges = Challenge.get_all_by_status(status)
         return ChallengeListDTO(
-            challenges=[ChallengeDTO.from_orm(challenge) for challenge in challenges]
+            challenges=[
+                challenge.as_dto_for_summary(stats=True) for challenge in challenges
+            ]
         )
 
     @staticmethod

@@ -3,6 +3,7 @@ from flask import jsonify
 
 from backend.services.challenge_service import ChallengeService
 from backend.models.dtos.challenge_dto import CreateChallengeDTO, UpdateChallengeDTO
+from backend.models.sql.enum import ChallengeStatus
 from backend.services.user_service import auth
 
 
@@ -40,4 +41,8 @@ class ChallengeList(Resource):
 
     def get(self):
         """Get all challenges"""
-        return jsonify(ChallengeService.get_all_challenges().dict())
+        return jsonify(
+            ChallengeService.get_all_challenges_by_status(
+                ChallengeStatus.PUBLISHED.value
+            ).dict()
+        )
