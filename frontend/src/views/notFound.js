@@ -3,7 +3,10 @@ import notFound from "../assets/icons/notFound.jpg";
 export const Notfound = () => {
   return (
     <div style={{ height: "90vh" }}>
-      <div className="d-flex justify-content-center" style={{ height: "80%" }}>
+      <div
+        className="d-flex justify-content-center"
+        style={{ height: "80%", overflowX: "hidden" }}
+      >
         <img src={notFound} alt="notFound" />
       </div>
       <div className="title d-flex align-items-center flex-column">
