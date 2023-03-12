@@ -31,7 +31,7 @@ services:
     restart: always
     env_file: ${ENV_FILE:-localizer.env}
     ports:
-      - "5434:5432"
+      - "5535:5432"
     volumes:
       - db_data:/var/lib/postgresql/data
   

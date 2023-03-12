@@ -1,0 +1,60 @@
+version: 2.1
+
+jobs:
+  build-and-deploy:
+    # Use the Docker executor to run Docker commands
+    docker:
+      - image: docker:20.10.12
+    # Specify the steps to build and deploy the app
+    steps:
+      # Check out the code from GitHub
+      - checkout
+      # Install Docker Compose
+      - run:
+          name: Install curl
+          command: apk add --no-cache curl
+
+      - setup_remote_docker
+
+      # This should go into custom primary image, here's only for the sake of explanation
+      - run:
+          name: Install Docker client
+          command: |
+            set -x
+            VER="17.03.0-ce"
+            curl -L -o /tmp/docker-$VER.tgz https://get.docker.com/builds/Linux/x86_64/docker-$VER.tgz
+            tar -xz -C /tmp -f /tmp/docker-$VER.tgz
+            mv /tmp/docker/* /usr/bin
+      # This should go into custom primary image, here's only for the sake of explanation
+      - run:
+          name: Install Docker Compose
+          command: |
+            set -x
+            curl -L https://github.com/docker/compose/releases/download/1.11.2/docker-compose-`uname -s`-`uname -m` > /usr/local/bin/docker-compose
+            chmod +x /usr/local/bin/docker-compose
+      - run:
+          name: Checkout code
+          command: |
+            ssh -oStrictHostKeyChecking=no -v circleci@159.89.163.215 "cd OSMLocalizer && git checkout circleci-project-setup  && git pull origin circleci-project-setup"
+      # Build the Docker image on the DigitalOcean droplet
+      - run:
+          name: Build Docker image
+          command: |
+            ssh -oStrictHostKeyChecking=no -v circleci@159.89.163.215 "cd OSMLocalizer && docker build -t localizer-backend:latest ."
+      # SSH into the DigitalOcean droplet and deploy the app using Docker Compose
+      - run:
+          name: Deploy app
+          command: |
+            ssh -oStrictHostKeyChecking=no -v circleci@159.89.163.215 "cd OSMLocalizer && docker-compose down && docker-compose up -d"
+
+
+# Run jobs from above in configurable sequences called workflows
+workflows:
+  version: 2
+  # Workflow name
+  build-deploy:
+    jobs:
+      - build-and-deploy:
+          filters:
+            branches:
+              only: circleci-project-setup
