@@ -367,7 +367,7 @@ summary = "The comprehensive WSGI web application library."
 
 [metadata]
 lock_version = "4.1"
-content_hash = "sha256:3a2c22819377d47e97b7d48cee6e627fca845797450f77fd80a54b8cf0ecd835"
+content_hash = "sha256:f5d1cf6d99306fa994c6fd153bcd888c351aac663c0a0cd308961c0e82859ce4"
 
 [metadata.files]
 "alembic 1.8.1" = [

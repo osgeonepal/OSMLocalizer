@@ -1,4 +1,4 @@
-from flask_restx import Resource
+from flask_restful import Resource
 from flask import jsonify
 
 from backend.services.challenge_service import ChallengeService
