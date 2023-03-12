@@ -42,7 +42,7 @@ const removeUserFromStore = () => {
 
 const createLoginWindow = (dispatch, redirectTo) => {
   const popup = createPopup("Login", "");
-  const url = "/auth/url/";
+  const url = "auth/url/";
   fetchLocalJSONAPI(url, "GET")
     .then((response) => {
       popup.location = response.url;
@@ -50,7 +50,7 @@ const createLoginWindow = (dispatch, redirectTo) => {
       window.authComplete = (code, state) => {
         if (response.state === state) {
           popup.close();
-          const url = "/auth/token/?code=" + code;
+          const url = "auth/token/?code=" + code;
           fetchLocalJSONAPI(url, "GET").then((response) => {
             setUserToStore(response);
             dispatch(authActions.login(response));

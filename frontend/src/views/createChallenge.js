@@ -1,5 +1,4 @@
 import React, { useState, useRef, useEffect, useLayoutEffect } from "react";
-import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import mapboxgl from "mapbox-gl";
 import bbox from "@turf/bbox";
@@ -123,11 +122,19 @@ const CreateChallenge = () => {
     }).addControl(new mapboxgl.NavigationControl(), "top-right");
     newMap.on("load", () => {
       setMapObject({
-        ...mapObject,
+        draw: mapObject.draw,
         map: newMap,
       });
     });
-  }, []);
+  }, [mapObject.draw]);
+
+  const updateBBBOX = (polygon) => {
+    // Calculate area in square kilometers
+    const bboxPolygon = bbox(polygon);
+    const areaPolygon = Math.floor(Area(polygon) / 1000000);
+    setBboxArea(areaPolygon);
+    setChallenge({ ...challenge, bbox: bboxPolygon });
+  };
 
   useLayoutEffect(() => {
     if (mapObject.map) {
@@ -141,11 +148,7 @@ const CreateChallenge = () => {
       const data = mapObject.draw.getAll();
       if (data.features.length > 0) {
         const polygon = data.features[0];
-        const bboxPolygon = bbox(polygon);
-        // Calculate area in square kilometers
-        const areaPolygon = Math.floor(Area(polygon) / 1000000);
-        setBboxArea(areaPolygon);
-        setChallenge({ ...challenge, bbox: bboxPolygon });
+        updateBBBOX(polygon);
       }
     }
 
@@ -156,6 +159,7 @@ const CreateChallenge = () => {
         mapObject.map.off("draw.delete", onDrawUpdate);
       }
     };
+    // eslint-disable-next-line
   }, [mapObject]);
 
   const addDrawHandler = () => {

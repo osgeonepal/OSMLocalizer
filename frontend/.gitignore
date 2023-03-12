@@ -24,4 +24,4 @@ yarn-debug.log*
 yarn-error.log*
 
 # To be removed in future
-*config.js
+*config_test.js

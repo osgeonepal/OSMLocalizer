@@ -1,4 +1,4 @@
-const API_URL = "http://localhost:5000";
+import { API_BASE_URL } from "../config";
 
 export async function handleErrors(response) {
   if (response.ok) {
@@ -21,7 +21,7 @@ export function fetchLocalJSONAPI(
   method = "GET",
   language = "en"
 ) {
-  const url = new URL(endpoint, API_URL);
+  const url = new URL(endpoint, API_BASE_URL);
   let headers = {
     "Content-Type": "application/json",
     "Accept-Language": language.replace("-", "_"),
@@ -46,7 +46,7 @@ export function pushToLocalJSONAPI(
   method = "POST",
   language = "en"
 ) {
-  const url = new URL(endpoint, API_URL);
+  const url = new URL(endpoint, API_BASE_URL);
   const headers = {
     "Content-Type": "application/json",
     "Accept-Language": language.replace("-", "_"),
