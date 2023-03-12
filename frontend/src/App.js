@@ -14,15 +14,7 @@ import { LoggedInRoute } from "./views/privateRoute";
 import ManagementSection from "./views/managementRoute";
 import AboutView from "./views/about";
 import CreateChallenge from "./views/createChallenge";
-
-const BasicLayout = () => {
-  return (
-    <>
-      <Header />
-      <div className="container"></div>
-    </>
-  );
-};
+import { Notfound } from "./views/notFound";
 
 function App() {
   useEffect(() => {
@@ -31,10 +23,9 @@ function App() {
 
   return (
     <BrowserRouter>
-      <Header path="/*" />
+      <Header />
       <div className="container App">
         <Routes>
-          <Route path="/*" element={<BasicLayout />} />
           <Route path="/" element={<ChallengesView />} />
           <Route path="/challenges" element={<ChallengesView />} />
           <Route path="/manage" element={<ManagementSection />}>
@@ -53,9 +44,10 @@ function App() {
           />
           <Route path="/authorized" element={<AuthorizedView />} />
           <Route path="/login" element={<LoginView />} />
+          <Route path="*" element={<Notfound />} />
         </Routes>
       </div>
-      <Footer path="/*" />
+      <Footer />
     </BrowserRouter>
   );
 }
