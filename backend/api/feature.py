@@ -1,4 +1,4 @@
-from flask_restx import Resource
+from flask_restful import Resource
 from flask import request
 from backend.services.feature_service import FeatureService
 from backend.services.user_service import auth
@@ -16,13 +16,10 @@ class FeatureRestAPI(Resource):
         current_user = auth.current_user()
         nearby = request.args.get("nearby")
         FeatureService.reset_expired_tasks(challenge_id)
-        try:
-            feature = FeatureService.get_feature_to_localize(
-                feature_id, challenge_id, current_user, nearby
-            )
-            return feature
-        except NotFound as e:
-            e.to_dict()
+        feature = FeatureService.get_feature_to_localize(
+            feature_id, challenge_id, current_user, nearby
+        )
+        return feature
 
     @auth.login_required
     def post(self, challenge_id: int):
@@ -40,8 +37,4 @@ class FeaturesRandomAPI(Resource):
         nearby = request.args.get("nearby")
         current_user = auth.current_user()
         FeatureService.reset_expired_tasks(challenge_id)
-        try:
-            feature = FeatureService.get_random_task(challenge_id, current_user, nearby)
-            return feature
-        except NotFound as e:
-            return e.to_dict()
+        return FeatureService.get_random_task(challenge_id, current_user, nearby)

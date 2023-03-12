@@ -3,8 +3,7 @@ import geojson
 import requests
 from geoalchemy2 import shape
 from shapely.geometry import box, Polygon, Point
-from werkzeug.exceptions import BadRequest, NotFound
-
+from backend.errors import BadRequest, NotFound
 
 from backend import db
 from backend.models.sql.enum import ChallengeStatus, TranslateEngine
@@ -95,9 +94,7 @@ class ChallengeService:
     def get_challenge_by_id(challenge_id) -> Challenge:
         challenge = Challenge.get_by_id(challenge_id)
         if not challenge:
-            error = NotFound(f"Challenge with id {challenge_id} not found")
-            error.data = {"sub_code": "challenge_not_found"}
-            raise error
+            raise NotFound("CHALLENGE_NOT_FOUND")
         return challenge
 
     @staticmethod
@@ -122,7 +119,9 @@ class ChallengeService:
         """Get all challenges by status"""
         challenges = Challenge.get_all_by_status(status)
         return ChallengeListDTO(
-            challenges=[ChallengeDTO.from_orm(challenge) for challenge in challenges]
+            challenges=[
+                challenge.as_dto_for_summary(stats=True) for challenge in challenges
+            ]
         )
 
     @staticmethod
@@ -151,20 +150,10 @@ class ChallengeService:
             # Get centroid of polygon
             centroid = polygon.centroid
         except Exception as e:
-            error = BadRequest()
-            error.data = {
-                "message": f"error making polygon: {e}",
-                "subcode": "invalid_request",
-            }
-            raise error
+            raise BadRequest(message=f"error making polygon: {e}")
 
         if not ChallengeService.validate_bbox_area(polygon):
-            error = BadRequest()
-            error.data = {
-                "message": "challenge bbox area exceeds maximum allowed",
-                "subcode": "invalid_request",
-            }
-            raise error
+            raise BadRequest(message="Challenge bbox area exceeds maximum allowed")
         return polygon, centroid
 
     @staticmethod

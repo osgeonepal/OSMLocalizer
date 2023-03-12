@@ -3,6 +3,7 @@ from flask import jsonify
 
 from backend.services.challenge_service import ChallengeService
 from backend.models.dtos.challenge_dto import CreateChallengeDTO, UpdateChallengeDTO
+from backend.models.sql.enum import ChallengeStatus
 from backend.services.user_service import auth
 
 
@@ -11,7 +12,8 @@ class Challenge(Resource):
 
     def get(self, challenge_id: int):
         """Get challenge by id"""
-        return jsonify(ChallengeService.get_challenge_as_dto(challenge_id).dict())
+        challenge_dto = ChallengeService.get_challenge_as_dto(challenge_id)
+        return jsonify(challenge_dto.dict())
 
     def patch(self, challenge_id: int):
         """Update existing challenge"""
@@ -39,4 +41,8 @@ class ChallengeList(Resource):
 
     def get(self):
         """Get all challenges"""
-        return jsonify(ChallengeService.get_all_challenges().dict())
+        return jsonify(
+            ChallengeService.get_all_challenges_by_status(
+                ChallengeStatus.PUBLISHED.value
+            ).dict()
+        )

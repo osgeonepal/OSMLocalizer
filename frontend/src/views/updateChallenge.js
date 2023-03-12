@@ -1,14 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
-// import { Form } from "react-final-form";
 
 import { FormTabs } from "../components/challengeEdit/formTabs";
-// import { MetadataForm } from "../components/challengeEdit/challengeMetadata";
 import { MetadataForm } from "../components/challengeCreate/setChallengeMetdata";
 // import { TasksForm } from "../components/challengeEdit/challengeTasks";
 import { TranslationForm } from "../components/challengeCreate/setChallengeTranslate";
 import { fetchLocalJSONAPI, pushToLocalJSONAPI } from "../utills/fetch";
+import ShowError from "../components/error";
 
 const renderForm = (option, challengeInfo, setChallengeInfo) => {
   switch (option) {
@@ -43,11 +42,16 @@ const UpdateChallengeView = () => {
   const { id } = useParams();
   const [challengeInfo, setChallengeInfo] = useState({});
   const jwt_token = useSelector((state) => state.auth.jwtToken);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    fetchLocalJSONAPI(`challenge/${id}/`).then((data) => {
-      setChallengeInfo(data);
-    });
+    fetchLocalJSONAPI(`challenge/${id}/`)
+      .then((data) => {
+        setChallengeInfo(data);
+      })
+      .catch((error) => {
+        setError(error.message);
+      });
   }, [id]);
 
   const onSubmit = (values) => {
@@ -77,6 +81,7 @@ const UpdateChallengeView = () => {
       <div className="col-6 justify-content-right">
         <form>{renderForm(option, challengeInfo, setChallengeInfo)}</form>
       </div>
+      {error && <ShowError error={error} setError={setError} />}
     </div>
   );
 };

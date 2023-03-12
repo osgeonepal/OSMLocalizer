@@ -50,8 +50,6 @@ class FeatureService:
         feature = FeatureService.get_by_id(feature_id, challenge_id)
         if feature.status != FeatureStatus.TO_LOCALIZE.value:
             feature = Feature.get_random_task(challenge_id)
-        if not feature:
-            raise NotFound("No feature to localize")
         feature.lock_to_localize(user_id)
         if nearby:
             nearby_feature = Feature.get_nearby(feature.id, feature.challenge_id)

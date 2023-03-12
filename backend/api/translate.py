@@ -1,5 +1,5 @@
 from flask import request
-from flask_restx import Resource
+from flask_restful import Resource
 
 from backend.services.translate_service import TranslateService
 from backend.services.challenge_service import ChallengeService

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { osmAuth } from "osm-auth";
 import { useSelector } from "react-redux";
-
+import ShowError from "../error";
 import {
   fetchExternalJSONAPI,
   fetchLocalJSONAPI,
@@ -27,6 +27,7 @@ export default function TagEditor({
   const [feature, setFeature] = useState();
   const osm_token = useSelector((state) => state.auth.osmToken);
   const jwt_token = useSelector((state) => state.auth.jwtToken);
+  const [error, setError] = useState();
 
   const options = {
     url: "https://www.openstreetmap.org",
@@ -52,10 +53,14 @@ export default function TagEditor({
     fetchLocalJSONAPI(
       `challenge/${challenge_id}/features/random/?nearby=true`,
       jwt_token
-    ).then((data) => {
-      setFeature(data);
-      setLoading(false);
-    });
+    )
+      .then((data) => {
+        setFeature(data);
+        setLoading(false);
+      })
+      .catch((error) => {
+        setError(error.message);
+      });
   }, [challenge_id, jwt_token]);
 
   useEffect(() => {
@@ -151,6 +156,7 @@ export default function TagEditor({
           </div>
         </div>
       )}
+      {error && <ShowError error={error} setError={setError} />}
     </div>
   );
 }
