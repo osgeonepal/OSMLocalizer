@@ -1,4 +1,5 @@
 ## OSM Localizer
+[![pdm-managed](https://img.shields.io/badge/pdm-managed-blueviolet)](https://pdm.fming.dev)
 [![Netlify Status](https://api.netlify.com/api/v1/badges/c35f420b-b996-4e61-a59a-1875ebbf2f21/deploy-status)](https://app.netlify.com/sites/osmlocalizer/deploys)
 
 *One tool to localize them all.*
