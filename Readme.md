@@ -1,4 +1,6 @@
 ## OSM Localizer
+[![Netlify Status](https://api.netlify.com/api/v1/badges/c35f420b-b996-4e61-a59a-1875ebbf2f21/deploy-status)](https://app.netlify.com/sites/osmlocalizer/deploys)
+
 *One tool to localize them all.*
 
 OSMLocalizer is a web-based app that allows users to localize elements in OpenStreetMap. Challenge creators can draw an area on the map and provide an Overpass query to create a challenge. Users can then select a challenge to work on and will be provided a random element from the challenge area. They can make changes and upload their changes directly to OSM from the tool.
