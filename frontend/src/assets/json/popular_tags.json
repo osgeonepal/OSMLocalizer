@@ -1,0 +1,76 @@
+    {
+        "place": [
+            "*",
+            "sea",
+            "city",
+            "town",
+            "village",
+            "suburb",
+            "locality",
+            "neighbourhood"
+        ],
+        "amenity": [
+            "*",
+            "hospital",
+            "school",
+            "college",
+            "kindergarten",
+            "university",
+            "police",
+            "fuel",
+            "bank",
+            "embassy",
+            "apartment",
+            "cinema",
+            "atm",
+            "restaurant",
+            "health_post",
+            "clinic",
+            "place_of_worship",
+            "pharmacy",
+            "cafe",
+            "fast_food"
+        ],
+        "highway": [
+            "*",
+            "bus_stop",
+            "service",
+            "cycleway",
+            "path",
+            "footway",
+            "steps",
+            "bridleway",
+            "motorway_link",
+            "primary_link",
+            "trunk_link",
+            "secondary_link",
+            "tertiary_link",
+            "residential",
+            "track",
+            "unclassified",
+            "tertiary",
+            "secondary",
+            "primary",
+            "living_street",
+            "trunk",
+            "motorway",
+            "pedestrian",
+            "road",
+            "construction"
+        ],
+        "shop": [
+            "*",
+            "supermarket",
+            "mall",
+            "department_store"
+        ],
+        "office": [
+            "*",
+            "government"
+        ],
+        "tourism": [
+            "*",
+            "hotel",
+            "museum"
+        ]
+    }
