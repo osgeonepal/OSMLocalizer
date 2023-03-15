@@ -41,6 +41,16 @@ class Overpass:
         return feature
 
     @staticmethod
+    def ways_to_features(way: overpy.Way, feature_id) -> Feature:
+        feature = Feature()
+        feature.id = way.id
+        feature.osm_type = "way"
+        feature.status = FeatureStatus.TO_LOCALIZE.value
+        geometry = Overpass.coordinates_to_point(float(way.center_lon), float(way.center_lat))
+        feature.geometry = f"SRID=4326;{geometry.wkt}"
+        return feature
+
+    @staticmethod
     def coordinates_to_point(lon: float, lat: float) -> Point:
         shapely_point = Point(lon, lat)
         geometry = shape.from_shape(shapely_point, 4326)

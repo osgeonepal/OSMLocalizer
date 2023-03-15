@@ -3,6 +3,11 @@ import popularTags from "../../assets/json/popular_tags.json";
 
 export const ElementButtons = ({ onChange }) => {
   const [selectedTag, setSelectedTag] = useState();
+  const [customTag, setCustomTag] = useState();
+
+  const onCustomTagChange = (e) => {
+    setCustomTag(e.target.value);
+  };
 
   const onTagClick = (tag) => {
     setSelectedTag(tag);
@@ -14,18 +19,18 @@ export const ElementButtons = ({ onChange }) => {
         <div>
           <div>
             <button
-              className="btn btn-sm btn-success me-2 mb-2"
+              className="btn btn-sm btn-primary me-2 mb-2"
               onClick={() => {
                 setSelectedTag(null);
               }}
             >
-              <i className="fa fa-arrow-left me-2" style={{fontSize: "0.6rem"}}></i>
+              <i className="fa fa-arrow-left me-2" style={{ fontSize: "0.6rem" }}></i>
               {selectedTag}
             </button>
           </div>
           {popularTags[selectedTag].map((sub_tag) => (
             <button
-              className="btn btn-sm btn-outline-primary me-2 mb-2"
+              className="btn btn-sm btn-outline-success me-2 mb-2"
               onClick={() => {
                 onChange({
                   target: {
@@ -44,17 +49,31 @@ export const ElementButtons = ({ onChange }) => {
         <div>
           {Object.keys(popularTags).map((tag) => (
             <button
-              className="btn btn-sm btn-outline-success me-2 mb-2"
+              className="btn btn-sm btn-outline-primary me-2 mb-2"
               onClick={() => onTagClick(tag)}
             >
               {tag}
             </button>
           ))}
           <input
-            className="btn btn-sm btn-outline-success me-2 mb-2 bg-transparent text-dark"
+            className="btn btn-sm btn-outline-primary mb-2 bg-white text-dark rounded-end-0"
             type="text"
-            placeholder="Add custom tag"
+            placeholder="Add tag in key=value format"
+            onChange={onCustomTagChange}
           />
+          <button
+            className="btn btn-sm btn-primary me-2 mb-2 rounded-start-0"
+            onClick={() => {
+              onChange({
+                target: {
+                  name: "overpass_query",
+                  value: `(node[${customTag}]({{bbox}}));out;`,
+                },
+              });
+            }}
+          >
+            <i className="fa fa-plus"></i>
+          </button>
         </div>
       )}
     </div>
