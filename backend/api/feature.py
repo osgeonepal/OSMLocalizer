@@ -2,7 +2,6 @@ from flask_restful import Resource
 from flask import request
 from backend.services.feature_service import FeatureService
 from backend.services.user_service import auth
-from backend.errors import NotFound
 
 
 class FeaturesAllAPI(Resource):
@@ -14,10 +13,9 @@ class FeatureRestAPI(Resource):
     @auth.login_required
     def get(self, challenge_id: int, feature_id: int):
         current_user = auth.current_user()
-        nearby = request.args.get("nearby")
         FeatureService.reset_expired_tasks(challenge_id)
         feature = FeatureService.get_feature_to_localize(
-            feature_id, challenge_id, current_user, nearby
+            feature_id, challenge_id, current_user
         )
         return feature
 
@@ -31,10 +29,10 @@ class FeatureRestAPI(Resource):
         )
 
 
-class FeaturesRandomAPI(Resource):
+class GetFeatureToLocalizeAPI(Resource):
     @auth.login_required
     def get(self, challenge_id: int):
-        nearby = request.args.get("nearby")
         current_user = auth.current_user()
+        lastFeature = request.args.get("lastFeature")
         FeatureService.reset_expired_tasks(challenge_id)
-        return FeatureService.get_random_task(challenge_id, current_user, nearby)
+        return FeatureService.get_random_task(challenge_id, current_user, lastFeature)

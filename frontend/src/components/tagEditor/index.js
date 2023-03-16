@@ -40,10 +40,10 @@ export default function TagEditor({
   var auth = osmAuth(options);
 
   const getFeature = async () => {
-    const url =
-      feature && feature.nearby.id
-        ? `challenge/${challenge_id}/feature/${feature.nearby.id}/?nearby=${nearbyTask}`
-        : `challenge/${challenge_id}/features/random/?nearby=${nearbyTask}`;
+    let url = `challenge/${challenge_id}/feature/get-feature-to-localize/`;
+    if (nearbyTask && feature) {
+      url = url + `?lastFeature=${feature.feature.properties.id}`;
+    }
     const data = await fetchLocalJSONAPI(url, jwt_token);
     setFeature(data);
   };
@@ -51,7 +51,7 @@ export default function TagEditor({
   useEffect(() => {
     setLoading(true);
     fetchLocalJSONAPI(
-      `challenge/${challenge_id}/features/random/?nearby=true`,
+      `challenge/${challenge_id}/feature/get-feature-to-localize/`,
       jwt_token
     )
       .then((data) => {

@@ -26,7 +26,11 @@ def create_app(config=EnvironmentConfig):
         return {"system": "healthy"}, 200
 
     from backend.api.challenge import Challenge, ChallengeList
-    from backend.api.feature import FeatureRestAPI, FeaturesAllAPI, FeaturesRandomAPI
+    from backend.api.feature import (
+        FeatureRestAPI,
+        FeaturesAllAPI,
+        GetFeatureToLocalizeAPI,
+    )
     from backend.api.user import UserAuthorizationUrlAPI, UserTokenAPI
     from backend.api.translate import TranslateTextAPI
 
@@ -45,7 +49,8 @@ def create_app(config=EnvironmentConfig):
         endpoint="create_feature",
     )
     api.add_resource(
-        FeaturesRandomAPI, "/challenge/<int:challenge_id>/features/random/"
+        GetFeatureToLocalizeAPI,
+        "/challenge/<int:challenge_id>/feature/get-feature-to-localize/",
     )
     api.add_resource(UserAuthorizationUrlAPI, "/auth/url/")
     api.add_resource(UserTokenAPI, "/auth/token/")
