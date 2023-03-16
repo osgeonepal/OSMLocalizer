@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { DEFAULT_CHANGESET_COMMENT } from "../../config";
 import { useSelector } from "react-redux";
 
+import userAvatar from "../../assets/icons/user_avatar.png";
+
 export const UploadSuccess = (props) => {
   return (
     <div className="alert alert-success position-fixed start-50 top-0 p-2 m-2">
@@ -28,7 +30,9 @@ const EditorHeader = (props) => {
             <div className="row ">
               <div className="col-4">
                 <img
-                  src={user["picture_url"]}
+                  src={
+                    user.picture_url !== "null" ? user.picture_url : userAvatar
+                  }
                   alt={user["username"]}
                   className="img-fluid col-12"
                 />
