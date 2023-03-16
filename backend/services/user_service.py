@@ -17,7 +17,7 @@ def verify_token(token):
         data = jwt.decode(
             token, current_app.config["APP_SECRET_KEY"], algorithms=["HS256"]
         )
-    except:
+    except Exception:
         return False
     user_id = data.get("user_id")
     return user_id
@@ -47,7 +47,6 @@ class UserService:
     @staticmethod
     def login_user(osm_user, osm_token):
         """Create or update a user in the database."""
-        print(osm_token)
         user = User.get_by_id(osm_user["id"])
         if user is None:
             user = UserService.create_user_from_osm(osm_user)
@@ -65,7 +64,6 @@ class UserService:
         :param user_id: The id of the user.
         :return: A token string.
         """
-        print(current_app.config["APP_SECRET_KEY"])
         return jwt.encode(
             {"user_id": user_id, "exp": datetime.utcnow() + timedelta(days=7)},
             current_app.config["APP_SECRET_KEY"],

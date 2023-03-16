@@ -79,6 +79,7 @@ class Feature(db.Model):
         """Lock feature to localize"""
         self.status = FeatureStatus.LOCKED_TO_LOCALIZE.value
         self.locked_by = user_id
+        self.last_updated = timestamp()
         self.update()
 
     def lock_to_validate(self, user_id: int):
@@ -132,4 +133,6 @@ class Feature(db.Model):
             LIMIT 1;
         """
         ).fetchall()
-        return {"id": nearby[0][0], "distance": nearby[0][1]} if nearby else None
+        if nearby:
+            feature = Feature.get_by_id(nearby[0][0], challenge_id)
+        return feature
