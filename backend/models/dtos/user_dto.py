@@ -1,4 +1,5 @@
 from pydantic import BaseModel
+from typing import Optional
 
 
 class UserDTO(BaseModel):
@@ -7,7 +8,7 @@ class UserDTO(BaseModel):
     role: int
     level: int
     date_registered: str
-    picture_url: str
+    picture_url: Optional[str]
 
 
 class UserLoginDTO(BaseModel):
