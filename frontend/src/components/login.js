@@ -5,6 +5,7 @@ import { fetchLocalJSONAPI } from "../utills/fetch";
 import { setItem, removeItem } from "../utills/localStorage";
 import { useDispatch, useSelector } from "react-redux";
 import { authActions } from "../store/store";
+import userAvatar from "../assets/icons/user_avatar.png";
 
 const createPopup = (title = "Authentication", location) => {
   const width = 600;
@@ -71,7 +72,7 @@ const createLoginWindow = (dispatch, redirectTo) => {
 
 const UserMenu = ({ username, user_picture, dispatch }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-
+  const picture_url = user_picture !== "null" ? user_picture : userAvatar;
   const onClick = () => {
     setIsDropdownOpen(!isDropdownOpen);
   };
@@ -83,7 +84,7 @@ const UserMenu = ({ username, user_picture, dispatch }) => {
       <span className="dropdown-toggle">
         <img
           className="me-1"
-          src={user_picture}
+          src={picture_url}
           alt="img"
           style={{ width: "35px", height: "35px", borderRadius: "50%" }}
         />
@@ -110,7 +111,7 @@ const UserMenu = ({ username, user_picture, dispatch }) => {
       <span className="dropdown-toggle">
         <img
           className="me-1"
-          src={user_picture}
+          src={picture_url}
           alt="img"
           style={{ width: "35px", height: "35px", borderRadius: "50%" }}
         />
