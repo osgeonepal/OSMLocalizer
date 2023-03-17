@@ -8,3 +8,6 @@ export const DEFAULT_CHANGESET_COMMENT =
 export const API_BASE_URL = process.env.REACT_APP_API_BASE_URL
   ? new URL("/api/", process.env.REACT_APP_API_BASE_URL)
   : "http://127.0.0.1:5000/api/";
+
+export const SENTRY_FRONTEND_DSN = process.env.REACT_APP_SENTRY_FRONTEND_DSN;
+export const SENTRY_ENVIRONMENT = process.env.REACT_APP_SENTRY_ENVIRONMENT;
