@@ -3,6 +3,8 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 from flask_restful import Api
 from requests_oauthlib import OAuth2Session
+import sentry_sdk
+from sentry_sdk.integrations.flask import FlaskIntegration
 
 from backend.config import EnvironmentConfig
 
@@ -15,6 +17,18 @@ osm = OAuth2Session(
 
 
 def create_app(config=EnvironmentConfig):
+
+    if config.SENTRY_BACKEND_DSN:
+        sentry_sdk.init(
+            dsn=EnvironmentConfig.SENTRY_BACKEND_DSN,
+            environment=EnvironmentConfig.SENTRY_ENVIRONMENT,
+            integrations=[FlaskIntegration()],
+            traces_sample_rate=1.0,
+            _experiments={
+                "profiles_sample_rate": 1.0,
+            },
+        )
+
     app = Flask(__name__)
     app.config.from_object(config)
     db.init_app(app)

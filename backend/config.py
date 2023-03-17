@@ -44,3 +44,7 @@ class EnvironmentConfig:
     OAUTH2_USER_INFO_URL = os.getenv("OAUTH2_USER_INFO_URL", None)
 
     APP_SECRET_KEY = os.getenv("APP_SECRET_KEY", None)
+
+    # Sentry configuration
+    SENTRY_BACKEND_DSN = os.getenv("SENTRY_BACKEND_DSN", None)
+    SENTRY_ENVIRONMENT = os.getenv("SENTRY_ENVIRONMENT", "development")
