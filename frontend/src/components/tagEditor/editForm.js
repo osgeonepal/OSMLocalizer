@@ -5,21 +5,44 @@ import { useDetectClickOutside } from "react-detect-click-outside";
 import InputToolForm from "./inputToolForm";
 import TranslateComponent from "./translate";
 
-export const inputComponnent = (key, value) => {
+export const inputComponnent = (key, value, index, props, editTags) => {
   return (
-    <div className="input-group input-group-sm p-2" key={key}>
-      <span className="input-group-text sm" id={key}>
-        {key}
-      </span>
-      <Field
-        className="form-control form-control-sm"
-        name={key}
-        component="input"
-        initialValue={value ? value : ""}
-      />
+    <div className="d-flex" key={key}>
+      <div className="input-group input-group-sm p-2 flex-grow-1" >
+        <span className="input-group-text sm" id={key}>
+          {key}
+        </span>
+        <Field
+          className="form-control form-control-sm"
+          name={key}
+          component="input"
+          initialValue={value ? value : ""}
+        />
+      </div>
     </div>
   );
 };
+
+const range = (a, b, step)=>{
+    var A = [];
+    A[0] = a;
+    step = step || 1;
+    while(a+step <= b){
+        A[A.length]= a+= step;
+    }
+    return A
+}
+
+const ExchangeButton = ({topKey,buttomKey})=>{
+  return(
+      <span
+        className="btn btn-sm btn-light p-1 rounded"
+        onClick={(e) => { }}
+      >
+        <i className="fa fa-exchange fa-rotate-90"></i>
+      </span>
+  )
+}
 
 const SkipDropdown = (props) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -102,6 +125,8 @@ export function TagEditorForm(props) {
     return changedKeys;
   };
 
+  console.log(range(1, (editTags.length)-1, 1))
+
   const onSubmitChange = (values) => {
     async function updateElement() {
       const changedKeys = detectChange(values);
@@ -137,10 +162,27 @@ export function TagEditorForm(props) {
               form.reset(props.element["tags"]);
             }}
           >
-            <div className="border border-secondary-subtle p-2 m-2 rounded">
-              {editTags.map((key) => {
-                return inputComponnent(key, props.element["tags"][key]);
-              })}
+            <div className="border border-secondary-subtle p-2 m-2 rounded d-flex">
+              <div className="flex-grow-1">
+                {editTags.map((tag, index) => {
+                  return inputComponnent(
+                    tag,
+                    props.element["tags"][tag],
+                    index,
+                    props,
+                    editTags
+                  );
+                })}
+              </div>
+              {/* Add button between two input fields to exchange value between them */}
+              <div className="d-flex justify-content-evenly flex-column">
+                {range(1, (editTags.length)-1, 1).map((index)=>{
+                  return(
+                    <ExchangeButton topKey={editTags[index-1]} buttomKey={editTags[index]} key={index} />
+                  )
+                })
+                }
+              </div>
             </div>
             <div className="border border-secondary-subtle rounded overflow-y-auto m-2 mb-1">
               {props.translateEngine ? (
