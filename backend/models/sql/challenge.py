@@ -1,5 +1,5 @@
 from backend import db
-from datetime import datetime, timedelta
+from datetime import timedelta
 from sqlalchemy.dialects.postgresql import ARRAY
 from geoalchemy2 import Geometry
 from flask import json
@@ -11,7 +11,7 @@ from backend.models.dtos.challenge_dto import (
     ChallengeSummaryDTO,
     ChallengeStatsDTO,
 )
-from backend.services.utills import get_last_updated, to_strfdate
+from backend.services.utills import get_last_updated, to_strfdate, timestamp
 
 
 class Challenge(db.Model):
@@ -31,10 +31,10 @@ class Challenge(db.Model):
     language_tags = db.Column(ARRAY(db.String), nullable=False)
 
     due_date = db.Column(
-        db.DateTime, nullable=False, default=datetime.utcnow() + timedelta(days=30)
+        db.DateTime, nullable=False, default=timestamp() + timedelta(days=30)
     )
-    created = db.Column(db.DateTime, default=datetime.utcnow())
-    last_updated = db.Column(db.DateTime, default=datetime.utcnow())
+    created = db.Column(db.DateTime, default=timestamp())
+    last_updated = db.Column(db.DateTime, default=timestamp())
     features = db.relationship(
         Feature,
         backref="challenge",
@@ -99,7 +99,7 @@ class Challenge(db.Model):
             description=self.description,
             country=self.country,
             to_language=self.to_language,
-            due_date=(self.due_date - datetime.utcnow()).days,
+            due_date=(self.due_date - timestamp()).days,
             last_updated=get_last_updated(self.last_updated),
             created=to_strfdate(self.created),
         )
