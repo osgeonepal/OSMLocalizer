@@ -18,6 +18,7 @@ const ProgressBar = (props) => {
         place="top"
         className={`bg-${props.color}`}
         effect="solid"
+        style={{ fontSize: "0.8rem" }}
         id={props.label}
       />
     </>
@@ -25,15 +26,38 @@ const ProgressBar = (props) => {
 };
 
 export const ChallengeProgress = (props) => {
+  const stats = props.challenge.stats;
+
+  const getPercentage = (value) => {
+    return Math.round((value / stats.total) * 100, 2);
+  };
+
   const featureStatuses = {
-    localized: { color: "primary text-white", label: "Localized" },
-    skipped: { color: "info text-black", label: "Skipped" },
-    already_localized: {
+    localized: {
       color: "success text-white",
-      label: "Already Localized",
+      label: "Localized",
+      value: getPercentage(stats.localized),
     },
-    invalid_data: { color: "warning text-black", label: "Invalid Data" },
-    too_hard: { color: "danger-subtle text-black", label: "Too Hard" },
+    already_localized: {
+      color: "primary text-white",
+      label: "Already Localized",
+      value: getPercentage(stats.already_localized),
+    },
+    skipped: {
+      color: "info text-black",
+      label: "Skipped",
+      value: getPercentage(stats.skipped),
+    },
+    invalid_data: {
+      color: "warning text-black",
+      label: "Invalid Data",
+      value: getPercentage(stats.invalid_data),
+    },
+    too_hard: {
+      color: "danger text-white",
+      label: "Too Hard",
+      value: getPercentage(stats.too_hard),
+    },
   };
 
   return (
@@ -52,11 +76,11 @@ export const ChallengeProgress = (props) => {
           return (
             <ProgressBar
               key={status}
-              value={props.challenge.stats[status]}
+              value={featureStatuses[status]["value"]}
               color={featureStatuses[status]["color"]}
               label={
                 featureStatuses[status]["label"] +
-                `- (${props.challenge.stats[status]}%)`
+                `- (${featureStatuses[status]["value"]}%)`
               }
             />
           );
