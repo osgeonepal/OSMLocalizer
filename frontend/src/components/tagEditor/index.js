@@ -44,7 +44,9 @@ export default function TagEditor({
     if (nearbyTask && feature) {
       url = url + `?lastFeature=${feature.feature.properties.id}`;
     }
-    const data = await fetchLocalJSONAPI(url, jwt_token);
+    const data = await fetchLocalJSONAPI(url, jwt_token).catch((error) => {
+      setError(error.message);
+    });
     setFeature(data);
   };
 
