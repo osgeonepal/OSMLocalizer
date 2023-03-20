@@ -135,4 +135,6 @@ class Feature(db.Model):
         ).fetchall()
         if nearby:
             feature = Feature.get_by_id(nearby[0][0], challenge_id)
+        else:
+            raise NotFound("NO_FEATURES_TO_LOCALIZE")
         return feature

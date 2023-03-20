@@ -33,7 +33,7 @@
   "scripts": {
     "preparation": "bash -c \"if (test -a ../localizer.env); then grep -hs ^ ../localizer.env .env.expand > .env; else cp .env.expand .env; fi\"",
     "start": "npm run preparation && react-scripts start",
-    "build": "react-scripts build",
+    "build": "npm run preparation && react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "lint": "eslint --ext .js,.jsx,.ts,.tsx --fix src/",
