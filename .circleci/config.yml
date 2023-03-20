@@ -1,7 +1,7 @@
 version: 2.1
 
 jobs:
-  build-and-deploy:
+  backend-deploy:
     # Use the Docker executor to run Docker commands
     docker:
       - image: docker:20.10.12
@@ -19,12 +19,26 @@ jobs:
             && docker build -t localizer-backend:latest ."
       # SSH into the DigitalOcean droplet and deploy the app using Docker Compose
       - run:
-          name: Deploy app
+          name: Deploy backend
           command: |
             ssh -oStrictHostKeyChecking=no -v ${SSH_USER}@${SERVER_IP} "cd OSMLocalizer \
             && docker-compose down \
             && docker-compose up -d"
-
+  frontend-deploy:
+    docker:
+      - image: cimg/node:18.15.0
+    steps:
+      - checkout
+      - run:
+          name: Create build
+          command: |
+            cd frontend \
+            && npm install \
+            && npm run build
+      - run:
+          name: Deploy frontend
+          command: |
+            scp -oStrictHostKeyChecking=no -r frontend/build ${SSH_USER}@${SERVER_IP}:/home/${SSH_USER}/OSMLocalizer/frontend
 
 # Run jobs from above in configurable sequences called workflows
 workflows:
@@ -32,7 +46,11 @@ workflows:
   # Workflow name
   build-deploy:
     jobs:
-      - build-and-deploy:
+      - backend-deploy:
+          filters:
+            branches:
+              only: master
+      - frontend-deploy:
           filters:
             branches:
               only: master
