@@ -31,7 +31,7 @@ const Map = (props) => {
       container: "map-container",
       style: osm_style,
       center: [0, 0],
-      zoom: 19,
+      zoom: 18,
     });
     return () => mapContainerRef.current && mapContainerRef.current.remove();
   }, []);
