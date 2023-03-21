@@ -42,6 +42,13 @@ class Feature(db.Model):
         default=None,
         nullable=True,
     )
+    skipped_by = db.Column(
+        db.BigInteger,
+        db.ForeignKey("users.id", name="fk_users_skipped"),
+        index=True,
+        default=None,
+        nullable=True,
+    )
 
     def create(self):
         """Create new entry"""
