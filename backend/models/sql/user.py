@@ -40,6 +40,13 @@ class User(db.Model):
         """
         return User.query.filter_by(id=id).first()
 
+    @staticmethod
+    def get_all():
+        """Get all users.
+        :return: A list of user objects.
+        """
+        return User.query.all()
+
     def as_dto(self):
         """Return the user as a dictionary object."""
         return UserDTO(

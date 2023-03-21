@@ -4,7 +4,7 @@ from flask import current_app
 from flask_httpauth import HTTPTokenAuth
 
 from backend.models.sql.user import User
-from backend.models.dtos.user_dto import UserLoginDTO
+from backend.models.dtos.user_dto import UserLoginDTO, UserAllDTO
 from backend.services.utills import timestamp
 
 
@@ -74,3 +74,18 @@ class UserService:
             current_app.config["APP_SECRET_KEY"],
             algorithm="HS256",
         )
+
+    @staticmethod
+    def is_user_admin(user_id: int) -> bool:
+        """Check if user is admin.
+        :param user_id: The id of the user.
+        :return: True if user is admin else False.
+        """
+        user = UserService.get_user_by_id(user_id)
+        return user.role == 1
+
+    @staticmethod
+    def get_all_users():
+        """Get all users."""
+        users_list = [user.as_dto() for user in User.get_all()]
+        return UserAllDTO(users=users_list).dict()

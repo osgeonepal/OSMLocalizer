@@ -15,3 +15,7 @@ class UserLoginDTO(BaseModel):
     user: UserDTO
     jwt_token: str
     osm_token: str
+
+
+class UserAllDTO(BaseModel):
+    users: list[UserDTO]

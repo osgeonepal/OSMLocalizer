@@ -3,7 +3,8 @@ from flask_restful import Resource
 
 from backend import osm, EnvironmentConfig
 from backend.services.user_service import UserService
-from backend.errors import NotFound
+from backend.errors import NotFound, Unauthorized
+from backend.services.user_service import auth
 
 
 class UserAuthorizationUrlAPI(Resource):
@@ -31,3 +32,11 @@ class UserTokenAPI(Resource):
         if user_info is None:
             raise NotFound("USER_NOT_FOUND")
         return UserService.login_user(user_info["user"], token["access_token"]).dict()
+
+
+class UserAllAPI(Resource):
+    @auth.login_required
+    def get(self):
+        if not UserService.is_admin():
+            raise Unauthorized("USER_NOT_ADMIN")
+        return UserService.get_all_users()
