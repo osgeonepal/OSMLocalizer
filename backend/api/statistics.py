@@ -19,7 +19,7 @@ class UserStatSAPI(Resource):
 class ChallengeContributorsStatsAPI(Resource):
     def get(self, challenge_id):
         start_date = request.args.get("startDate", None)
-        end_date = request.args.get("endDate", datetime.now().strftime("%Y-%m-%d"))
+        end_date = request.args.get("endDate", None)
         if start_date:
             start_date = datetime.strptime(start_date, "%Y-%m-%d")
         if end_date:
