@@ -1,5 +1,7 @@
 from flask_restful import Resource
 from flask import request
+from datetime import datetime
+
 from backend.services.stats_service import StatsService
 
 
@@ -16,4 +18,12 @@ class UserStatSAPI(Resource):
 
 class ChallengeContributorsStatsAPI(Resource):
     def get(self, challenge_id):
-        return StatsService.get_challenge_contributors_stats(challenge_id).dict()
+        start_date = request.args.get("startDate", None)
+        end_date = request.args.get("endDate", datetime.now().strftime("%Y-%m-%d"))
+        if start_date:
+            start_date = datetime.strptime(start_date, "%Y-%m-%d")
+        if end_date:
+            end_date = datetime.strptime(end_date, "%Y-%m-%d")
+        return StatsService.get_challenge_contributors_stats(
+            challenge_id, start_date, end_date
+        ).dict()
