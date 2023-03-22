@@ -150,7 +150,13 @@ class FeatureService:
             feature.last_updated = timestamp()
 
         # Update the user id if the status is localized or validated
-        if status == "LOCALIZED":
+        if status in [
+            "LOCALIZED",
+            "OTHER",
+            "ALREADY_LOCALIZED",
+            "TOO_HARD",
+            "INVALID_DATA",
+        ]:
             feature.localized_by = user_id
         if status == "VALIDATED":
             feature.validated_by = user_id

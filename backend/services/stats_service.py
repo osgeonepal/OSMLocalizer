@@ -31,7 +31,9 @@ class StatsService:
         )
 
     @staticmethod
-    def get_user_stats_by_status(user_id: int, action, challenge_id: int = None):
+    def get_user_stats_by_status(
+        user_id: int, action, challenge_id: int = None, start_date=None, end_date=None
+    ):
         """Get user stats by status"""
         if action.upper() == "LOCALIZED":
             query = Feature.query.filter_by(
@@ -50,19 +52,25 @@ class StatsService:
             ).filter_by(localized_by=user_id)
         else:
             raise Exception("Invalid action")
+        if start_date:
+            query = query.filter(Feature.last_updated >= start_date)
+        if end_date:
+            query = query.filter(Feature.last_updated <= end_date)
         if challenge_id:
             query = query.filter_by(challenge_id=challenge_id)
         return query.count()
 
     @staticmethod
-    def get_user_stats(user_id: int, challenge_id: int = None):
+    def get_user_stats(
+        user_id: int, challenge_id: int = None, start_date=None, end_date=None
+    ):
         """Get user stats"""
         user = UserService.get_user_by_id(user_id)
         total_localized = StatsService.get_user_stats_by_status(
-            user_id, "LOCALIZED", challenge_id
+            user_id, "LOCALIZED", challenge_id, start_date, end_date
         )
         total_skipped = StatsService.get_user_stats_by_status(
-            user_id, "SKIPPED", challenge_id
+            user_id, "SKIPPED", challenge_id, start_date, end_date
         )
         # Total challenges is the number of challenges the user has contributed to
         total_challenges = StatsService.get_user_challenegs_count(user_id)
@@ -77,15 +85,22 @@ class StatsService:
         return stats_dto
 
     @staticmethod
-    def get_all_challenge_contributors(challenge_id: int):
+    def get_all_challenge_contributors(
+        challenge_id: int, start_date=None, end_date=None
+    ):
         """Get list of contributors ids for a challenge"""
-        contributors = (
+        query = (
             Feature.query.with_entities(Feature.localized_by)
             .filter_by(challenge_id=challenge_id)
             .filter(Feature.localized_by.isnot(None))
             .distinct(Feature.localized_by)
-            .all()
         )
+
+        if start_date:
+            query = query.filter(Feature.last_updated >= start_date)
+        if end_date:
+            query = query.filter(Feature.last_updated <= end_date)
+        contributors = query.all()
         return [contributor[0] for contributor in contributors]
 
     @staticmethod
@@ -99,13 +114,19 @@ class StatsService:
         )
 
     @staticmethod
-    def get_challenge_contributors_stats(challenge_id: int):
+    def get_challenge_contributors_stats(
+        challenge_id: int, start_date=None, end_date=None
+    ):
         """Get challenge contributors stats"""
 
-        contributor_ids = StatsService.get_all_challenge_contributors(challenge_id)
+        contributor_ids = StatsService.get_all_challenge_contributors(
+            challenge_id, start_date, end_date
+        )
         contributors_stats = []
         for contributor_id in contributor_ids:
             contributors_stats.append(
-                StatsService.get_user_stats(contributor_id, challenge_id)
+                StatsService.get_user_stats(
+                    contributor_id, challenge_id, start_date, end_date
+                )
             )
         return ListUserStatsDTO(users=contributors_stats)
