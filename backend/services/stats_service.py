@@ -1,7 +1,7 @@
 from backend.services.user_service import UserService
 from backend.models.sql.enum import FeatureStatus
 from backend.models.sql.features import Feature
-from backend.models.dtos.stats_dto import UserStatsDTO
+from backend.models.dtos.stats_dto import UserStatsDTO, ListUserStatsDTO
 
 
 class StatsService:
@@ -23,14 +23,15 @@ class StatsService:
             )
         elif action.upper() == "SKIPPED":
             query = Feature.query.filter(
-                Feature.status.in_((
-                    FeatureStatus.OTHER.value,
-                    FeatureStatus.ALREADY_LOCALIZED.value,
-                    FeatureStatus.TOO_HARD.value,
-                    FeatureStatus.INVALID_DATA.value)
-                )).filter_by(
-                localized_by=user_id
+                Feature.status.in_(
+                    (
+                        FeatureStatus.OTHER.value,
+                        FeatureStatus.ALREADY_LOCALIZED.value,
+                        FeatureStatus.TOO_HARD.value,
+                        FeatureStatus.INVALID_DATA.value,
+                    )
                 )
+            ).filter_by(localized_by=user_id)
         else:
             raise Exception("Invalid action")
         if challenge_id:
@@ -58,3 +59,27 @@ class StatsService:
             stats_dto.total_challenges = total_challenges
 
         return stats_dto
+
+    @staticmethod
+    def get_all_challenge_contributors(challenge_id: int):
+        """Get list of contributors ids for a challenge"""
+        contributors = (
+            Feature.query.with_entities(Feature.localized_by)
+            .filter_by(challenge_id=challenge_id)
+            .filter(Feature.localized_by.isnot(None))
+            .distinct(Feature.localized_by)
+            .all()
+        )
+        return [contributor[0] for contributor in contributors]
+
+    @staticmethod
+    def get_challenge_contributors_stats(challenge_id: int):
+        """Get challenge contributors stats"""
+
+        contributor_ids = StatsService.get_all_challenge_contributors(challenge_id)
+        contributors_stats = []
+        for contributor_id in contributor_ids:
+            contributors_stats.append(
+                StatsService.get_user_stats(contributor_id, challenge_id)
+            )
+        return ListUserStatsDTO(users=contributors_stats)

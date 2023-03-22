@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from typing import Optional
+from typing import Optional, List
 
 
 class UserStatsDTO(BaseModel):
@@ -7,3 +7,7 @@ class UserStatsDTO(BaseModel):
     total_challenges: Optional[int]
     total_localized: int
     total_skipped: int
+
+
+class ListUserStatsDTO(BaseModel):
+    users: List[UserStatsDTO]
