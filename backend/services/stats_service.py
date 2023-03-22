@@ -1,10 +1,26 @@
 from backend.services.user_service import UserService
 from backend.models.sql.enum import FeatureStatus
 from backend.models.sql.features import Feature
-from backend.models.dtos.stats_dto import UserStatsDTO, ListUserStatsDTO
+from backend.models.sql.challenge import Challenge
+from backend.models.sql.user import User
+from backend.models.dtos.stats_dto import UserStatsDTO, ListUserStatsDTO, HomeStatsDTO
 
 
 class StatsService:
+    @staticmethod
+    def get_home_page_stats():
+        """Get home page stats"""
+        total_challenges = Challenge.query.count()
+        total_localized = Feature.query.filter_by(
+            status=FeatureStatus.LOCALIZED.value
+        ).count()
+        total_users = User.query.count()
+        return HomeStatsDTO(
+            total_challenges=total_challenges,
+            total_localized=total_localized,
+            total_users=total_users,
+        )
+
     @staticmethod
     def get_user_challenegs_count(user_id: int):
         """Get number of hallenges the user has contributed to"""
