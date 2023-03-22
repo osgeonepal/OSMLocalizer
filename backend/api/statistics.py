@@ -3,6 +3,11 @@ from flask import request
 from backend.services.stats_service import StatsService
 
 
+class HomeStatsAPI(Resource):
+    def get(self):
+        return StatsService.get_home_page_stats().dict()
+
+
 class UserStatSAPI(Resource):
     def get(self, user_id):
         challenge_id = request.args.get("challengeId", None)

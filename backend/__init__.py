@@ -47,8 +47,13 @@ def create_app(config=EnvironmentConfig):
     )
     from backend.api.user import UserAuthorizationUrlAPI, UserTokenAPI, UserAllAPI
     from backend.api.translate import TranslateTextAPI
-    from backend.api.statistics import UserStatSAPI, ChallengeContributorsStatsAPI
+    from backend.api.statistics import (
+        UserStatSAPI,
+        ChallengeContributorsStatsAPI,
+        HomeStatsAPI,
+    )
 
+    api.add_resource(HomeStatsAPI, "/stats/home/")
     api.add_resource(Challenge, "/challenge/", "/challenge/<int:challenge_id>/")
     api.add_resource(ChallengeList, "/challenges/")
     api.add_resource(FeaturesAllAPI, "/challenge/<int:challenge_id>/features/")
@@ -74,7 +79,6 @@ def create_app(config=EnvironmentConfig):
     api.add_resource(
         ChallengeContributorsStatsAPI, "/challenge/<int:challenge_id>/user-stats/"
     )
-
     api.add_resource(TranslateTextAPI, "/challenge/<int:challenge_id>/translate/")
 
     return app
