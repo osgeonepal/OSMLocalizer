@@ -89,6 +89,16 @@ class StatsService:
         return [contributor[0] for contributor in contributors]
 
     @staticmethod
+    def get_challenge_contributors_count(challenge_id: int):
+        """Get number of contributors for a challenge"""
+        return (
+            Feature.query.filter_by(challenge_id=challenge_id)
+            .filter(Feature.localized_by.isnot(None))
+            .distinct(Feature.localized_by)
+            .count()
+        )
+
+    @staticmethod
     def get_challenge_contributors_stats(challenge_id: int):
         """Get challenge contributors stats"""
 

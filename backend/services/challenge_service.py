@@ -19,7 +19,7 @@ from backend.models.dtos.challenge_dto import (
     UpdateChallengeDTO,
 )
 from backend.services.overpass_service import Overpass
-
+from backend.services.stats_service import StatsService
 
 # max area allowed for passed in bbox, calculation shown to help future maintenance
 # Total area of challenge to be allowed is 100 sq km. So max area of bbox is 100*100, 2 for square meter
@@ -118,11 +118,14 @@ class ChallengeService:
     def get_all_challenges_by_status(status: int) -> ChallengeListDTO:
         """Get all challenges by status"""
         challenges = Challenge.get_all_by_status(status)
-        return ChallengeListDTO(
-            challenges=[
-                challenge.as_dto_for_summary(stats=True) for challenge in challenges
-            ]
-        )
+        challenges_dto = []
+        for challenge in challenges:
+            challenge_dto = challenge.as_dto_for_summary(stats=True)
+            challenge_dto.total_contributors = (
+                StatsService.get_challenge_contributors_count(challenge.id)
+            )
+            challenges_dto.append(challenge_dto)
+        return ChallengeListDTO(challenges=challenges_dto)
 
     @staticmethod
     def delete_challenge(challenge_id: int) -> None:

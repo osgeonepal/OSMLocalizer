@@ -66,7 +66,9 @@ export const ChallengeProgress = (props) => {
       style={{ height: "15vh" }}
     >
       <div className="d-flex flex-row p-2">
-        <span className="text-secondary flex-grow-1">12 Contributors</span>
+        <span className="text-secondary flex-grow-1">
+          {props.challenge.total_contributors} Contributors
+        </span>
         <span className="text-secondary">
           Task Data Sourced: {props.challenge.created}
         </span>
