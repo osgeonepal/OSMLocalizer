@@ -54,7 +54,15 @@ def create_app(config=EnvironmentConfig):
     )
 
     api.add_resource(HomeStatsAPI, "/stats/home/")
-    api.add_resource(Challenge, "/challenge/", "/challenge/<int:challenge_id>/")
+    api.add_resource(
+        Challenge,
+        "/challenge/",
+        endpoint="create_challenge",
+        methods=["POST"],
+    )
+    api.add_resource(
+        Challenge, "/challenge/<int:challenge_id>/", methods=["GET", "PATCH", "DELETE"]
+    )
     api.add_resource(ChallengeList, "/challenges/")
     api.add_resource(FeaturesAllAPI, "/challenge/<int:challenge_id>/features/")
     api.add_resource(
