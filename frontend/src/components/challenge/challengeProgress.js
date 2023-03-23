@@ -95,6 +95,9 @@ export const ChallengeProgress = (props) => {
             <span className=""> {props.challenge.due_date} days left</span>
           </div>
         </div>
+        <Link to={`/challenge/${props.challenge.id}/leaderboard`} className="">
+          <button className="btn btn-light me-2">Leaderboard</button>
+        </Link>
         <Link to={`/challenge/${props.challenge.id}`} className="">
           <button
             className="btn btn-primary"
