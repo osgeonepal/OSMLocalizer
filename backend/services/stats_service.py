@@ -76,6 +76,7 @@ class StatsService:
         total_challenges = StatsService.get_user_challenegs_count(user_id)
         stats_dto = UserStatsDTO(
             username=user.username,
+            picture_url=user.picture_url,
             total_localized=total_localized,
             total_skipped=total_skipped,
         )
