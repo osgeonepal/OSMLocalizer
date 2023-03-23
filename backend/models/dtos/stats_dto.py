@@ -10,6 +10,7 @@ class HomeStatsDTO(BaseModel):
 
 class UserStatsDTO(BaseModel):
     username: str
+    picture_url: Optional[str]
     total_challenges: Optional[int]
     total_localized: int
     total_skipped: int
