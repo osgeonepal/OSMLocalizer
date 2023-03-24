@@ -134,7 +134,7 @@ export function TagEditorForm(props) {
             onSubmit={(e) => {
               e.preventDefault();
               handleSubmit();
-              form.reset(props.element["tags"]);
+              form.reset({});
             }}
           >
             <div className="border border-secondary-subtle p-2 m-2 rounded">
