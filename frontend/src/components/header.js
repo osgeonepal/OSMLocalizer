@@ -18,6 +18,10 @@ const menuItems = [
     link: "manage/challenge/create",
   },
   {
+    label: "LEADERBOARD",
+    link: "leaderboard",
+  },
+  {
     label: "ABOUT",
     link: "about",
   },
@@ -85,7 +89,10 @@ const NavBarSmall = () => {
                     rel="noopener noreferrer"
                   >
                     REPORT
-                    <i className="fa fa-external-link"></i>
+                    <i
+                      className="fa fa-external-link ms-1"
+                      style={{ fontSize: "0.8rem" }}
+                    ></i>
                   </a>
                 </li>
                 <div className="nav-item">
@@ -130,8 +137,11 @@ const NavBarLarge = () => {
               target="_blank"
               rel="noopener noreferrer"
             >
-              SUPPORT
-              <i className="fa fa-external-link ms-1"></i>
+              REPORT
+              <i
+                className="fa fa-external-link ms-1"
+                style={{ fontSize: "0.8rem" }}
+              ></i>
             </a>
           </li>
         </ul>

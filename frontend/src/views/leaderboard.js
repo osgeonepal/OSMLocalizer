@@ -146,7 +146,7 @@ const LeaderboardHeader = () => (
   </div>
 );
 
-const ChallengeLeaderBoard = () => {
+export const ChallengeLeaderBoard = () => {
   const [leaderboard, setLeaderboard] = useState([]);
   const [isLeaderboardLoaded, setIsLeaderboardLoaded] = useState(false);
   const [error, setError] = useState(null);
@@ -200,4 +200,55 @@ const ChallengeLeaderBoard = () => {
   );
 };
 
-export default ChallengeLeaderBoard;
+export const LeaderboardView = () => {
+  const [leaderboard, setLeaderboard] = useState([]);
+  const [isLeaderboardLoaded, setIsLeaderboardLoaded] = useState(false);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    fetchLocalJSONAPI("user/leaderboard/")
+      .then((data) => {
+        // set score = (total_localized*3 + total_skipped*1) and sort by score
+        data.users.forEach((user) => {
+          user.score = user.total_localized * 3 + user.total_skipped;
+        });
+        data.users.sort((a, b) => b.score - a.score);
+        setLeaderboard(data);
+        setIsLeaderboardLoaded(true);
+      })
+      .catch((error) => {
+        setError(error.message);
+      });
+  }, []);
+
+  return (
+    <div className="d-flex justify-content-center">
+      {isLeaderboardLoaded ? (
+        <div className="col-11 p-4 mt-4">
+          <LeaderboardHeader />
+          <div className="bg-secondary-subtle p-4 pt-0">
+            {leaderboard.users.length > 0 && (
+              <div className="row">
+                <h4 className="mt-0">Top Contributors</h4>
+                {leaderboard.users.slice(0, 3).map((user, index) => (
+                  <TopCard key={index} user={user} rank={index + 1} />
+                ))}
+              </div>
+            )}
+            <div className="col-12">
+              {leaderboard.users.length > 3 && (
+                <>
+                  <h4 className="mt-2">Other Contributors</h4>
+                  <LeaderboardTable leaderboard={leaderboard} />
+                </>
+              )}
+            </div>
+          </div>
+        </div>
+      ) : (
+        <div>Loading...</div>
+      )}
+      {error && <ShowError error={error} setError={setError} />}
+    </div>
+  );
+};
