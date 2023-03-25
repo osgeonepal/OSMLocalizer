@@ -10,6 +10,11 @@ class HomeStatsAPI(Resource):
         return StatsService.get_home_page_stats().dict()
 
 
+class UserLeaderboardAPI(Resource):
+    def get(self):
+        return StatsService.get_user_leaderboard().dict()
+
+
 class UserStatSAPI(Resource):
     def get(self, user_id):
         challenge_id = request.args.get("challengeId", None)

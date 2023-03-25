@@ -1,3 +1,5 @@
+from cachetools import cached, TTLCache
+
 from backend.services.user_service import UserService
 from backend.models.sql.enum import FeatureStatus
 from backend.models.sql.features import Feature
@@ -131,3 +133,19 @@ class StatsService:
                 )
             )
         return ListUserStatsDTO(users=contributors_stats)
+
+    @staticmethod
+    @cached(cache=TTLCache(maxsize=1024, ttl=300))  # Cache for 5 minutes
+    def get_user_leaderboard():
+        """Get user leaderboard"""
+        # TODO: Add pagination  and calculate stats using Feature table
+        users = (
+            Feature.query.with_entities(Feature.localized_by)
+            .filter(Feature.localized_by.isnot(None))
+            .distinct(Feature.localized_by)
+            .all()
+        )
+        user_stats = []
+        for user in users:
+            user_stats.append(StatsService.get_user_stats(user[0]))
+        return ListUserStatsDTO(users=user_stats)
