@@ -29,6 +29,7 @@ dependencies = [
     "gunicorn>=20.1.0",
     "tornado>=6.2",
     "sentry-sdk[flask]>=1.17.0",
+    "cachetools>=5.3.0",
 ]
 requires-python = ">=3.10"
 license = {text = "MIT"}

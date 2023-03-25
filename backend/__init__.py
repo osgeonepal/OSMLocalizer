@@ -51,6 +51,7 @@ def create_app(config=EnvironmentConfig):
         UserStatSAPI,
         ChallengeContributorsStatsAPI,
         HomeStatsAPI,
+        UserLeaderboardAPI,
     )
 
     api.add_resource(HomeStatsAPI, "/stats/home/")
@@ -87,6 +88,8 @@ def create_app(config=EnvironmentConfig):
     api.add_resource(
         ChallengeContributorsStatsAPI, "/challenge/<int:challenge_id>/user-stats/"
     )
+    api.add_resource(UserLeaderboardAPI, "/user/leaderboard/")
+
     api.add_resource(TranslateTextAPI, "/challenge/<int:challenge_id>/translate/")
 
     return app
