@@ -41,7 +41,7 @@ class ChallengeService:
         )
         country = ChallengeService.get_country_from_coordinates(centroid.y, centroid.x)
         overpass_query = challenge_dto.overpass_query.replace(
-            "{{bbox}}", f"({bbox_str})"
+            "{{bbox}}", f"{bbox_str}"
         )
         language_tags = [tag.strip() for tag in challenge_dto.language_tags.split(",")]
         challenge = Challenge(

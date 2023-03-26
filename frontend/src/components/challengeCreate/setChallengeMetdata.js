@@ -17,45 +17,55 @@ export const MetadataForm = ({ challenge, setChallenge }) => {
 
   return (
     <div>
-      <Input
-        label="Name*"
-        name="name"
-        type="text"
-        placeholder="Name"
-        defaultValue={challenge.name}
-        onChange={onInputChange}
-      />
-      <Checkbox
-        label="Status:"
-        name="status"
-        options={challengeStatusOption}
-        onChange={onInputChange}
-        value={challenge.status}
-      />
-      <TextArea
-        label="Description*"
-        name="description"
-        type="text"
-        placeholder="Description"
-        defaultValue={challenge.description}
-        onChange={onInputChange}
-      />
-      <TextArea
-        label="Task Instructions*"
-        name="feature_instructions"
-        type="text"
-        placeholder="Task Instructions"
-        defaultValue={challenge.feature_instructions}
-        onChange={onInputChange}
-      />
-      <Input
-        name="language_tags"
-        label="Tags to edit"
-        type="text"
-        placeholder="Name tags separated by comma e.g. name, name:en"
-        onChange={onInputChange}
-        defaultValue={challenge.language_tags}
-      />
+      <div>
+        <div>
+          <p className="fs-5 title text-dark fw-semibold">
+            {" "}
+            Step 3: Set Challenge Metadata
+          </p>
+        </div>
+      </div>
+      <div>
+        <Input
+          label="Name*"
+          name="name"
+          type="text"
+          placeholder="Name"
+          defaultValue={challenge.name}
+          onChange={onInputChange}
+        />
+        <Checkbox
+          label="Status:*"
+          name="status"
+          options={challengeStatusOption}
+          onChange={onInputChange}
+          value={challenge.status}
+        />
+        <TextArea
+          label="Description*"
+          name="description"
+          type="text"
+          placeholder="Description"
+          defaultValue={challenge.description}
+          onChange={onInputChange}
+        />
+        <TextArea
+          label="Task Instructions*"
+          name="feature_instructions"
+          type="text"
+          placeholder="Task Instructions"
+          defaultValue={challenge.feature_instructions}
+          onChange={onInputChange}
+        />
+        <Input
+          name="language_tags"
+          label="Tags to edit*"
+          type="text"
+          placeholder="Name tags separated by comma e.g. name, name:en"
+          onChange={onInputChange}
+          defaultValue={challenge.language_tags}
+        />
+      </div>
     </div>
   );
 };

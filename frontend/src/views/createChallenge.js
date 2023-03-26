@@ -145,7 +145,7 @@ const CreateChallenge = () => {
   const [bboxArea, setBboxArea] = useState(null);
   const [step, setStep] = useState(1);
   const [validationResult, setValidationResult] = useState({
-    isValid: true,
+    isValid: false,
     error: null,
   });
 
@@ -230,7 +230,12 @@ const CreateChallenge = () => {
       return !challenge.overpass_query;
     }
     if (step === 3) {
-      return !challenge.name || !challenge.description;
+      return (
+        !challenge.name ||
+        !challenge.description ||
+        !challenge.status ||
+        !challenge.language_tags
+      );
     }
     if (step === 4) {
       return !challenge.to_language;
@@ -240,7 +245,7 @@ const CreateChallenge = () => {
 
   const onCreate = () => {
     validateChallenge();
-
+    console.log(validationResult);
     validationResult.isValid &&
       pushToLocalJSONAPI(
         "challenge/",
@@ -331,7 +336,7 @@ const CreateChallenge = () => {
             />
           </div>
           <div>
-            {validationResult.isValid ? null : (
+            {!validationResult.error ? null : (
               <div className="alert alert-danger fw-bold ps-2 pe-2">
                 {validationResult.error}
               </div>
