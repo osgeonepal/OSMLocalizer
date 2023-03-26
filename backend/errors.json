@@ -6,6 +6,7 @@
     "NO_TRANSLATE_ENGINE": "No translation engine is set for the challenge.",
     "FORBIDDEN": "The request is not allowed",
     "UNAUTHORIZED": "The request is not authorized",
+    "USER_NOT_ADMIN": "The user is not an administrator and cannot perform this action.",
     "BAD_REQUEST": "The request is invalid",
     "INTERNAL_SERVER_ERROR": "An internal server error occurred",
     "CONFLICT": "The request could not be completed due to a conflict with the current state of the target resource",

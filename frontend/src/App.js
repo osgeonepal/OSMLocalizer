@@ -5,6 +5,8 @@ import "./App.css";
 import Header from "./components/header";
 import Footer from "./components/footer";
 import ChallengesView from "./views/challenges";
+import { ChallengeLeaderBoard } from "./views/leaderboard";
+import { LeaderboardView } from "./views/leaderboard";
 import UpdateChallengeView from "./views/updateChallenge";
 import { LocalizeChallengeView } from "./views/localizeChallenge";
 import AuthorizedView from "./views/authorized";
@@ -32,6 +34,10 @@ function App() {
             <Route path="challenge/:id" element={<UpdateChallengeView />} />
             <Route path="challenge/create" element={<CreateChallenge />} />
           </Route>
+          <Route
+            path="challenge/:id/leaderboard"
+            element={<ChallengeLeaderBoard />}
+          ></Route>
           <Route path="/create" element={<CreateChallenge />} />
           <Route path="/about" element={<AboutView />} />
           <Route
@@ -42,6 +48,7 @@ function App() {
               </LoggedInRoute>
             }
           />
+          <Route path="/leaderboard" element={<LeaderboardView />} />
           <Route path="/authorized" element={<AuthorizedView />} />
           <Route path="/login" element={<LoginView />} />
           <Route path="*" element={<Notfound />} />

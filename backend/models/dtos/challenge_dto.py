@@ -94,6 +94,7 @@ class ChallengeSummaryDTO(BaseModel):
     created: str
     bbox: Optional[dict] = None
     stats: Optional[ChallengeStatsDTO] = None
+    total_contributors: Optional[int] = None
 
     class Config:
         orm_mode = True

@@ -1,10 +1,11 @@
 import jwt
-from datetime import datetime, timedelta
+from datetime import timedelta
 from flask import current_app
 from flask_httpauth import HTTPTokenAuth
 
 from backend.models.sql.user import User
-from backend.models.dtos.user_dto import UserLoginDTO
+from backend.models.dtos.user_dto import UserLoginDTO, UserAllDTO
+from backend.services.utills import timestamp
 
 
 # Validate jwt token
@@ -17,7 +18,7 @@ def verify_token(token):
         data = jwt.decode(
             token, current_app.config["APP_SECRET_KEY"], algorithms=["HS256"]
         )
-    except:
+    except Exception:
         return False
     user_id = data.get("user_id")
     return user_id
@@ -47,12 +48,15 @@ class UserService:
     @staticmethod
     def login_user(osm_user, osm_token):
         """Create or update a user in the database."""
-        print(osm_token)
         user = User.get_by_id(osm_user["id"])
         if user is None:
             user = UserService.create_user_from_osm(osm_user)
+        # Get user picture_url else set None
+        try:
             user.picture_url = osm_user["img"]["href"]
-        user.last_login = datetime.utcnow()
+        except KeyError:
+            user.picture_url = None
+        user.last_login = timestamp()
         user.update()
         jwt_token = UserService.generate_jwt_token(user.id)
         return UserLoginDTO(
@@ -65,9 +69,23 @@ class UserService:
         :param user_id: The id of the user.
         :return: A token string.
         """
-        print(current_app.config["APP_SECRET_KEY"])
         return jwt.encode(
-            {"user_id": user_id, "exp": datetime.utcnow() + timedelta(days=7)},
+            {"user_id": user_id, "exp": timestamp() + timedelta(days=7)},
             current_app.config["APP_SECRET_KEY"],
             algorithm="HS256",
         )
+
+    @staticmethod
+    def is_user_admin(user_id: int) -> bool:
+        """Check if user is admin.
+        :param user_id: The id of the user.
+        :return: True if user is admin else False.
+        """
+        user = UserService.get_user_by_id(user_id)
+        return user.role == 1
+
+    @staticmethod
+    def get_all_users():
+        """Get all users."""
+        users_list = [user.as_dto() for user in User.get_all()]
+        return UserAllDTO(users=users_list).dict()

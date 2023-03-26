@@ -1,5 +1,5 @@
 from flask_restful import Resource
-from flask import jsonify
+from flask import jsonify, request
 
 from backend.services.challenge_service import ChallengeService
 from backend.models.dtos.challenge_dto import CreateChallengeDTO, UpdateChallengeDTO
@@ -17,7 +17,7 @@ class Challenge(Resource):
 
     def patch(self, challenge_id: int):
         """Update existing challenge"""
-        challenge_dto = UpdateChallengeDTO(**self.api.payload)
+        challenge_dto = UpdateChallengeDTO(**request.get_json())
         ChallengeService.update_challenge(challenge_id, challenge_dto)
         return {"success": "yes"}
 
@@ -29,8 +29,8 @@ class Challenge(Resource):
     def post(self):
         """Create new challenge"""
         current_user = auth.current_user()
-        self.api.payload["created_by"] = current_user
-        challenge_dto = CreateChallengeDTO(**self.api.payload)
+        request.get_json()["created_by"] = current_user
+        challenge_dto = CreateChallengeDTO(**request.get_json())
         if ChallengeService.create_challenge(challenge_dto):
             return {"success": "yes"}, 201
         return {"success": "no"}, 400

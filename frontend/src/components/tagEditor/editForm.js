@@ -91,29 +91,33 @@ export function TagEditorForm(props) {
   const text = encodeURIComponent(props.element["tags"][name]);
   const elementKey = `${props.element.type}-${props.element.id}`;
   const editTags = props.tags.split(",").map((tag) => tag.trim());
+  // Sort editTags array so that the order of tags is consistent
+  editTags.sort();
 
-  const detectChange = (values) => {
-    var changedKeys = [];
-    for (const [key, value] of Object.entries(values)) {
-      if (value !== props.element["tags"][key]) {
-        changedKeys.push(key);
-      }
-    }
-    return changedKeys;
-  };
+  // const detectChange = (values) => {
+  //   var changedKeys = [];
+  //   for (const [key, value] of Object.entries(values)) {
+  //     if (value !== props.element["tags"][key]) {
+  //       changedKeys.push(key);
+  //     }
+  //   }
+  //   console.log(changedKeys);
+  //   return changedKeys;
+  // };
 
   const onSubmitChange = (values) => {
     async function updateElement() {
-      const changedKeys = detectChange(values);
-      if (changedKeys.length > 0) {
-        const newElementTmp = Object.assign({}, props.element);
-        for (const key of changedKeys) {
-          newElementTmp["tags"][key] = values[key];
-        }
-        const allChangesTmp = Object.assign({}, props.allChanges);
-        allChangesTmp[elementKey] = newElementTmp;
-        props.setAllChanges(allChangesTmp);
+      // const changedKeys = detectChange(values);
+      // if (changedKeys.length > 0) {
+      const newElementTmp = { ...props.element };
+      newElementTmp["tags"] = { ...props.element["tags"] };
+      for (const [key, value] of Object.entries(values)) {
+        newElementTmp["tags"][key] = value;
       }
+      const allChangesTmp = { ...props.allChanges };
+      allChangesTmp[elementKey] = newElementTmp;
+      props.setAllChanges(allChangesTmp);
+      // }
     }
     updateElement().then(() => {
       props.onDone();
@@ -134,7 +138,7 @@ export function TagEditorForm(props) {
             onSubmit={(e) => {
               e.preventDefault();
               handleSubmit();
-              form.reset(props.element["tags"]);
+              form.reset({});
             }}
           >
             <div className="border border-secondary-subtle p-2 m-2 rounded">

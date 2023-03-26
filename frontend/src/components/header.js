@@ -18,6 +18,10 @@ const menuItems = [
     link: "manage/challenge/create",
   },
   {
+    label: "LEADERBOARD",
+    link: "leaderboard",
+  },
+  {
     label: "ABOUT",
     link: "about",
   },
@@ -77,6 +81,20 @@ const NavBarSmall = () => {
                     </NavLink>
                   </li>
                 ))}
+                <li className="nav-item">
+                  <a
+                    className={navClass}
+                    href="https://forms.gle/fmfeyPEXjSPZk1tX6"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    REPORT
+                    <i
+                      className="fa fa-external-link ms-1"
+                      style={{ fontSize: "0.8rem" }}
+                    ></i>
+                  </a>
+                </li>
                 <div className="nav-item">
                   <div className={navClass}>
                     <Login />
@@ -112,6 +130,20 @@ const NavBarLarge = () => {
               </NavLink>
             </li>
           ))}
+          <li className="nav-item">
+            <a
+              className={navClass}
+              href="https://forms.gle/fmfeyPEXjSPZk1tX6"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              REPORT
+              <i
+                className="fa fa-external-link ms-1"
+                style={{ fontSize: "0.8rem" }}
+              ></i>
+            </a>
+          </li>
         </ul>
         <div className="d-flex">
           <Login />
