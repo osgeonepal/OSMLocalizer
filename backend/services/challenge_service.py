@@ -40,9 +40,7 @@ class ChallengeService:
             challenge_dto.bbox
         )
         country = ChallengeService.get_country_from_coordinates(centroid.y, centroid.x)
-        overpass_query = challenge_dto.overpass_query.replace(
-            "{{bbox}}", f"{bbox_str}"
-        )
+        overpass_query = challenge_dto.overpass_query.replace("{{bbox}}", f"{bbox_str}")
         language_tags = [tag.strip() for tag in challenge_dto.language_tags.split(",")]
         challenge = Challenge(
             name=challenge_dto.name,
@@ -63,7 +61,9 @@ class ChallengeService:
                 TranslateEngine[challenge_dto.translate_engine.upper()].value,
             )
             challenge.api_key = (challenge_dto.api_key,)
-        ChallengeService.get_features_from_overpass(challenge, overpass_query)
+        ChallengeService.get_features_from_overpass(
+            challenge, overpass_query, challenge_dto.type
+        )
         challenge.create()
         return True
 
@@ -195,12 +195,24 @@ class ChallengeService:
         return None
 
     @staticmethod
-    def get_features_from_overpass(challenge: Challenge, query) -> None:
+    def get_features_from_overpass(challenge: Challenge, query, type) -> None:
         """Attach features to challenge"""
         overpass = Overpass()
-        nodes = overpass.get_nodes(query)
-        feature_count = 1
-        for node in nodes:
-            feature = Overpass.node_to_features(node, feature_count)
-            challenge.features.append(feature)
-            feature_count += 1
+        # Check if the type is a node or a way or a relation
+        result = overpass.api.query(query)
+
+        if result is None:
+            return
+
+        if type == "node":
+            for node in result.nodes:
+                feature = Overpass.node_to_features(node)
+                challenge.features.append(feature)
+        if type == "way":
+            for way in result.ways:
+                feature = Overpass.way_to_features(way)
+                challenge.features.append(feature)
+        if type == "relation":
+            for relation in result.relations:
+                feature = Overpass.relation_to_features(relation)
+                challenge.features.append(feature)

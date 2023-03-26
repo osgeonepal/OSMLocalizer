@@ -24,6 +24,7 @@ class CreateChallengeDTO(BaseModel):
     due_date: Optional[str] = None
     created_by: int
     feature_instructions: Optional[str] = None
+    type: str = "node"
 
     class Config:
         orm_mode = True
