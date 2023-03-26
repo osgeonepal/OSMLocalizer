@@ -61,9 +61,7 @@ class ChallengeService:
                 TranslateEngine[challenge_dto.translate_engine.upper()].value,
             )
             challenge.api_key = (challenge_dto.api_key,)
-        ChallengeService.get_features_from_overpass(
-            challenge, overpass_query, challenge_dto.type
-        )
+        ChallengeService.get_features_from_overpass(challenge, overpass_query)
         challenge.create()
         return True
 
@@ -195,11 +193,15 @@ class ChallengeService:
         return None
 
     @staticmethod
-    def get_features_from_overpass(challenge: Challenge, query, type) -> None:
+    def get_features_from_overpass(challenge: Challenge, query) -> None:
         """Attach features to challenge"""
         overpass = Overpass()
-        # Check if the type is a node or a way or a relation
-        result = overpass.api.query(query)
+        # Check if the type is a node or a way or a relation which is in format (node[amenity=restaurant]])
+        type = query.split("[")[0].split("(")[1]
+        try:
+            result = overpass.api.query(query)
+        except Exception as e:
+            raise BadRequest(message=f"error querying overpass: {e}")
 
         if result is None:
             return

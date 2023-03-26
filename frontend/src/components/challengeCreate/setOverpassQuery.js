@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import popularTags from "../../assets/json/popular_tags.json";
 
-const ElementButtons = ({ onChange }) => {
+const ElementButtons = ({ setOverpassQuery }) => {
   const [selectedTag, setSelectedTag] = useState();
   const [customTag, setCustomTag] = useState();
   const [customTagError, setCustomTagError] = useState(false);
@@ -24,12 +24,22 @@ const ElementButtons = ({ onChange }) => {
     setSelectedTag(tag);
   };
 
-  const generateQuery = (type, tag, sub_tag) => {
+  const generateQuery = (sub_tag) => {
+    let query = "";
+    const type = popularTags[selectedTag]["type"];
+
     setSubTag(sub_tag);
-    if (sub_tag === "*") {
-      return `(${type}[${tag}]({{bbox}}););out;`;
+
+    if (type === "node") {
+      sub_tag === "*"
+        ? (query = `(${type}[${selectedTag}]({{bbox}}););out;`)
+        : (query = `(${type}[${selectedTag}=${sub_tag}]({{bbox}}););out;`);
+    } else {
+      sub_tag === "*"
+        ? (query = `(${type}[${selectedTag}]({{bbox}});>;);out;`)
+        : (query = `(${type}[${selectedTag}=${sub_tag}]({{bbox}});>;);out;`);
     }
-    return `(${type}[${tag}=${sub_tag}]({{bbox}}););out;`;
+    setOverpassQuery(query);
   };
 
   // const excludeFromQuery = (type, tag, exclude_subtag) => {
@@ -66,16 +76,7 @@ const ElementButtons = ({ onChange }) => {
                 (sub_tag === subTag ? "btn-success" : "btn-outline-success")
               }
               onClick={() => {
-                onChange({
-                  target: {
-                    name: "overpass_query",
-                    value: generateQuery(
-                      popularTags[selectedTag]["type"],
-                      selectedTag,
-                      sub_tag
-                    ),
-                  },
-                });
+                generateQuery(sub_tag);
               }}
             >
               {sub_tag}
@@ -141,12 +142,7 @@ const ElementButtons = ({ onChange }) => {
               className="btn btn-sm btn-primary me-2 mb-2 rounded-start-0"
               onClick={() => {
                 !customTagError
-                  ? onChange({
-                      target: {
-                        name: "overpass_query",
-                        value: generateQuery("node", customTag, "*"),
-                      },
-                    })
+                  ? generateQuery("node", customTag, "*")
                   : console.log("Invalid custom tag");
               }}
             >
@@ -163,12 +159,12 @@ export const OverpassQuery = ({ challenge, setChallenge, step, setStep }) => {
   const [src, setSrc] = useState("https://overpass-turbo.eu/map.html");
   const [isTested, setIsTested] = useState(false);
 
-  const onChange = (e) => {
-    setIsTested(false);
+  const setOverpassQuery = (query) => {
     setChallenge({
       ...challenge,
-      [e.target.name]: e.target.value,
+      overpass_query: query,
     });
+    setIsTested(false);
   };
 
   const onNext = () => {
@@ -181,6 +177,7 @@ export const OverpassQuery = ({ challenge, setChallenge, step, setStep }) => {
 
   const onTest = () => {
     const bbox = challenge.bbox;
+    console.log(challenge);
     // Replace {{bbox}} with bbox and set bbox to lng, lat form lat, lng to test query on overpass turbo
     const new_bbox = bbox[1] + "," + bbox[0] + "," + bbox[3] + "," + bbox[2];
     const bboxQuery = challenge.overpass_query.replace("{{bbox}}", new_bbox);
@@ -196,25 +193,14 @@ export const OverpassQuery = ({ challenge, setChallenge, step, setStep }) => {
 
   return (
     <div>
-      <div
-        className="modal modal-xl fade show"
-        style={{
-          display: "block",
-          backgroundColor: "transparent",
-          zIndex: "9999",
-        }}
-      >
+      <div className="modal modal-xl fade show" style={{ display: "block" }}>
         <div className="modal-dialog modal-dialog-centered modal-dialog-scrollable">
           <div className="modal-content">
             <div className="modal-header">
-              <div className="modal-title">
-                <div>
-                  <p className="fs-5 title text-dark fw-semibold">
-                    {" "}
-                    Step 2: Select elements to be included in the challenge
-                  </p>
-                </div>
-              </div>
+              <p className="modal-title fs-5 title text-dark fw-semibold">
+                {" "}
+                Step 2: Select elements to be included in the challenge
+              </p>
             </div>
             <div className="modal-body">
               <div className="row" style={{ height: "70vh" }}>
@@ -225,7 +211,7 @@ export const OverpassQuery = ({ challenge, setChallenge, step, setStep }) => {
                       use the pre-defined tags or add your own.
                     </p>
                   </div>
-                  <ElementButtons onChange={onChange} />
+                  <ElementButtons setOverpassQuery={setOverpassQuery} />
                   <label className="form-label fw-bold text-dark">
                     Overpass query
                   </label>
@@ -235,7 +221,7 @@ export const OverpassQuery = ({ challenge, setChallenge, step, setStep }) => {
                     type="text"
                     placeholder="Overpass query"
                     value={challenge.overpass_query}
-                    onChange={(e) => onChange(e)}
+                    onChange={(e) => setOverpassQuery(e.target.value)}
                     rows="3"
                     disabled={true}
                   />
