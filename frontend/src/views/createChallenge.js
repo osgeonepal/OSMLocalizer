@@ -3,7 +3,11 @@ import { useSelector } from "react-redux";
 import mapboxgl from "mapbox-gl";
 import bbox from "@turf/bbox";
 import Area from "@turf/area";
+import { Tooltip } from "react-tooltip";
+import "react-tooltip/dist/react-tooltip.css";
 import MapboxDraw from "@mapbox/mapbox-gl-draw";
+import MapboxGeocoder from "@mapbox/mapbox-gl-geocoder";
+import "@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css";
 import "@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css";
 import "mapbox-gl/dist/mapbox-gl.css";
 
@@ -11,11 +15,24 @@ import { pushToLocalJSONAPI } from "../utills/fetch";
 import SetChallengeBBBOX from "../components/challengeCreate/setChallengeBBOX";
 import { MetadataForm } from "../components/challengeCreate/setChallengeMetdata";
 import { TranslationForm } from "../components/challengeCreate/setChallengeTranslate";
+import { OverpassQuery } from "../components/challengeCreate/setOverpassQuery";
 import { MAPBOX_ACCESS_TOKEN } from "../config";
 
-const StepButtons = ({ step, setStep, onCreate }) => {
+const StepButtons = ({ step, setStep, onCreate, isNextDisabled }) => {
+  const disabledReason = () => {
+    if (step === 1) {
+      return "Please draw a bounding box";
+    } else if (step === 2) {
+      return "Please enter a valid overpass query";
+    } else if (step === 3) {
+      return "Please fill in all required fields marked with *";
+    } else if (step === 4) {
+      return "Please fill in all required fields marked with *";
+    }
+  };
+
   const onNext = () => {
-    if (step < 3) {
+    if (step < 4) {
       setStep(step + 1);
     }
   };
@@ -36,16 +53,19 @@ const StepButtons = ({ step, setStep, onCreate }) => {
           Back
         </button>
       )}
-      {step < 3 && (
-        <button
-          className="btn btn-primary rounded-0 me-4"
-          onClick={() => onNext()}
-        >
-          Next
-          <i className="fa fa-arrow-right ms-2"></i>
-        </button>
+      {step < 4 && (
+        <div data-tooltip-id="tooltip" data-tooltip-content={disabledReason()}>
+          <button
+            disabled={isNextDisabled()}
+            className="btn btn-primary rounded-0 me-4"
+            onClick={() => onNext()}
+          >
+            Next
+            <i className="fa fa-arrow-right ms-2"></i>
+          </button>
+        </div>
       )}
-      {step === 3 && (
+      {step === 4 && (
         <button
           className="btn btn-primary rounded-0 me-4"
           onClick={() => onCreate()}
@@ -54,12 +74,21 @@ const StepButtons = ({ step, setStep, onCreate }) => {
           <i className="fa fa-arrow-right ms-2"></i>
         </button>
       )}
+      {isNextDisabled() && (
+        <Tooltip
+          place="top-right"
+          className="bg-secondary"
+          effect="solid"
+          id="tooltip"
+        />
+      )}
     </div>
   );
 };
 
 const HandleSteps = ({
   step,
+  setStep,
   addDrawHandler,
   removeDrawHandler,
   challenge,
@@ -76,8 +105,17 @@ const HandleSteps = ({
         />
       );
     case 2:
-      return <MetadataForm challenge={challenge} setChallenge={setChallenge} />;
+      return (
+        <OverpassQuery
+          challenge={challenge}
+          setChallenge={setChallenge}
+          step={step}
+          setStep={setStep}
+        />
+      );
     case 3:
+      return <MetadataForm challenge={challenge} setChallenge={setChallenge} />;
+    case 4:
       return (
         <TranslationForm challenge={challenge} setChallenge={setChallenge} />
       );
@@ -119,7 +157,19 @@ const CreateChallenge = () => {
       style: "mapbox://styles/mapbox/streets-v11",
       center: [0, 0],
       zoom: 2,
-    }).addControl(new mapboxgl.NavigationControl(), "top-right");
+    })
+      .addControl(
+        new MapboxGeocoder({
+          accessToken: mapboxgl.accessToken,
+          mapboxgl: mapboxgl,
+          marker: false,
+          // collapsed: true,
+        }),
+        "top-right"
+      )
+      .addControl(new mapboxgl.NavigationControl(), "top-right");
+    // Add geocoder on top of the map
+
     newMap.on("load", () => {
       setMapObject({
         draw: mapObject.draw,
@@ -170,6 +220,22 @@ const CreateChallenge = () => {
     mapObject.draw.deleteAll();
     setChallenge({ ...challenge, bbox: null });
     setBboxArea(null);
+  };
+
+  const isNextDisabled = () => {
+    if (step === 1) {
+      return !challenge.bbox;
+    }
+    if (step === 2) {
+      return !challenge.overpass_query;
+    }
+    if (step === 3) {
+      return !challenge.name || !challenge.description;
+    }
+    if (step === 4) {
+      return !challenge.to_language;
+    }
+    return false;
   };
 
   const onCreate = () => {
@@ -257,6 +323,7 @@ const CreateChallenge = () => {
           <div className="p-4">
             <HandleSteps
               step={step}
+              setStep={setStep}
               addDrawHandler={addDrawHandler}
               removeDrawHandler={removeDrawHandler}
               challenge={challenge}
@@ -269,14 +336,19 @@ const CreateChallenge = () => {
                 {validationResult.error}
               </div>
             )}
-            <StepButtons step={step} setStep={setStep} onCreate={onCreate} />
+            <StepButtons
+              step={step}
+              setStep={setStep}
+              onCreate={onCreate}
+              isNextDisabled={isNextDisabled}
+            />
           </div>
         </div>
         <div>
           {bboxArea && (
             <div
               className="position-absolute bottom-0 end-0 p-4"
-              style={{ zIndex: 999 }}
+              style={{ zIndex: 99 }}
             >
               <span className="bg-white p-2 fw-semibold">
                 Area: {bboxArea} ㎢
