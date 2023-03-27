@@ -1,17 +1,5 @@
-// import { osmAuth } from 'osm-auth';
-// import { OSM_ACCESS_TOKEN, OAUTH_CLIENT_SECRET, OAUTH_CLIENT_ID } from '../config';
-
-// const options = {
-//     url: "https://www.openstreetmap.org",
-//     client_id: OAUTH_CLIENT_ID,
-//     client_secret: OAUTH_CLIENT_SECRET,
-//     redirect_uri: "http//127.0.0.1/authorized",
-//     access_token: OSM_ACCESS_TOKEN,
-
-// }
-
-// create a function to return user details from osm
 export function getUserDetails(auth) {
+
   var options = {
     method: "GET",
     path: "/api/0.6/user/details.json",
@@ -30,7 +18,9 @@ export function getUserDetails(auth) {
 }
 
 export function createChangeset(auth, comment, reviewEdits) {
+
   const changeset = createChnagesetJSON(comment, reviewEdits);
+
   return new Promise((resolve, reject) => {
     auth.xhr(
       {
@@ -53,7 +43,9 @@ export function createChangeset(auth, comment, reviewEdits) {
 }
 
 export function uploadChanges(auth, changes, changesetId) {
+
   const changeXML = createChangeXML(changes, changesetId);
+
   return new Promise((resolve, reject) => {
     auth.xhr(
       {
@@ -135,14 +127,31 @@ const escapeXML = (str) => {
 export function createChangeXML(elements, changesetId) {
   let changeXML =
     '<osmChange version="0.6" generator="OSMLocalizer"><create/> <modify>';
-  // eslint-disable-next-line
-  for (const [key, value] of Object.entries(elements)) {
-    changeXML += `<${value.type} id="${value.id}" changeset="${changesetId}" lon="${value.lon}" lat="${value.lat}" version="${value.version}">`;
+
+  for (const value of Object.values(elements)) {
+    if (value.type === "node") {
+      changeXML += `<${value.type} id="${value.id}" changeset="${changesetId}" lon="${value.lon}" lat="${value.lat}" version="${value.version}">`;
+
+    } else if (value.type === "way") {
+      changeXML += `<${value.type} id="${value.id}" changeset="${changesetId}" version="${value.version}">`;
+      for (const node_value of Object.values(value.nodes)) {
+        changeXML += `<nd ref="${node_value}"/>`;
+      }
+
+    } else if (value.type === "relation") {
+      changeXML += `<${value.type} id="${value.id}" changeset="${changesetId}" version="${value.version}">`;
+      for (const member_value of Object.values(value.members)) {
+        changeXML += `<member type="${member_value.type}" ref="${member_value.ref}" role="${member_value.role}"/>`;
+      }
+    }
+    // add tags to the element xml
     for (const [tag_key, tag_value] of Object.entries(value.tags)) {
-      changeXML += `<tag k="${tag_key}" v="${escapeXML(tag_value)}"/>`;
+      changeXML += `<tag k="${escapeXML(tag_key)}" v="${escapeXML(
+        tag_value
+      )}"/>`;
     }
     changeXML += `</${value.type}>`;
   }
-  changeXML += '</modify><delete if-unused="true"/></osmChange>';
+  changeXML += "</modify><delete if-unused='true'/></osmChange>";
   return changeXML;
 }

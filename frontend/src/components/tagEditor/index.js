@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { osmAuth } from "osm-auth";
 import { useSelector } from "react-redux";
+
 import ShowError from "../error";
 import {
   fetchExternalJSONAPI,
@@ -68,12 +69,11 @@ export default function TagEditor({
   useEffect(() => {
     feature &&
       (async () => {
-        // setLoading(true);
-        const data = await fetchExternalJSONAPI(
-          `https://api.openstreetmap.org/api/0.6/${feature.feature.properties.osm_type}/${feature.feature.properties.id}.json`
-        );
+        const url = `https://api.openstreetmap.org/api/0.6/
+        ${feature.feature.properties.osm_type}/
+        ${feature.feature.properties.id}.json`.replace(/\s/g, "");
+        const data = await fetchExternalJSONAPI(url);
         setElement(data["elements"][0]);
-        // setLoading(false);
       })();
   }, [feature]);
 
