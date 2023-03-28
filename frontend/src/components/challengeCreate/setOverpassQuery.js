@@ -1,4 +1,7 @@
 import React, { useState } from "react";
+import { Tooltip } from "react-tooltip";
+import "react-tooltip/dist/react-tooltip.css";
+
 import popularTags from "../../assets/json/popular_tags.json";
 
 const ElementButtons = ({ setOverpassQuery }) => {
@@ -42,6 +45,18 @@ const ElementButtons = ({ setOverpassQuery }) => {
     setOverpassQuery(query);
   };
 
+  const generateCustomQuery = () => {
+    let query = "";
+    const type = "node";
+    const [tag, sub_tag] = customTag.split("=");
+    if (sub_tag) {
+      query = `(${type}[${tag}=${sub_tag}]({{bbox}}););out;`;
+    } else {
+      query = `(${type}[${tag}]({{bbox}});>;);out;`;
+    }
+    setOverpassQuery(query);
+  };
+
   // const excludeFromQuery = (type, tag, exclude_subtag) => {
   //     if (subTag === "*") {
   //         return `(${type}[${tag}][!~"${exclude_subtag}"]({{bbox}}););out;`
@@ -51,9 +66,10 @@ const ElementButtons = ({ setOverpassQuery }) => {
 
   return (
     <div>
+      <p className="fw-bold text-dark mb-1">Predefined tags</p>
       {selectedTag ? (
         // Display subtags for selected tag if any tag is selected
-        <div>
+        <div className="mb-4">
           <div>
             <button
               className="btn btn-sm btn-primary me-2 mb-2"
@@ -118,36 +134,62 @@ const ElementButtons = ({ setOverpassQuery }) => {
         </div>
       ) : (
         <div>
-          {Object.keys(popularTags).map((tag) => (
-            <button
-              key={tag}
-              className="btn btn-sm btn-outline-primary me-2 mb-2"
-              onClick={() => {
-                onTagClick(tag);
-              }}
-            >
-              {tag}
-            </button>
-          ))}
-          <div className="input-group mb-3">
-            <input
-              className={`btn btn-sm mb-2 bg-white text-dark rounded-end-0 ${
-                customTagError ? "btn-outline-danger" : "btn-outline-primary"
-              }`}
-              type="text"
-              placeholder="Add tag in key=value format"
-              onChange={onCustomTagChange}
-            />
-            <button
-              className="btn btn-sm btn-primary me-2 mb-2 rounded-start-0"
-              onClick={() => {
-                !customTagError
-                  ? generateQuery("node", customTag, "*")
-                  : console.log("Invalid custom tag");
-              }}
-            >
-              <i className="fa fa-plus"></i>
-            </button>
+          <div className="mb-2">
+            {Object.keys(popularTags).map((tag) => (
+              <button
+                key={tag}
+                className="btn btn-sm btn-outline-primary me-2 mb-2"
+                onClick={() => {
+                  onTagClick(tag);
+                }}
+              >
+                {tag}
+              </button>
+            ))}
+          </div>
+          <div className="mb-4 mt-3">
+            <p className="fw-bold text-dark mb-1">Add custom tag here</p>
+            <div className="d-flex align-items-center">
+              <input
+                className={`btn btn-sm mb-2 bg-white text-dark rounded-end-0 ${
+                  customTagError ? "btn-outline-danger" : "btn-outline-primary"
+                }`}
+                type="text"
+                placeholder="Add tag in key=value format"
+                onChange={onCustomTagChange}
+                // Also generate query on enter
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    !customTagError
+                      ? generateCustomQuery()
+                      : console.log("Invalid custom tag");
+                  }
+                }}
+              />
+              <button
+                className="btn btn-sm btn-primary me-2 mb-2 rounded-start-0"
+                onClick={() => {
+                  !customTagError
+                    ? generateCustomQuery()
+                    : console.log("Invalid custom tag");
+                }}
+              >
+                <i className="fa fa-plus"></i>
+              </button>
+              <div data-tooltip-id="tooltip">
+                <i className="fa fa-question-circle ms-1 fs-5 text-muted"></i>
+                <Tooltip id="tooltip" place="top" className="bg-info text-dark">
+                  <p className="mb-0">
+                    Add a tag in key=value format or just key to include all the
+                    values of the tag.
+                  </p>
+                  <p className="mb-0">
+                    For example, amenity=restaurant or just amenity to include
+                    all the amenities.
+                  </p>
+                </Tooltip>
+              </div>
+            </div>
           </div>
         </div>
       )}
@@ -158,6 +200,7 @@ const ElementButtons = ({ setOverpassQuery }) => {
 export const OverpassQuery = ({ challenge, setChallenge, step, setStep }) => {
   const [src, setSrc] = useState("https://overpass-turbo.eu/map.html");
   const [isTested, setIsTested] = useState(false);
+  const [isTestLoading, setIsTestLoading] = useState(false);
 
   const setOverpassQuery = (query) => {
     setChallenge({
@@ -168,7 +211,9 @@ export const OverpassQuery = ({ challenge, setChallenge, step, setStep }) => {
   };
 
   const onNext = () => {
-    setStep(step + 1);
+    isTested
+      ? setStep(step + 1)
+      : alert("Please test the query before proceeding to the next step");
   };
 
   const onBack = () => {
@@ -176,19 +221,19 @@ export const OverpassQuery = ({ challenge, setChallenge, step, setStep }) => {
   };
 
   const onTest = () => {
+    setIsTestLoading(true);
     const bbox = challenge.bbox;
-    console.log(challenge);
     // Replace {{bbox}} with bbox and set bbox to lng, lat form lat, lng to test query on overpass turbo
     const new_bbox = bbox[1] + "," + bbox[0] + "," + bbox[3] + "," + bbox[2];
     const bboxQuery = challenge.overpass_query.replace("{{bbox}}", new_bbox);
     setSrc(
       "https://overpass-turbo.eu/map.html?Q=" + encodeURIComponent(bboxQuery)
     );
-    setIsTested(true);
-  };
-
-  const onClick = () => {
-    isTested ? onNext() : onTest();
+    // Add some delay to set isTested to true so that the iframe is loaded
+    setTimeout(() => {
+      setIsTested(true);
+      setIsTestLoading(false);
+    }, 5000); // 5 seconds
   };
 
   return (
@@ -199,32 +244,39 @@ export const OverpassQuery = ({ challenge, setChallenge, step, setStep }) => {
             <div className="modal-header">
               <p className="modal-title fs-5 title text-dark fw-semibold">
                 {" "}
-                Step 2: Select elements to be included in the challenge
+                Step 2: Select tags to localize
               </p>
             </div>
             <div className="modal-body">
               <div className="row" style={{ height: "70vh" }}>
                 <div className="col-5">
-                  <div>
+                  <div className="mb-2">
                     <p className="text-dark" style={{ fontSize: "0.9rem" }}>
-                      Select elements to be included in the challenge. You can
-                      use the pre-defined tags or add your own.
+                      Select tags you want to localize in this challenge. You
+                      can use the pre-defined tags or add your own.
                     </p>
                   </div>
                   <ElementButtons setOverpassQuery={setOverpassQuery} />
-                  <label className="form-label fw-bold text-dark">
-                    Overpass query
-                  </label>
-                  <textarea
-                    className="form-control rounded-0"
-                    name="overpass_query"
-                    type="text"
-                    placeholder="Overpass query"
-                    value={challenge.overpass_query}
-                    onChange={(e) => setOverpassQuery(e.target.value)}
-                    rows="3"
-                    disabled={true}
-                  />
+                  <div className="mt-4">
+                    <label className="form-label fw-bold text-dark">
+                      Overpass query
+                    </label>
+                    <textarea
+                      className="form-control rounded-0"
+                      name="overpass_query"
+                      type="text"
+                      placeholder="Overpass query"
+                      value={challenge.overpass_query}
+                      onChange={(e) => setOverpassQuery(e.target.value)}
+                      rows="3"
+                      disabled={true}
+                    />
+                  </div>
+                  <div>
+                    <button className="btn btn-primary mt-3" onClick={onTest}>
+                      Test query
+                    </button>
+                  </div>
                 </div>
                 <div className="col-7">
                   <iframe
@@ -245,14 +297,21 @@ export const OverpassQuery = ({ challenge, setChallenge, step, setStep }) => {
               >
                 Back
               </button>
-
               <button
-                className="btn btn-primary"
+                className={`btn btn-primary`}
+                disabled={isTestLoading}
                 onClick={() => {
-                  onClick();
+                  onNext();
                 }}
               >
-                {isTested ? "Next" : "Test"}
+                Next
+                {isTestLoading && (
+                  <span
+                    className="spinner-border spinner-border-sm ms-2"
+                    role="status"
+                    aria-hidden="true"
+                  ></span>
+                )}
               </button>
             </div>
           </div>

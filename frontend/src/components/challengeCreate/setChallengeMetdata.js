@@ -27,19 +27,20 @@ export const MetadataForm = ({ challenge, setChallenge }) => {
       </div>
       <div>
         <Input
+          name="language_tags"
+          label="Tags to edit*"
+          type="text"
+          placeholder="Name tags separated by comma e.g. name, name:en"
+          onChange={onInputChange}
+          defaultValue={challenge.language_tags}
+        />
+        <Input
           label="Name*"
           name="name"
           type="text"
           placeholder="Name"
           defaultValue={challenge.name}
           onChange={onInputChange}
-        />
-        <Checkbox
-          label="Status:*"
-          name="status"
-          options={challengeStatusOption}
-          onChange={onInputChange}
-          value={challenge.status}
         />
         <TextArea
           label="Description*"
@@ -57,13 +58,12 @@ export const MetadataForm = ({ challenge, setChallenge }) => {
           defaultValue={challenge.feature_instructions}
           onChange={onInputChange}
         />
-        <Input
-          name="language_tags"
-          label="Tags to edit*"
-          type="text"
-          placeholder="Name tags separated by comma e.g. name, name:en"
+        <Checkbox
+          label="Status*"
+          name="status"
+          options={challengeStatusOption}
           onChange={onInputChange}
-          defaultValue={challenge.language_tags}
+          value={challenge.status}
         />
       </div>
     </div>

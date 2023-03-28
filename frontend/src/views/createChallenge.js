@@ -93,6 +93,7 @@ const HandleSteps = ({
   removeDrawHandler,
   challenge,
   setChallenge,
+  isLoaded,
 }) => {
   switch (step) {
     case 1:
@@ -102,6 +103,7 @@ const HandleSteps = ({
           removeDrawHandler={removeDrawHandler}
           challenge={challenge}
           setChallenge={setChallenge}
+          isLoaded={isLoaded}
         />
       );
     case 2:
@@ -141,7 +143,7 @@ const CreateChallenge = () => {
       displayControlsDefault: false,
     }),
   });
-  const [challenge, setChallenge] = useState({});
+  const [challenge, setChallenge] = useState({ status: "DRAFT" });
   const [bboxArea, setBboxArea] = useState(null);
   const [step, setStep] = useState(1);
   const [validationResult, setValidationResult] = useState({
@@ -187,7 +189,7 @@ const CreateChallenge = () => {
   };
 
   useLayoutEffect(() => {
-    if (mapObject.map) {
+    if (mapObject.map && mapObject.map.isStyleLoaded()) {
       mapObject.map.addControl(mapObject.draw);
 
       mapObject.map.on("draw.create", onDrawUpdate);
@@ -333,6 +335,7 @@ const CreateChallenge = () => {
               removeDrawHandler={removeDrawHandler}
               challenge={challenge}
               setChallenge={setChallenge}
+              isLoaded={mapObject.map && mapObject.map.isStyleLoaded()}
             />
           </div>
           <div>

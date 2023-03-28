@@ -1,4 +1,4 @@
-const SetChallengeBBBOX = ({ addDrawHandler, removeDrawHandler }) => {
+const SetChallengeBBBOX = ({ addDrawHandler, removeDrawHandler, isLoaded }) => {
   return (
     <div>
       <div>
@@ -12,7 +12,11 @@ const SetChallengeBBBOX = ({ addDrawHandler, removeDrawHandler }) => {
           A bounding box will be calculated from the area you draw.
         </p>
       </div>
-      <button className="btn btn-outline-primary me-2" onClick={addDrawHandler}>
+      <button
+        className="btn btn-outline-primary me-2"
+        onClick={addDrawHandler}
+        disabled={!isLoaded}
+      >
         Draw
       </button>
       <button className="btn btn-outline-secondary" onClick={removeDrawHandler}>

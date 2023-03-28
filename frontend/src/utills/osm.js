@@ -1,5 +1,4 @@
 export function getUserDetails(auth) {
-
   var options = {
     method: "GET",
     path: "/api/0.6/user/details.json",
@@ -18,7 +17,6 @@ export function getUserDetails(auth) {
 }
 
 export function createChangeset(auth, comment, reviewEdits) {
-
   const changeset = createChnagesetJSON(comment, reviewEdits);
 
   return new Promise((resolve, reject) => {
@@ -43,7 +41,6 @@ export function createChangeset(auth, comment, reviewEdits) {
 }
 
 export function uploadChanges(auth, changes, changesetId) {
-
   const changeXML = createChangeXML(changes, changesetId);
 
   return new Promise((resolve, reject) => {
@@ -131,13 +128,11 @@ export function createChangeXML(elements, changesetId) {
   for (const value of Object.values(elements)) {
     if (value.type === "node") {
       changeXML += `<${value.type} id="${value.id}" changeset="${changesetId}" lon="${value.lon}" lat="${value.lat}" version="${value.version}">`;
-
     } else if (value.type === "way") {
       changeXML += `<${value.type} id="${value.id}" changeset="${changesetId}" version="${value.version}">`;
       for (const node_value of Object.values(value.nodes)) {
         changeXML += `<nd ref="${node_value}"/>`;
       }
-
     } else if (value.type === "relation") {
       changeXML += `<${value.type} id="${value.id}" changeset="${changesetId}" version="${value.version}">`;
       for (const member_value of Object.values(value.members)) {

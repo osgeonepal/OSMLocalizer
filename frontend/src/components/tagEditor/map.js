@@ -23,7 +23,6 @@ const osm_style = {
   },
   layers: [
     {
-
       id: "osm",
       type: "raster",
       source: "osm",
@@ -40,7 +39,10 @@ const Map = (props) => {
     const zoom = props.element.type === "node" ? 18 : 12;
     mapContainerRef.current = new mapboxgl.Map({
       container: "map-container",
-      style: props.element.type === "node" ? osm_style : "mapbox://styles/mapbox/streets-v11",
+      style:
+        props.element.type === "node"
+          ? osm_style
+          : "mapbox://styles/mapbox/streets-v11",
       center: [0, 0],
       zoom: zoom,
     });
@@ -61,59 +63,54 @@ const Map = (props) => {
   }, [props.element]);
 
   useEffect(() => {
-    if (mapContainerRef.current.isStyleLoaded() ){
-
-    if (props.element.type === "node") {
-      var marker = new mapboxgl.Marker();
-      props.element &&
-        marker
-          .setLngLat([props.element.lon, props.element.lat])
-          .addTo(mapContainerRef.current);
-      mapContainerRef.current.jumpTo({
-        center: [props.element.lon, props.element.lat],
-      });
-      return () => marker && marker.remove();
-    }
-
-    else if (props.element.type === "way") {
-
-      if( mapContainerRef.current.getSource("geojson")){
-        mapContainerRef.current.removeSource("geojson");
-        mapContainerRef.current.removeLayer("geojson");
-      }
-      console.log(geojson);
-    geojson.features &&
-      mapContainerRef.current.addSource("geojson", {
-        type: "geojson",
-        data: {
-          type: "Feature",
-          geometry: {
-            type: "LineString",
-            coordinates: geojson.features[0].geometry.coordinates,
-          },
+    if (mapContainerRef.current.isStyleLoaded()) {
+      if (props.element.type === "node") {
+        var marker = new mapboxgl.Marker();
+        props.element &&
+          marker
+            .setLngLat([props.element.lon, props.element.lat])
+            .addTo(mapContainerRef.current);
+        mapContainerRef.current.jumpTo({
+          center: [props.element.lon, props.element.lat],
+        });
+        return () => marker && marker.remove();
+      } else if (props.element.type === "way") {
+        if (mapContainerRef.current.getSource("geojson")) {
+          mapContainerRef.current.removeSource("geojson");
+          mapContainerRef.current.removeLayer("geojson");
         }
-      });
-    mapContainerRef.current.getSource("geojson") &&
-      mapContainerRef.current.addLayer({
-        id: "geojson",
-        type: "line",
-        source: "geojson",
-        layout: {},
-        paint: {
-          "line-color": "#9000ff",
-          "line-width": 3,
-        },
-      });
-      mapContainerRef.current.fitBounds(
-        (geojson.features) && bbox(geojson),
-        {
+        console.log(geojson);
+        geojson.features &&
+          mapContainerRef.current.addSource("geojson", {
+            type: "geojson",
+            data: {
+              type: "Feature",
+              geometry: {
+                type: "LineString",
+                coordinates: geojson.features[0].geometry.coordinates,
+              },
+            },
+          });
+        mapContainerRef.current.getSource("geojson") &&
+          mapContainerRef.current.addLayer({
+            id: "geojson",
+            type: "line",
+            source: "geojson",
+            layout: {},
+            paint: {
+              "line-color": "#9000ff",
+              "line-width": 3,
+            },
+          });
+        mapContainerRef.current.fitBounds(geojson.features && bbox(geojson), {
           padding: 80,
           animate: false,
-        }
-      );
-      return () => mapContainerRef.current.removeLayer("geojson") && mapContainerRef.current.removeSource("geojson");
+        });
+        return () =>
+          mapContainerRef.current.removeLayer("geojson") &&
+          mapContainerRef.current.removeSource("geojson");
+      }
     }
-  }
   }, [props.element, geojson]);
 
   return (
