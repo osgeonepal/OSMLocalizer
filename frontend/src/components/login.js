@@ -126,7 +126,7 @@ const Login = (props) => {
   const user = useSelector((state) => state.auth.user);
   return (
     <div>
-      {user ? (
+      {!props.expired && user ? (
         <UserMenu
           username={user.username}
           user_picture={user.picture_url}
