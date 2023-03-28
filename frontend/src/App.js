@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import "./App.css";
@@ -17,16 +17,30 @@ import ManagementSection from "./views/managementRoute";
 import AboutView from "./views/about";
 import CreateChallenge from "./views/createChallenge";
 import { Notfound } from "./views/notFound";
+import { fetchLocalJSONAPI } from "./utills/fetch";
+import ShowError from "./components/error";
 
 function App() {
+  const [error, setError] = useState(null);
   useEffect(() => {
-    handleLogin();
+    const token = localStorage.getItem("jwt_token");
+    fetchLocalJSONAPI("auth/token-expiry/", token, "GET")
+      .then((res) => {
+        console.log(res);
+        if (!res.expired) {
+          handleLogin();
+        }
+      })
+      .catch((err) => {
+        setError("SESSION_EXPIRED");
+      });
   }, []);
 
   return (
     <BrowserRouter>
       <Header />
       <div className="container App">
+        {error && <ShowError error={error} setError={setError} />}
         <Routes>
           <Route path="/" element={<ChallengesView />} />
           <Route path="/challenges" element={<ChallengesView />} />

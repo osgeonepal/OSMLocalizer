@@ -1,10 +1,15 @@
 import { useNavigate } from "react-router-dom";
+import Login from "./login";
 
 const errorMessages = {
   NO_FEATURES_TO_LOCALIZE: {
     title: "No features to localize",
     message:
       "Congratulations! There are no more features left to localize in this challenge. You can either validate features or check out other challenges.",
+  },
+  SESSION_EXPIRED: {
+    title: "Session expired",
+    message: "Your session has expired. Please login again to continue.",
   },
   OTHER: {
     title: "Something went wrong",
@@ -18,8 +23,6 @@ const errorMessages = {
 
 const ShowError = ({ error, setError }) => {
   const navigate = useNavigate();
-  console.log(error);
-  Object.keys(errorMessages).includes(error) || (error = "OTHER");
   const { title, message } = errorMessages[error];
   return (
     <div>
@@ -36,18 +39,24 @@ const ShowError = ({ error, setError }) => {
               <p>{message}</p>
             </div>
             <div className="modal-footer">
-              <button
-                className="btn btn-secondary"
-                onClick={() => setError(null)}
-              >
-                Close
-              </button>
-              <button
-                className="btn btn-primary"
-                onClick={() => navigate("/challenges")}
-              >
-                Go to Challenges
-              </button>
+              {error === "SESSION_EXPIRED" ? (
+                <Login expired={true} />
+              ) : (
+                <>
+                  <button
+                    className="btn btn-secondary"
+                    onClick={() => setError(null)}
+                  >
+                    Close
+                  </button>
+                  <button
+                    className="btn btn-primary"
+                    onClick={() => navigate("/challenges")}
+                  >
+                    Go to Challenges
+                  </button>
+                </>
+              )}
             </div>
           </div>
         </div>
