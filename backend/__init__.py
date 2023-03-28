@@ -45,7 +45,12 @@ def create_app(config=EnvironmentConfig):
         FeaturesAllAPI,
         GetFeatureToLocalizeAPI,
     )
-    from backend.api.user import UserAuthorizationUrlAPI, UserTokenAPI, UserAllAPI
+    from backend.api.user import (
+        UserAuthorizationUrlAPI,
+        UserTokenAPI,
+        UserAllAPI,
+        UserTokenExpiryAPI,
+    )
     from backend.api.translate import TranslateTextAPI
     from backend.api.statistics import (
         UserStatSAPI,
@@ -81,8 +86,11 @@ def create_app(config=EnvironmentConfig):
         GetFeatureToLocalizeAPI,
         "/challenge/<int:challenge_id>/feature/get-feature-to-localize/",
     )
+
     api.add_resource(UserAuthorizationUrlAPI, "/auth/url/")
     api.add_resource(UserTokenAPI, "/auth/token/")
+    api.add_resource(UserTokenExpiryAPI, "/auth/token-expiry/")
+
     api.add_resource(UserAllAPI, "/users/")
     api.add_resource(UserStatSAPI, "/user/<int:user_id>/stats/")
     api.add_resource(

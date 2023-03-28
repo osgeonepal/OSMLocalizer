@@ -34,6 +34,12 @@ class UserTokenAPI(Resource):
         return UserService.login_user(user_info["user"], token["access_token"]).dict()
 
 
+class UserTokenExpiryAPI(Resource):
+    @auth.login_required
+    def get(self):
+        return {"expired": False}, 200
+
+
 class UserAllAPI(Resource):
     @auth.login_required
     def get(self):
