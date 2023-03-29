@@ -6,6 +6,7 @@
     "@emotion/react": "^11.10.5",
     "@emotion/styled": "^11.10.5",
     "@mapbox/mapbox-gl-draw": "^1.4.0",
+    "@mapbox/mapbox-gl-geocoder": "^5.0.1",
     "@reduxjs/toolkit": "^1.9.3",
     "@sentry/react": "^7.43.0",
     "@sentry/tracing": "^7.43.0",
@@ -19,6 +20,7 @@
     "final-form": "^4.20.8",
     "mapbox-gl": "^2.12.0",
     "osm-auth": "^2.0.1",
+    "osmtogeojson": "^3.0.0-beta.5",
     "prettier": "^2.8.4",
     "react": "^18.2.0",
     "react-detect-click-outside": "^1.1.7",
@@ -27,6 +29,7 @@
     "react-redux": "^8.0.5",
     "react-router-dom": "^6.7.0",
     "react-scripts": "5.0.1",
+    "react-select": "^5.7.2",
     "react-tooltip": "^5.8.3",
     "web-vitals": "^2.1.4"
   },

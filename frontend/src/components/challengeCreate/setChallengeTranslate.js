@@ -27,9 +27,15 @@ export const TranslationForm = ({ challenge, setChallenge }) => {
 
   return (
     <div>
+      <div>
+        <p className="fs-5 title text-dark fw-semibold">
+          {" "}
+          Step 4: Set Challenge Translation Settings
+        </p>
+      </div>
       <div className="form-group">
         <Select
-          label="Translate to"
+          label="Translate to:*"
           name="to_language"
           clearable={true}
           options={languageOptions}

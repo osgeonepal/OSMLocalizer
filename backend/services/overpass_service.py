@@ -31,12 +31,32 @@ class Overpass:
         return api_result.get_json()
 
     @staticmethod
-    def node_to_features(node: overpy.Node, feature_id) -> Feature:
+    def node_to_features(node: overpy.Node) -> Feature:
         feature = Feature()
         feature.id = node.id
         feature.osm_type = "node"
         feature.status = FeatureStatus.TO_LOCALIZE.value
         geometry = Overpass.coordinates_to_point(float(node.lon), float(node.lat))
+        feature.geometry = f"SRID=4326;{geometry.wkt}"
+        return feature
+
+    @staticmethod
+    def way_to_features(way: overpy.Way) -> Feature:
+        feature = Feature()
+        feature.id = way.id
+        feature.osm_type = "way"
+        feature.status = FeatureStatus.TO_LOCALIZE.value
+        geometry = Overpass.coordinates_to_point(0, 0)
+        feature.geometry = f"SRID=4326;{geometry.wkt}"
+        return feature
+
+    @staticmethod
+    def relation_to_features(relation: overpy.Relation) -> Feature:
+        feature = Feature()
+        feature.id = relation.id
+        feature.osm_type = "relation"
+        feature.status = FeatureStatus.TO_LOCALIZE.value
+        geometry = Overpass.coordinates_to_point(0, 0)
         feature.geometry = f"SRID=4326;{geometry.wkt}"
         return feature
 

@@ -1,0 +1,126 @@
+    {
+        "place": {
+            "values": [
+                "*",
+                "sea",
+                "city",
+                "town",
+                "village",
+                "suburb",
+                "locality",
+                "neighbourhood"
+            ],
+            "type": "node"
+        },
+        "amenity": {
+            "values": [
+                "*",
+                "hospital",
+                "school",
+                "college",
+                "kindergarten",
+                "police",
+                "fuel",
+                "bank",
+                "embassy",
+                "apartment",
+                "cinema",
+                "atm",
+                "restaurant",
+                "health_post",
+                "clinic",
+                "place_of_worship",
+                "pharmacy",
+                "cafe",
+                "fast_food"
+            ],
+            "type": "node"
+        },
+        "shop": {
+            "values": [
+                "*",
+                "supermarket",
+                "mall",
+                "department_store"
+            ],
+            "type": "node"
+        },
+        "office": {
+            "values": [
+                "*",
+                "government"
+            ],
+            "type": "node"
+        },
+        "tourism": {
+            "values": [
+                "*",
+                "hotel",
+                "museum"
+            ],
+            "type": "node"
+        },
+        "highway": {
+            "values": [
+                "*",
+                "bus_stop",
+                "service",
+                "cycleway",
+                "residential",
+                "track",
+                "unclassified",
+                "tertiary",
+                "secondary",
+                "primary",
+                "trunk",
+                "motorway",
+                "road"
+            ],
+            "type": "way"
+        },
+        "waterway": {
+            "values": [
+                "*",
+                "river",
+                "stream",
+                "canal",
+                "ditch",
+                "weir",
+                "dam",
+                "drain",
+                "lock_gate",
+                "waterfall",
+                "lock",
+                "moat"
+            ],
+            "type": "way"
+        },
+        "route": {
+            "values": [
+                "*",
+                "bus",
+                "train",
+                "tram",
+                "subway"
+            ],
+            "type": "relation"
+        },
+        "boundary": {
+            "values": [
+                "*",
+                "administrative",
+                "political"
+            ],
+            "type": "relation"
+        },
+        "site": {
+            "values": [
+                "*",
+                "archaeological",
+                "historical",
+                "cultural",
+                "natural"
+            ],
+            "type": "relation"
+        }
+    }
