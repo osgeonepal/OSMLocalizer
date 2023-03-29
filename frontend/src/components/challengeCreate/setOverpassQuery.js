@@ -1,14 +1,21 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import Select from "react-select";
 import { Tooltip } from "react-tooltip";
 import "react-tooltip/dist/react-tooltip.css";
 
 import popularTags from "../../assets/json/popular_tags.json";
 
-const ElementButtons = ({ setOverpassQuery }) => {
+const ElementButtons = ({ setOverpassQuery, overpass_query }) => {
   const [selectedTag, setSelectedTag] = useState();
   const [customTag, setCustomTag] = useState();
   const [customTagError, setCustomTagError] = useState(false);
   const [subTag, setSubTag] = useState();
+  const [elementType, setElementType] = useState("node");
+
+  useEffect(() => {
+    overpass_query && generateQuery(subTag);
+    // eslint-disable-next-line
+  }, [elementType, overpass_query, subTag]);
 
   const onCustomTagChange = (e) => {
     // Validate custom tag is in key=value or key format using regex
@@ -29,170 +36,149 @@ const ElementButtons = ({ setOverpassQuery }) => {
 
   const generateQuery = (sub_tag) => {
     let query = "";
-    const type = popularTags[selectedTag]["type"];
-
+    // const type = popularTags[selectedTag]["type"];
     setSubTag(sub_tag);
 
-    if (type === "node") {
+    if (elementType === "node") {
       sub_tag === "*"
-        ? (query = `(${type}[${selectedTag}]({{bbox}}););out;`)
-        : (query = `(${type}[${selectedTag}=${sub_tag}]({{bbox}}););out;`);
+        ? (query = `(${elementType}[${selectedTag}]({{bbox}}););out;`)
+        : (query = `(${elementType}[${selectedTag}=${sub_tag}]({{bbox}}););out;`);
     } else {
       sub_tag === "*"
-        ? (query = `(${type}[${selectedTag}]({{bbox}});>;);out;`)
-        : (query = `(${type}[${selectedTag}=${sub_tag}]({{bbox}});>;);out;`);
+        ? (query = `(${elementType}[${selectedTag}]({{bbox}});>;);out;`)
+        : (query = `(${elementType}[${selectedTag}=${sub_tag}]({{bbox}});>;);out;`);
     }
     setOverpassQuery(query);
   };
 
   const generateCustomQuery = () => {
     let query = "";
-    const type = "node";
     const [tag, sub_tag] = customTag.split("=");
-    if (sub_tag) {
-      query = `(${type}[${tag}=${sub_tag}]({{bbox}}););out;`;
+    if (elementType === "node") {
+      sub_tag
+        ? (query = `(${elementType}[${tag}=${sub_tag}]({{bbox}}););out;`)
+        : (query = `(${elementType}[${tag}]({{bbox}}););out;`);
     } else {
-      query = `(${type}[${tag}]({{bbox}});>;);out;`;
+      sub_tag
+        ? (query = `(${elementType}[${tag}=${sub_tag}]({{bbox}});>;);out;`)
+        : (query = `(${elementType}[${tag}]({{bbox}});>;);out;`);
     }
     setOverpassQuery(query);
   };
 
-  // const excludeFromQuery = (type, tag, exclude_subtag) => {
-  //     if (subTag === "*") {
-  //         return `(${type}[${tag}][!~"${exclude_subtag}"]({{bbox}}););out;`
-  //     }
-  //     return `(${type}[${tag}=${subTag}][!~"${exclude_subtag}"]({{bbox}}););out;`
-  // }
+  const onElementTypeChange = (e) => {
+    console.log(overpass_query);
+    setElementType(e.value);
+  };
+
+  const tagOptions = Object.keys(popularTags).map((tag) => {
+    return { value: tag, label: tag };
+  });
+
+  const subTagOptions = selectedTag
+    ? popularTags[selectedTag]["values"].map((sub_tag) => {
+        return { value: sub_tag, label: sub_tag };
+      })
+    : [];
 
   return (
     <div>
-      <p className="fw-bold text-dark mb-1">Predefined tags</p>
-      {selectedTag ? (
-        // Display subtags for selected tag if any tag is selected
-        <div className="mb-4">
-          <div>
-            <button
-              className="btn btn-sm btn-primary me-2 mb-2"
-              onClick={() => {
-                setSelectedTag(null);
-              }}
-            >
-              <i
-                className="fa fa-arrow-left me-2"
-                style={{ fontSize: "0.6rem" }}
-              ></i>
-              {selectedTag}
-            </button>
-          </div>
-          {popularTags[selectedTag]["values"].map((sub_tag) => (
-            <button
-              key={sub_tag}
-              className={
-                `btn btn-sm me-2 mb-2 ` +
-                (sub_tag === subTag ? "btn-success" : "btn-outline-success")
-              }
-              onClick={() => {
-                generateQuery(sub_tag);
-              }}
-            >
-              {sub_tag}
-            </button>
-          ))}
-          {/* <div className="mt-3">
-                        <button className="btn btn-sm btn-outline-danger me-2 mb-2" onClick={() => {
-                            onChange({
-                                target: {
-                                    name: "overpass_query",
-                                    value: excludeFromQuery(popularTags[selectedTag]["type"], selectedTag, ".*")
-                                }
-                            })
-                        }}>
-                            Exclude all
-                        </button>
-                        <button className="btn btn-sm btn-outline-danger me-2 mb-2" onClick={() => {
-                            onChange({
-                                target: {
-                                    name: "overpass_query",
-                                    value: excludeFromQuery(popularTags[selectedTag]["type"], selectedTag, ".*_name")
-                                }
-                            })
-                        }}>
-                            Exclude names
-                        </button>
-                        <button className="btn btn-sm btn-outline-danger me-2 mb-2" onClick={() => {
-                            onChange({
-                                target: {
-                                    name: "overpass_query",
-                                    value: excludeFromQuery(popularTags[selectedTag]["type"], selectedTag, ".*_ref")
-
-                                }
-                            })
-                        }}>
-                            Exclude refs
-                        </button>
-                    </div> */}
+      <p className="fw-bold text-dark mb-1">
+        Select a tag in key=value format:
+      </p>
+      <div className="row d-flex align-items-center mb-4">
+        <div className="col-5">
+          <Select
+            className="fs-6"
+            options={tagOptions}
+            placeholder="Select a key"
+            getOptionLabel={(option) => option.label}
+            getOptionValue={(option) => option.value}
+            onChange={(e) => onTagClick(e.value)}
+            isClearable={true}
+            value={{ value: selectedTag, label: selectedTag }}
+            isSearchable={true}
+          />
         </div>
-      ) : (
-        <div>
-          <div className="mb-2">
-            {Object.keys(popularTags).map((tag) => (
-              <button
-                key={tag}
-                className="btn btn-sm btn-outline-primary me-2 mb-2"
-                onClick={() => {
-                  onTagClick(tag);
-                }}
-              >
-                {tag}
-              </button>
-            ))}
-          </div>
-          <div className="mb-4 mt-3">
-            <p className="fw-bold text-dark mb-1">Add custom tag here</p>
-            <div className="d-flex align-items-center">
-              <input
-                className={`btn btn-sm mb-2 bg-white text-dark rounded-end-0 ${
-                  customTagError ? "btn-outline-danger" : "btn-outline-primary"
-                }`}
-                type="text"
-                placeholder="Add tag in key=value format"
-                onChange={onCustomTagChange}
-                // Also generate query on enter
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    !customTagError
-                      ? generateCustomQuery()
-                      : console.log("Invalid custom tag");
-                  }
-                }}
-              />
-              <button
-                className="btn btn-sm btn-primary me-2 mb-2 rounded-start-0"
-                onClick={() => {
+        <div className="col-1 fw-bold">=</div>
+        <div className="col-5">
+          <Select
+            className="fs-6"
+            options={subTagOptions}
+            placeholder="Select a value"
+            onChange={(e) => generateQuery(e.value)}
+            value={subTag ? { value: subTag, label: subTag } : null}
+            isDisabled={!selectedTag}
+          />
+        </div>
+      </div>
+      <div>
+        <div className="mb-4 mt-3">
+          <p className="fw-bold text-dark mb-1">Or add your custom tag here:</p>
+          <div className="d-flex align-items-center">
+            <input
+              className={`btn btn-sm mb-2 bg-white text-dark rounded-end-0 ${
+                customTagError ? "btn-outline-danger" : "btn-outline-primary"
+              }`}
+              type="text"
+              placeholder="Add tag in key=value format"
+              onChange={onCustomTagChange}
+              // Also generate query on enter
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
                   !customTagError
                     ? generateCustomQuery()
                     : console.log("Invalid custom tag");
-                }}
+                }
+              }}
+            />
+            <button
+              className="btn btn-sm btn-secondary me-2 mb-2 rounded-start-0"
+              onClick={() => {
+                !customTagError
+                  ? generateCustomQuery()
+                  : console.log("Invalid custom tag");
+              }}
+            >
+              Add
+              {/* <i className="ms-2 fa fa-plus"></i> */}
+            </button>
+            <div data-tooltip-id="tooltip">
+              <i className="fa fa-question-circle ms-1 fs-5 text-muted"></i>
+              <Tooltip
+                id="tooltip"
+                place="top"
+                className="bg-secondary text-white"
               >
-                <i className="fa fa-plus"></i>
-              </button>
-              <div data-tooltip-id="tooltip">
-                <i className="fa fa-question-circle ms-1 fs-5 text-muted"></i>
-                <Tooltip id="tooltip" place="top" className="bg-info text-dark">
-                  <p className="mb-0">
-                    Add a tag in key=value format or just key to include all the
-                    values of the tag.
-                  </p>
-                  <p className="mb-0">
-                    For example, amenity=restaurant or just amenity to include
-                    all the amenities.
-                  </p>
-                </Tooltip>
-              </div>
+                <p className="mb-0">
+                  Add a tag in key=value format or just key to include all the
+                  values of the tag.
+                </p>
+                <p className="mb-0">
+                  For example, amenity=restaurant or just amenity to include all
+                  the amenities.
+                </p>
+              </Tooltip>
             </div>
           </div>
+          <div className="col-4 mt-3">
+            <p className="mb-0 fw-bold">Select element type:</p>
+            <Select
+              className="fs-6"
+              options={[
+                { value: "node", label: "Node" },
+                { value: "way", label: "Way" },
+                { value: "relation", label: "Relation" },
+              ]}
+              placeholder="Select element type"
+              onChange={(e) => onElementTypeChange(e)}
+              value={{ value: elementType, label: elementType }}
+              isClearable={false}
+              isSearchable={false}
+            />
+          </div>
         </div>
-      )}
+      </div>
     </div>
   );
 };
@@ -213,7 +199,7 @@ export const OverpassQuery = ({ challenge, setChallenge, step, setStep }) => {
   const onNext = () => {
     isTested
       ? setStep(step + 1)
-      : alert("Please test the query before proceeding to the next step");
+      : alert("Please run the query before proceeding to the next step");
   };
 
   const onBack = () => {
@@ -256,7 +242,10 @@ export const OverpassQuery = ({ challenge, setChallenge, step, setStep }) => {
                       can use the pre-defined tags or add your own.
                     </p>
                   </div>
-                  <ElementButtons setOverpassQuery={setOverpassQuery} />
+                  <ElementButtons
+                    setOverpassQuery={setOverpassQuery}
+                    overpass_query={challenge.overpass_query}
+                  />
                   <div className="mt-4">
                     <label className="form-label fw-bold text-dark">
                       Overpass query
@@ -274,7 +263,8 @@ export const OverpassQuery = ({ challenge, setChallenge, step, setStep }) => {
                   </div>
                   <div>
                     <button className="btn btn-primary mt-3" onClick={onTest}>
-                      Test query
+                      <i className="me-2 fa fa-play"></i>
+                      Run query
                     </button>
                   </div>
                 </div>

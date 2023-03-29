@@ -143,7 +143,7 @@ const CreateChallenge = () => {
       displayControlsDefault: false,
     }),
   });
-  const [challenge, setChallenge] = useState({ status: "DRAFT" });
+  const [challenge, setChallenge] = useState({ status: "PUBLISHED" });
   const [bboxArea, setBboxArea] = useState(null);
   const [step, setStep] = useState(1);
   const [validationResult, setValidationResult] = useState({

@@ -9,7 +9,8 @@ const SetChallengeBBBOX = ({ addDrawHandler, removeDrawHandler, isLoaded }) => {
       </div>
       <div>
         <p className="text-dark" style={{ fontSize: "0.9rem" }}>
-          A bounding box will be calculated from the area you draw.
+          Draw area on the map to select the challenge area. A bounding box will
+          be calculated from the area you draw.
         </p>
       </div>
       <button
