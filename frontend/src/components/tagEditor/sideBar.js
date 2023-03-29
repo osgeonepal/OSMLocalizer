@@ -1,7 +1,8 @@
 import React, { useState } from "react";
+
 import { DEFAULT_CHANGESET_COMMENT } from "../../config";
 import { useSelector } from "react-redux";
-
+import { alertComponent } from "./inputToolForm";
 import userAvatar from "../../assets/icons/user_avatar.png";
 
 export const UploadSuccess = (props) => {
@@ -47,14 +48,6 @@ const EditorHeader = (props) => {
           ) : null}
         </div>
         <div className="col-5 d-flex justify-content-end align-items-center">
-          {/* <div>
-                <button className="btn btn-secondary">
-                    <i className="fa fa-undo " aria-hidden="true"></i>
-                </button>
-                <button className="btn btn-secondary">
-                    <i className="fa fa-repeat" aria-hidden="true"></i>
-                </button>
-            </div> */}
           <button
             className="btn btn-secondary ms-2"
             type="submit"
@@ -165,25 +158,41 @@ const UploadDialog = (props) => {
 };
 
 const ChangesCard = ({ change, onDelete, onElementClick }) => {
+  const [isCopied, setCopied] = useState(false);
+  const handleCopy = (value) => {
+    navigator.clipboard.writeText(value);
+    setCopied(true);
+    setTimeout(() => {
+      setCopied(false);
+    }, 1200);
+  };
+
   const key = `${change.type}-${change.id}`;
   return (
     <div
-      className="bg-light d-flex p-1 align-items-center"
+      className=" d-flex p-1 align-items-center border-bottom border-secondary-subtle"
       style={{ fontSize: "0.9rem" }}
     >
       <div
-        className="flex-grow-1 fw-bold"
+        className="flex-grow-1 fw-bold "
         style={{ cursor: "pointer" }}
         onClick={() => onElementClick(key)}
       >
         <span className="text-primary">{change.tags.name}</span>
       </div>
-      <span className="btn btn-sm btn-secondary ps-2">
-        <i
-          className="fa fa-trash text-danger"
-          onClick={() => onDelete(key)}
-        ></i>
-      </span>
+      <button
+        className="btn btn-sm btn-light border border-secondary-subtle"
+        onClick={() => handleCopy(change.tags.name)}
+      >
+        <i className="fa fa-clone text-secondary"></i>
+      </button>
+      <button
+        className="btn btn-sm btn-light ps-2 border border-secondary-subtle"
+        onClick={() => onDelete(key)}
+      >
+        <i className="fa fa-trash text-danger"></i>
+      </button>
+      {isCopied ? alertComponent() : null}
     </div>
   );
 };
