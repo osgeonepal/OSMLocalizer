@@ -32,8 +32,8 @@ class Challenge(Resource):
         request.get_json()["created_by"] = current_user
         challenge_dto = CreateChallengeDTO(**request.get_json())
         if ChallengeService.create_challenge(challenge_dto):
-            return {"success": "yes"}, 201
-        return {"success": "no"}, 400
+            return {"success": True}, 201
+        return {"success": False}, 400
 
 
 class ChallengeList(Resource):

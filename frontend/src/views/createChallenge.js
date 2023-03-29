@@ -16,9 +16,16 @@ import SetChallengeBBBOX from "../components/challengeCreate/setChallengeBBOX";
 import { MetadataForm } from "../components/challengeCreate/setChallengeMetdata";
 import { TranslationForm } from "../components/challengeCreate/setChallengeTranslate";
 import { OverpassQuery } from "../components/challengeCreate/setOverpassQuery";
+import { LoadingModal } from "../components/loadingModal";
 import { MAPBOX_ACCESS_TOKEN } from "../config";
 
-const StepButtons = ({ step, setStep, onCreate, isNextDisabled }) => {
+const StepButtons = ({
+  step,
+  setStep,
+  onCreate,
+  isNextDisabled,
+  isLoading,
+}) => {
   const disabledReason = () => {
     if (step === 1) {
       return "Please draw a bounding box";
@@ -68,10 +75,15 @@ const StepButtons = ({ step, setStep, onCreate, isNextDisabled }) => {
       {step === 4 && (
         <button
           className="btn btn-primary rounded-0 me-4"
+          disabled={isLoading}
           onClick={() => onCreate()}
         >
           Create
-          <i className="fa fa-arrow-right ms-2"></i>
+          {isLoading ? (
+            <i className="fa fa-spinner fa-spin ms-2"></i>
+          ) : (
+            <i className="fa fa-arrow-right ms-2"></i>
+          )}
         </button>
       )}
       {isNextDisabled() && (
@@ -144,6 +156,9 @@ const CreateChallenge = () => {
     }),
   });
   const [challenge, setChallenge] = useState({ status: "PUBLISHED" });
+  const [isLoading, setIsLoading] = useState(false);
+  const [isChallengeCreated, setIsChallengeCreated] = useState(false);
+
   const [bboxArea, setBboxArea] = useState(null);
   const [step, setStep] = useState(1);
   const [validationResult, setValidationResult] = useState({
@@ -247,17 +262,18 @@ const CreateChallenge = () => {
 
   const onCreate = () => {
     validateChallenge();
-    console.log(validationResult);
-    validationResult.isValid &&
+    if (validationResult.isValid) {
+      setIsLoading(true);
       pushToLocalJSONAPI(
         "challenge/",
         JSON.stringify(challenge),
         jwt_token
       ).then((response) => {
-        if (response.status === 201) {
-          window.location.href = `/challenges`;
+        if (response.success === true) {
+          setIsChallengeCreated(true);
         }
       });
+    }
   };
 
   const validateChallenge = () => {
@@ -349,8 +365,16 @@ const CreateChallenge = () => {
               setStep={setStep}
               onCreate={onCreate}
               isNextDisabled={isNextDisabled}
+              isLoading={isLoading}
             />
           </div>
+          {isLoading && (
+            <LoadingModal
+              loadingMessage="Creating challenge... This may take a few minutes."
+              successMessage="Challenge created successfully!"
+              isSuccess={isChallengeCreated}
+            />
+          )}
         </div>
         <div>
           {bboxArea && (
