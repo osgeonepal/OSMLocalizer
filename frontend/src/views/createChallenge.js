@@ -128,10 +128,22 @@ const HandleSteps = ({
         />
       );
     case 3:
-      return <MetadataForm challenge={challenge} setChallenge={setChallenge} />;
+      return (
+        <div>
+          <p className="fs-5 title text-dark fw-semibold">
+            Step 3: Set Challenge Metadata
+          </p>
+          <MetadataForm challenge={challenge} setChallenge={setChallenge} />
+        </div>
+      );
     case 4:
       return (
-        <TranslationForm challenge={challenge} setChallenge={setChallenge} />
+        <div>
+          <p className="fs-5 title text-dark fw-semibold">
+            Step 4: Set Challenge Translation Settings
+          </p>
+          <TranslationForm challenge={challenge} setChallenge={setChallenge} />
+        </div>
       );
     default:
       return (

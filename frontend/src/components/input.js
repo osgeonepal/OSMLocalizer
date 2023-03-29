@@ -3,7 +3,7 @@ import React from "react";
 export const Input = (props) => {
   return (
     <div className="p-2 pb-4">
-      <label className="form-label text-dark fw-bold">{props.label}</label>
+      <label className="form-label text-dark">{props.label}</label>
       <input
         className="form-control rounded-0"
         name={props.name}
@@ -19,7 +19,7 @@ export const Input = (props) => {
 export const TextArea = (props) => {
   return (
     <div className="p-2 pb-4">
-      <label className="form-label fw-bold text-dark">{props.label}</label>
+      <label className="form-label text-dark">{props.label}</label>
       <textarea
         className="form-control rounded-0"
         name={props.name}
@@ -36,7 +36,7 @@ export const TextArea = (props) => {
 export const Select = (props) => {
   return (
     <div className="p-2 pb-4">
-      <label className="form-label fw-bold text-dark">{props.label}</label>
+      <label className="form-label text-dark">{props.label}</label>
       <select
         className="form-select"
         name={props.name}
@@ -74,7 +74,7 @@ export const Checkbox = (props) => {
   });
   return (
     <div className="p-2 pb-4">
-      <label className="form-label fw-bold text-dark">{props.label}</label>
+      <label className="form-label text-dark">{props.label}</label>
       {options}
     </div>
   );
