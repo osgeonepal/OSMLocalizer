@@ -94,21 +94,8 @@ export function TagEditorForm(props) {
   // Sort editTags array so that the order of tags is consistent
   editTags.sort();
 
-  // const detectChange = (values) => {
-  //   var changedKeys = [];
-  //   for (const [key, value] of Object.entries(values)) {
-  //     if (value !== props.element["tags"][key]) {
-  //       changedKeys.push(key);
-  //     }
-  //   }
-  //   console.log(changedKeys);
-  //   return changedKeys;
-  // };
-
   const onSubmitChange = (values) => {
     async function updateElement() {
-      // const changedKeys = detectChange(values);
-      // if (changedKeys.length > 0) {
       const newElementTmp = { ...props.element };
       newElementTmp["tags"] = { ...props.element["tags"] };
       for (const [key, value] of Object.entries(values)) {
@@ -117,7 +104,6 @@ export function TagEditorForm(props) {
       const allChangesTmp = { ...props.allChanges };
       allChangesTmp[elementKey] = newElementTmp;
       props.setAllChanges(allChangesTmp);
-      // }
     }
     updateElement().then(() => {
       props.onDone();
