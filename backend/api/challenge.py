@@ -19,7 +19,7 @@ class Challenge(Resource):
         """Update existing challenge"""
         challenge_dto = UpdateChallengeDTO(**request.get_json())
         ChallengeService.update_challenge(challenge_id, challenge_dto)
-        return {"success": "yes"}
+        return {"success": True}
 
     def delete(self, challenge_id: int):
         """Delete challenge by id"""

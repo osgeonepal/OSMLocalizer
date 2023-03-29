@@ -26,30 +26,22 @@ export const TranslationForm = ({ challenge, setChallenge }) => {
   };
 
   return (
-    <div>
-      <div>
-        <p className="fs-5 title text-dark fw-semibold">
-          {" "}
-          Step 4: Set Challenge Translation Settings
-        </p>
-      </div>
-      <div className="form-group">
-        <Select
-          label="Translate to:*"
-          name="to_language"
-          clearable={true}
-          options={languageOptions}
-          onChange={onInputChange}
-          value={challenge.to_language}
-        />
-        <Select
-          name="translate_engine"
-          label="Translate Engine"
-          options={translateEngineOptions}
-          onChange={onInputChange}
-          value={challenge.translate_engine}
-        />
-      </div>
+    <div className="form-group">
+      <Select
+        label="Translate to:*"
+        name="to_language"
+        clearable={true}
+        options={languageOptions}
+        onChange={onInputChange}
+        value={challenge.to_language}
+      />
+      <Select
+        name="translate_engine"
+        label="Translate Engine"
+        options={translateEngineOptions}
+        onChange={onInputChange}
+        value={challenge.translate_engine}
+      />
       {/* {props.challengeInfo.translateEngine === "custom" && (
                 <div className="form-group">
                     <p className="form-label">Custom Translate Engine</p>
