@@ -30,7 +30,7 @@
     "react-router-dom": "^6.7.0",
     "react-scripts": "5.0.1",
     "react-select": "^5.7.2",
-    "react-tooltip": "^5.8.3",
+    "react-tooltip": "^5.10.4",
     "web-vitals": "^2.1.4"
   },
   "scripts": {
