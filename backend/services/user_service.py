@@ -6,7 +6,7 @@ from flask_httpauth import HTTPTokenAuth
 from backend.models.sql.user import User
 from backend.models.dtos.user_dto import UserLoginDTO, UserAllDTO
 from backend.services.utills import timestamp
-
+from backend.errors import Unauthorized
 
 # Validate jwt token
 auth = HTTPTokenAuth(scheme="Bearer")
@@ -19,7 +19,7 @@ def verify_token(token):
             token, current_app.config["APP_SECRET_KEY"], algorithms=["HS256"]
         )
     except Exception:
-        return False
+        raise Unauthorized("INVALID_TOKEN")
     user_id = data.get("user_id")
     return user_id
 
