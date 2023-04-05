@@ -24,6 +24,7 @@ function App() {
   const [error, setError] = useState(null);
   useEffect(() => {
     const token = localStorage.getItem("jwt_token");
+    token &&
     fetchLocalJSONAPI("auth/token-expiry/", token, "GET")
       .then((res) => {
         console.log(res);
@@ -32,6 +33,7 @@ function App() {
         }
       })
       .catch((err) => {
+        err.message === "INVALID_TOKEN" &&
         setError("SESSION_EXPIRED");
       });
   }, []);
