@@ -35,7 +35,7 @@ def create_app(config=EnvironmentConfig):
     api = Api(app, prefix="/api")
     CORS(app)
 
-    @app.route("/")
+    @app.route("/api/system/")
     def system():
         return {"system": "healthy"}, 200
 
