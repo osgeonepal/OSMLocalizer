@@ -103,7 +103,7 @@ export default function TagEditor({
     await changeFeatureStatus(changedFeatures, "LOCALIZED");
     setAllChanges({});
     setUploading(false);
-    getFeature();
+    // getFeature();
   };
 
   const onDone = async () => {

@@ -6,6 +6,7 @@ import "react-tooltip/dist/react-tooltip.css";
 
 import InputToolForm from "./inputToolForm";
 import TranslateComponent from "./translate";
+import { CHANGES_UPLOAD_LIMIT } from "../../config";
 
 export const inputComponnent = (key, value) => {
   return (
@@ -96,6 +97,12 @@ export function TagEditorForm(props) {
   // Sort editTags array so that the order of tags is consistent
   editTags.sort();
 
+  const exceededMessage = `You have made more than ${CHANGES_UPLOAD_LIMIT} changes. Please upload your changes first.`;
+  const disabledMessage =
+    Object.keys(props.allChanges).length >= CHANGES_UPLOAD_LIMIT
+      ? exceededMessage
+      : "You have not made any changes";
+
   const onSubmitChange = (values) => {
     async function updateElement() {
       const newElementTmp = { ...props.element };
@@ -168,25 +175,35 @@ export function TagEditorForm(props) {
               />
               <div
                 data-tooltip-id="disable"
-                data-tooltip-content="You have not made any changes"
+                data-tooltip-content={disabledMessage}
               >
                 <button
                   className="btn btn-primary ms-2"
                   type="submit"
+                  // Disable the button if there are more than required changes or if changes are not made to the element
                   disabled={
-                    pristine &&
-                    !Object.keys(props.allChanges).includes(elementKey)
+                    Object.keys(props.allChanges).length >=
+                      CHANGES_UPLOAD_LIMIT ||
+                    (pristine &&
+                      // Allow done on no changes
+                      // if it is already in the allChanges object i.e while updating the changes
+                      !Object.keys(props.allChanges).includes(elementKey))
                   }
                 >
                   Done
                 </button>
-                <Tooltip
-                  place="top-start"
-                  className="bg-dark"
-                  effect="float"
-                  id="disable"
-                  style={{ fontSize: "0.7rem" }}
-                />
+                {// Same logic as done button disabled
+                Object.keys(props.allChanges).length >= CHANGES_UPLOAD_LIMIT ||
+                (pristine &&
+                  !Object.keys(props.allChanges).includes(elementKey)) ? (
+                  <Tooltip
+                    place="top-start"
+                    className="bg-danger text-dark"
+                    effect="float"
+                    id="disable"
+                    style={{ fontSize: "0.7rem" }}
+                  />
+                ) : null}
               </div>
             </div>
           </form>
