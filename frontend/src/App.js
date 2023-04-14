@@ -25,17 +25,16 @@ function App() {
   useEffect(() => {
     const token = localStorage.getItem("jwt_token");
     token &&
-    fetchLocalJSONAPI("auth/token-expiry/", token, "GET")
-      .then((res) => {
-        console.log(res);
-        if (!res.expired) {
-          handleLogin();
-        }
-      })
-      .catch((err) => {
-        err.message === "INVALID_TOKEN" &&
-        setError("SESSION_EXPIRED");
-      });
+      fetchLocalJSONAPI("auth/token-expiry/", token, "GET")
+        .then((res) => {
+          console.log(res);
+          if (!res.expired) {
+            handleLogin();
+          }
+        })
+        .catch((err) => {
+          err.message === "INVALID_TOKEN" && setError("SESSION_EXPIRED");
+        });
   }, []);
 
   return (

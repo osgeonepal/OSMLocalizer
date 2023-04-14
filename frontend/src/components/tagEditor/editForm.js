@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { Form, Field } from "react-final-form";
 import { useDetectClickOutside } from "react-detect-click-outside";
+import { Tooltip } from "react-tooltip";
+import "react-tooltip/dist/react-tooltip.css";
 
 import InputToolForm from "./inputToolForm";
 import TranslateComponent from "./translate";
@@ -164,16 +166,28 @@ export function TagEditorForm(props) {
                   props.onSkip(value);
                 }}
               />
-              <button
-                className="btn btn-primary ms-2"
-                type="submit"
-                disabled={
-                  pristine &&
-                  !Object.keys(props.allChanges).includes(elementKey)
-                }
+              <div
+                data-tooltip-id="disable"
+                data-tooltip-content="You have not made any changes"
               >
-                Done
-              </button>
+                <button
+                  className="btn btn-primary ms-2"
+                  type="submit"
+                  disabled={
+                    pristine &&
+                    !Object.keys(props.allChanges).includes(elementKey)
+                  }
+                >
+                  Done
+                </button>
+                <Tooltip
+                  place="top-start"
+                  className="bg-dark"
+                  effect="float"
+                  id="disable"
+                  style={{ fontSize: "0.7rem" }}
+                />
+              </div>
             </div>
           </form>
         )}
