@@ -10,7 +10,10 @@ export const API_BASE_URL = process.env.REACT_APP_API_BASE_URL
   : "http://127.0.0.1:5000/api/";
 
 export const CHANGES_UPLOAD_LIMIT =
-  process.env.REACT_APP_CHANGES_UPLOAD_LIMIT || 25;
+  Number(process.env.REACT_APP_CHANGES_UPLOAD_LIMIT || 25);
+
+export const MAX_CHALLENGE_AREA =
+  Number(process.env.REACT_APP_MAX_CHALLENGE_AREA || 200);
 
 export const SENTRY_FRONTEND_DSN = process.env.REACT_APP_SENTRY_FRONTEND_DSN;
 export const SENTRY_ENVIRONMENT = process.env.REACT_APP_SENTRY_ENVIRONMENT;

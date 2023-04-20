@@ -45,6 +45,7 @@ class EnvironmentConfig:
 
     APP_SECRET_KEY = os.getenv("APP_SECRET_KEY", None)
 
+    MAX_CHALLENGE_AREA = os.getenv("MAX_CHALLENGE_AREA", 200)
     # Sentry configuration
     SENTRY_BACKEND_DSN = os.getenv("SENTRY_BACKEND_DSN", None)
     SENTRY_ENVIRONMENT = os.getenv("SENTRY_ENVIRONMENT", "development")
