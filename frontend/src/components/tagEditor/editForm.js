@@ -192,18 +192,21 @@ export function TagEditorForm(props) {
                 >
                   Done
                 </button>
-                {// Same logic as done button disabled
-                Object.keys(props.allChanges).length >= CHANGES_UPLOAD_LIMIT ||
-                (pristine &&
-                  !Object.keys(props.allChanges).includes(elementKey)) ? (
-                  <Tooltip
-                    place="top-start"
-                    className="bg-danger text-dark"
-                    effect="float"
-                    id="disable"
-                    style={{ fontSize: "0.7rem" }}
-                  />
-                ) : null}
+                {
+                  // Same logic as done button disabled
+                  Object.keys(props.allChanges).length >=
+                    CHANGES_UPLOAD_LIMIT ||
+                  (pristine &&
+                    !Object.keys(props.allChanges).includes(elementKey)) ? (
+                    <Tooltip
+                      place="top-start"
+                      className="bg-danger text-dark"
+                      effect="float"
+                      id="disable"
+                      style={{ fontSize: "0.7rem" }}
+                    />
+                  ) : null
+                }
               </div>
             </div>
           </form>

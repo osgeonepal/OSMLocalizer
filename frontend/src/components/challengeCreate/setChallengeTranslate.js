@@ -3,7 +3,7 @@ import { Input, Select } from "../input";
 import languageJson from "../../assets/json/language.json";
 
 const translateEngineOptions = [
-  { value: null, label: "---" },
+  { value: " ", label: "---" },
   { value: "GOOGLE", label: "Google" },
   { value: "MICROSOFT", label: "Microsoft" },
   { value: "YANDEX", label: "Yandex" },
@@ -81,6 +81,32 @@ export const TranslationForm = ({ challenge, setChallenge }) => {
         onChange={onInputChange}
         defaultValue={challenge.api_key}
       />
+      <p>
+        How to get API keys?{" "}
+        <a
+          href="Google: https://cloud.google.com/translate/docs/quickstarts"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Google
+        </a>
+        ,{" "}
+        <a
+          href="https://docs.microsoft.com/en-us/azure/cognitive-services/translator/translator-info-overview"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Microsoft
+        </a>
+        ,{" "}
+        <a
+          href="https://tech.yandex.com/translate/doc/dg/concepts/api-overview-docpage/"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Yandex
+        </a>
+      </p>
     </div>
   );
 };
