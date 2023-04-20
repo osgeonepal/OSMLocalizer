@@ -1,6 +1,7 @@
 import math
 import geojson
 import requests
+from flask import current_app
 from geoalchemy2 import shape
 from shapely.geometry import box, Polygon, Point
 from backend.errors import BadRequest, NotFound
@@ -22,8 +23,8 @@ from backend.services.overpass_service import Overpass
 from backend.services.stats_service import StatsService
 
 # max area allowed for passed in bbox, calculation shown to help future maintenance
-# Total area of challenge to be allowed is 100 sq km. So max area of bbox is 100*100, 2 for square meter
-MAX_AREA = math.pow(100 * 200, 2)
+# Total area of challenge to be allowed is 200 sq km. So max area of bbox is 100*100, 2 for square meter
+MAX_AREA = math.pow(100 * current_app.config["MAX_CHALLENGE_AREA"], 2)
 OSM_NOMINATIM_SERVER_URL = "https://nominatim.openstreetmap.org"
 
 

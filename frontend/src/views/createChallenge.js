@@ -17,7 +17,7 @@ import { MetadataForm } from "../components/challengeCreate/setChallengeMetdata"
 import { TranslationForm } from "../components/challengeCreate/setChallengeTranslate";
 import { OverpassQuery } from "../components/challengeCreate/setOverpassQuery";
 import { LoadingModal } from "../components/loadingModal";
-import { MAPBOX_ACCESS_TOKEN } from "../config";
+import { MAPBOX_ACCESS_TOKEN, MAX_CHALLENGE_AREA } from "../config";
 
 const StepButtons = ({
   step,
@@ -25,10 +25,15 @@ const StepButtons = ({
   onCreate,
   isNextDisabled,
   isLoading,
+  bboxArea,
 }) => {
   const disabledReason = () => {
     if (step === 1) {
-      return "Please draw a bounding box";
+      const errorMsg =
+        bboxArea > MAX_CHALLENGE_AREA
+          ? "Area is too large"
+          : "Please draw a bounding box";
+      return errorMsg;
     } else if (step === 2) {
       return "Please enter a valid overpass query";
     } else if (step === 3) {
@@ -253,7 +258,7 @@ const CreateChallenge = () => {
 
   const isNextDisabled = () => {
     if (step === 1) {
-      return !challenge.bbox;
+      return !challenge.bbox || bboxArea > MAX_CHALLENGE_AREA;
     }
     if (step === 2) {
       return !challenge.overpass_query;
@@ -312,7 +317,7 @@ const CreateChallenge = () => {
       });
       return;
     }
-    if (challenge.translate_engine && !challenge.api_key) {
+    if (challenge.translate_engine !== " " && !challenge.api_key) {
       setValidationResult({
         isValid: false,
         error: "Must provide an API key if using a translation engine",
@@ -378,6 +383,7 @@ const CreateChallenge = () => {
               onCreate={onCreate}
               isNextDisabled={isNextDisabled}
               isLoading={isLoading}
+              bboxArea={bboxArea}
             />
           </div>
           {isLoading && (
@@ -392,9 +398,15 @@ const CreateChallenge = () => {
           {bboxArea && (
             <div
               className="position-absolute bottom-0 end-0 p-4"
-              style={{ zIndex: 99 }}
+              style={{ zIndex: 999 }}
             >
-              <span className="bg-white p-2 fw-semibold">
+              <span
+                className={
+                  bboxArea > MAX_CHALLENGE_AREA
+                    ? "bg-danger p-2 fw-semibold"
+                    : "bg-white p-2 fw-semibold"
+                }
+              >
                 Area: {bboxArea} ㎢
               </span>
             </div>
