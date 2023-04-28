@@ -12,6 +12,14 @@ export const Input = (props) => {
         defaultValue={props.defaultValue}
         onChange={(e) => props.onChange(e)}
       />
+      {props.limit && (
+        <p className={
+          `fw-bold text-end pt-1 pb-0 mb-0 ` + (props.defaultValue && props.defaultValue.length > props.limit ? "text-danger" : "text-muted")
+        }
+        >
+          {props.defaultValue ? props.defaultValue.length : 0}/{props.limit}
+        </p>
+      )}
     </div>
   );
 };
@@ -29,6 +37,14 @@ export const TextArea = (props) => {
         onChange={(e) => props.onChange(e)}
         rows={props.rows}
       />
+      {props.limit && (
+        <p className={
+          `fw-bold text-end pt-1 pb0 mb-0 ` + (props.defaultValue && props.defaultValue.length > props.limit ? "text-danger" : "text-muted")
+        }
+        >
+          {props.defaultValue ? props.defaultValue.length : 0}/{props.limit}
+        </p>
+      )}
     </div>
   );
 };

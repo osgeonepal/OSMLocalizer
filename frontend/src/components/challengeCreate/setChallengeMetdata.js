@@ -32,6 +32,7 @@ export const MetadataForm = ({ challenge, setChallenge, type }) => {
         placeholder="Challenge Title"
         defaultValue={challenge.name}
         onChange={onInputChange}
+        limit={100}
       />
       <TextArea
         label="Description*"
@@ -40,6 +41,7 @@ export const MetadataForm = ({ challenge, setChallenge, type }) => {
         placeholder="Description"
         defaultValue={challenge.description}
         onChange={onInputChange}
+        limit={1000}
       />
       <TextArea
         label="Challenge Instructions*"
