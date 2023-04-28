@@ -175,6 +175,7 @@ const CreateChallenge = () => {
   const [challenge, setChallenge] = useState({ status: "PUBLISHED" });
   const [isLoading, setIsLoading] = useState(false);
   const [isChallengeCreated, setIsChallengeCreated] = useState(false);
+  const [error, setError] = useState(null);
 
   const [bboxArea, setBboxArea] = useState(null);
   const [step, setStep] = useState(1);
@@ -289,7 +290,9 @@ const CreateChallenge = () => {
         if (response.success === true) {
           setIsChallengeCreated(true);
         }
-      });
+      }).catch((error) => {
+        setError("Error creating challenge");
+      })
     }
   };
 
@@ -317,7 +320,7 @@ const CreateChallenge = () => {
       });
       return;
     }
-    if (challenge.translate_engine !== " " && !challenge.api_key) {
+    if ((challenge.translate_engine && challenge.translate_engine !== " ") && !challenge.api_key) {
       setValidationResult({
         isValid: false,
         error: "Must provide an API key if using a translation engine",
@@ -391,6 +394,8 @@ const CreateChallenge = () => {
               loadingMessage="Creating challenge... This may take a few minutes."
               successMessage="Challenge created successfully!"
               isSuccess={isChallengeCreated}
+              error={error}
+              setIsLoading={setIsLoading}
             />
           )}
         </div>
