@@ -1,12 +1,27 @@
-from pydantic import BaseModel, constr
+from pydantic import BaseModel, constr, validator
 from typing import Optional
 from datetime import datetime
+
+from backend.models.sql.enum import ChallengeStatus
 
 
 def convert_to_string(value):
     if value is None:
         return None
     return str(value)
+
+
+def validate_challenge_status(value):
+    """Validate challenge status"""
+    if value.lower() not in ["draft", "published", "archived", "all"]:
+        raise ValueError(
+            "Invalid challenge status. Valid values are draft, published, archived, all"
+        )
+    else:
+        if value.lower() == "all":
+            return None
+        value = ChallengeStatus[value.upper()].value
+    return value
 
 
 class CreateChallengeDTO(BaseModel):
@@ -102,7 +117,40 @@ class ChallengeSummaryDTO(BaseModel):
         # json_decoders = {datetime: lambda v: datetime.fromisoformat(v)}
 
 
+class PaginationDTO(BaseModel):
+    def __init__(self, paginated_result):
+        super().__init__(
+            total_pages=paginated_result.pages,
+            current_page=paginated_result.page,
+            total_items=paginated_result.total,
+        )
+
+    total_pages: int
+    current_page: int
+    total_items: int
+
+
 class ChallengeListDTO(BaseModel):
     """Challenge List DTO for returning list of challenges"""
 
     challenges: list
+    pagination: PaginationDTO
+
+
+class SearchChallengeDTO(BaseModel):
+    """Search Challenge DTO for returning list of challenges"""
+
+    status: Optional[str] = ChallengeStatus.PUBLISHED.value
+    country: Optional[str] = None
+    to_language: Optional[str] = None
+    name: Optional[str] = None
+    sort_by: Optional[str] = "CREATED"
+    sort_order: Optional[str] = "DESC"
+    created_by: Optional[int] = None
+    per_page: Optional[int] = 10
+    page: Optional[int] = 1
+
+    @validator("status")
+    def validate_status(cls, value):
+        """Validate challenge status"""
+        return validate_challenge_status(value)

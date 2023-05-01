@@ -69,6 +69,9 @@ const ChallengesView = () => {
   const [challenges, setChallenges] = useState([]);
   const [detailView, setDetailView] = useState(false);
   const [challenge, setChallenge] = useState({});
+  const status =
+    new URLSearchParams(window.location.search).get("status") || "ALL";
+  const page = new URLSearchParams(window.location.search).get("page") || 1;
 
   const onChallengeClick = (challenge) => {
     setChallenge(challenge);
@@ -80,10 +83,12 @@ const ChallengesView = () => {
   };
 
   useEffect(() => {
-    fetchLocalJSONAPI("challenges/").then((data) => {
-      setChallenges(data.challenges);
-    });
-  }, []);
+    fetchLocalJSONAPI(`challenges/?status=${status}&page=${page}`).then(
+      (data) => {
+        setChallenges(data.challenges);
+      }
+    );
+  }, [status, page]);
 
   return (
     <div className="pt-2 pb-2">

@@ -66,11 +66,3 @@ class Forbidden(BaseException):
         if message is None:
             message = error_messages[sub_code]
         BaseException.__init__(self, message, 403, sub_code)
-
-
-class Unauthorized(BaseException):
-    def __init__(self, sub_code=None, message=None):
-        sub_code = sub_code if sub_code else "UNAUTHORIZED"
-        if message is None:
-            message = error_messages[sub_code]
-        BaseException.__init__(self, message, 401, sub_code)
