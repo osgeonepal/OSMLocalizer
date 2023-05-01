@@ -282,17 +282,15 @@ const CreateChallenge = () => {
     validateChallenge();
     if (validationResult.isValid) {
       setIsLoading(true);
-      pushToLocalJSONAPI(
-        "challenge/",
-        JSON.stringify(challenge),
-        jwt_token
-      ).then((response) => {
-        if (response.success === true) {
-          setIsChallengeCreated(true);
-        }
-      }).catch((error) => {
-        setError("Error creating challenge");
-      })
+      pushToLocalJSONAPI("challenge/", JSON.stringify(challenge), jwt_token)
+        .then((response) => {
+          if (response.success === true) {
+            setIsChallengeCreated(true);
+          }
+        })
+        .catch((error) => {
+          setError("Error creating challenge");
+        });
     }
   };
 
@@ -320,7 +318,11 @@ const CreateChallenge = () => {
       });
       return;
     }
-    if ((challenge.translate_engine && challenge.translate_engine !== " ") && !challenge.api_key) {
+    if (
+      challenge.translate_engine &&
+      challenge.translate_engine !== " " &&
+      !challenge.api_key
+    ) {
       setValidationResult({
         isValid: false,
         error: "Must provide an API key if using a translation engine",
