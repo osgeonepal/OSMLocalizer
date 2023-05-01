@@ -18,6 +18,8 @@ from backend.models.dtos.challenge_dto import (
     ChallengeListDTO,
     CreateChallengeDTO,
     UpdateChallengeDTO,
+    SearchChallengeDTO,
+    PaginationDTO,
 )
 from backend.services.overpass_service import Overpass
 from backend.services.stats_service import StatsService
@@ -103,28 +105,18 @@ class ChallengeService:
         return challenge.as_dto(stats=True)
 
     @staticmethod
-    def get_all_challenges() -> ChallengeListDTO:
+    def get_all_challenges(dto: SearchChallengeDTO) -> ChallengeListDTO:
         """Get all challenges"""
-        challenges = Challenge.get_all()
-
-        return ChallengeListDTO(
-            challenges=[
-                challenge.as_dto_for_summary(stats=True) for challenge in challenges
-            ]
-        )
-
-    @staticmethod
-    def get_all_challenges_by_status(status: int) -> ChallengeListDTO:
-        """Get all challenges by status"""
-        challenges = Challenge.get_all_by_status(status)
+        challenges = Challenge.get_all_challenges(dto)
         challenges_dto = []
-        for challenge in challenges:
+        for challenge in challenges.items:
             challenge_dto = challenge.as_dto_for_summary(stats=True)
             challenge_dto.total_contributors = (
                 StatsService.get_challenge_contributors_count(challenge.id)
             )
             challenges_dto.append(challenge_dto)
-        return ChallengeListDTO(challenges=challenges_dto)
+        pagination = PaginationDTO(challenges)
+        return ChallengeListDTO(challenges=challenges_dto, pagination=pagination)
 
     @staticmethod
     def delete_challenge(challenge_id: int) -> None:

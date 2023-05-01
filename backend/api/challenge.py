@@ -1,10 +1,15 @@
 from flask_restful import Resource
 from flask import jsonify, request
+from pydantic import ValidationError
 
 from backend.services.challenge_service import ChallengeService
-from backend.models.dtos.challenge_dto import CreateChallengeDTO, UpdateChallengeDTO
-from backend.models.sql.enum import ChallengeStatus
+from backend.models.dtos.challenge_dto import (
+    CreateChallengeDTO,
+    UpdateChallengeDTO,
+    SearchChallengeDTO,
+)
 from backend.services.user_service import auth
+from backend.errors import BadRequest
 
 
 class Challenge(Resource):
@@ -41,8 +46,8 @@ class ChallengeList(Resource):
 
     def get(self):
         """Get all challenges"""
-        return jsonify(
-            ChallengeService.get_all_challenges_by_status(
-                ChallengeStatus.PUBLISHED.value
-            ).dict()
-        )
+        try:
+            search_challenge_dto = SearchChallengeDTO(**request.args)
+        except ValidationError as e:
+            raise BadRequest(message=e.__str__())
+        return jsonify(ChallengeService.get_all_challenges(search_challenge_dto).dict())

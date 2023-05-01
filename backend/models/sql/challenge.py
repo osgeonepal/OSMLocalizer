@@ -10,6 +10,7 @@ from backend.models.dtos.challenge_dto import (
     ChallengeDTO,
     ChallengeSummaryDTO,
     ChallengeStatsDTO,
+    SearchChallengeDTO,
 )
 from backend.services.utills import get_last_updated, to_strfdate, timestamp
 
@@ -124,9 +125,22 @@ class Challenge(db.Model):
         return Challenge.query.all()
 
     @staticmethod
-    def get_all_by_status(status: int):
+    def get_all_challenges(dto: SearchChallengeDTO):
         """Get all challenges by status"""
-        return Challenge.query.filter_by(status=status).all()
+        query = Challenge.query
+        if dto.status is not None:
+            query = query.filter_by(status=dto.status)
+        if dto.country:
+            query = query.filter_by(country=dto.country)
+        if dto.to_language:
+            query = query.filter_by(to_language=dto.to_language)
+        if dto.created_by:
+            query = query.filter_by(created_by=dto.created_by)
+
+        paginated_results = query.paginate(
+            page=dto.page, per_page=dto.per_page, error_out=False
+        )
+        return paginated_results
 
     def get_challenge_progress(self):
         """Get challenge progress"""
