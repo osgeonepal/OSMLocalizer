@@ -3,12 +3,13 @@ import { useEffect, useState } from "react";
 import { fetchLocalJSONAPI } from "../utills/fetch";
 import ChallengeCard from "../components/challenge/challengeCard";
 import ChallengeInfo from "../components/challenge/challengeInfo";
+import Pagination from "../components/pagination";
 import { useViewport } from "../utills/hooks";
 
 const WithoutDetailView = ({ challenges, onChallengeClick, detailView }) => {
   return (
     <div className="row gap-2">
-      {challenges.length > 0
+      {challenges?.length > 0
         ? challenges.map((challenge) => (
             <ChallengeCard
               challenge={challenge}
@@ -66,12 +67,15 @@ const WithDetailView = ({
 };
 
 const ChallengesView = () => {
+  const [page, setPage] = useState(
+    new URLSearchParams(window.location.search).get("page") || 1
+  );
+
   const [challenges, setChallenges] = useState([]);
   const [detailView, setDetailView] = useState(false);
   const [challenge, setChallenge] = useState({});
   const status =
     new URLSearchParams(window.location.search).get("status") || "ALL";
-  const page = new URLSearchParams(window.location.search).get("page") || 1;
 
   const onChallengeClick = (challenge) => {
     setChallenge(challenge);
@@ -82,22 +86,23 @@ const ChallengesView = () => {
     setDetailView(false);
   };
 
+  const onPageChange = (page) => {
+    setPage(page + 1); // react-paginate starts from 0 but our API starts from 1
+  };
+
   useEffect(() => {
     fetchLocalJSONAPI(`challenges/?status=${status}&page=${page}`).then(
       (data) => {
-        setChallenges(data.challenges);
+        setChallenges(data);
       }
     );
   }, [status, page]);
 
   return (
     <div className="pt-2 pb-2">
-      {/* <div>
-                <h5 className="text-primary">Challenges</h5>
-            </div> */}
       {detailView ? (
         <WithDetailView
-          challenges={challenges}
+          challenges={challenges?.challenges}
           challenge={challenge}
           onChallengeInfoClose={onChallengeInfoClose}
           detailView={detailView}
@@ -105,11 +110,16 @@ const ChallengesView = () => {
         />
       ) : (
         <WithoutDetailView
-          challenges={challenges}
+          challenges={challenges?.challenges}
           onChallengeClick={onChallengeClick}
           detailView={detailView}
         />
       )}
+      <Pagination
+        pageCount={challenges?.pagination?.total_pages}
+        onPageChange={onPageChange}
+        currentPage={page}
+      />
     </div>
   );
 };

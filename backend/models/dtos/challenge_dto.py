@@ -147,7 +147,7 @@ class SearchChallengeDTO(BaseModel):
     sort_by: Optional[str] = "CREATED"
     sort_order: Optional[str] = "DESC"
     created_by: Optional[int] = None
-    per_page: Optional[int] = 10
+    per_page: Optional[int] = 6
     page: Optional[int] = 1
 
     @validator("status")
