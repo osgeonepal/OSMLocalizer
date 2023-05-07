@@ -144,7 +144,7 @@ class SearchChallengeDTO(BaseModel):
     country: Optional[str] = None
     to_language: Optional[str] = None
     name: Optional[str] = None
-    sort_by: Optional[str] = "CREATED"
+    sort_by: Optional[str] = "NEWEST"
     sort_order: Optional[str] = "DESC"
     created_by: Optional[int] = None
     per_page: Optional[int] = 6
