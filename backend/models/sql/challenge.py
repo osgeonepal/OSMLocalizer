@@ -136,6 +136,10 @@ class Challenge(db.Model):
             query = query.filter_by(to_language=dto.to_language)
         if dto.created_by:
             query = query.filter_by(created_by=dto.created_by)
+        if dto.sort_by == "NEWEST":
+            query = query.order_by(Challenge.id.desc())
+        elif dto.sort_by == "OLDEST":
+            query = query.order_by(Challenge.id.asc())
 
         paginated_results = query.paginate(
             page=dto.page, per_page=dto.per_page, error_out=False
