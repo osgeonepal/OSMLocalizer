@@ -26,7 +26,7 @@ const setUserToStore = (response) => {
   setItem("osm_token", response.osm_token);
   setItem("jwt_token", response.jwt_token);
   setItem("username", user.username);
-  setItem("user_id", user.user_id);
+  setItem("user_id", user.id);
   setItem("role", user.role);
   setItem("picture_url", user.picture_url);
   // window.location.reload();
