@@ -1,4 +1,5 @@
 import React from "react";
+import Switch from "react-switch";
 
 export const Input = (props) => {
   return (
@@ -100,6 +101,29 @@ export const Checkbox = (props) => {
     <div className="p-2 pb-4">
       <label className="form-label text-dark">{props.label}</label>
       {options}
+    </div>
+  );
+};
+
+
+export const SwitchButton = (props) => {
+  return (
+    <div>
+      <Switch
+        checked={props.checked}
+        onChange={() => props.onChange()}
+        onColor="#0D6EFD"
+        handleDiameter={20}
+        uncheckedIcon={false}
+        checkedIcon={false}
+        boxShadow="0px 1px 5px rgba(0, 0, 0, 0.6)"
+        activeBoxShadow="0px 0px 1px 10px rgba(0, 0, 0, 0.2)"
+        height={25}
+        width={50}
+        className="react-switch"
+        id="material-switch"
+      />
+      <label className="form-label ps-2">{props.label}</label>
     </div>
   );
 };
