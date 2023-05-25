@@ -105,7 +105,6 @@ export const Checkbox = (props) => {
   );
 };
 
-
 export const SwitchButton = (props) => {
   return (
     <div>

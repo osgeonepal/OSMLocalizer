@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 
 import { fetchLocalJSONAPI } from "../utills/fetch";
 import ChallengeCard from "../components/challenge/challengeCard";
 import ChallengeInfo from "../components/challenge/challengeInfo";
 import Pagination from "../components/pagination";
 import { useViewport } from "../utills/hooks";
+import { ChallengeFilter } from "../components/challenge/challengeFilter";
 
 const WithoutDetailView = ({ challenges, onChallengeClick, detailView }) => {
   return (
@@ -67,15 +69,23 @@ const WithDetailView = ({
 };
 
 const ChallengesView = () => {
+  const user = useSelector((state) => state.auth.user);
+
   const [page, setPage] = useState(
     new URLSearchParams(window.location.search).get("page") || 1
+  );
+
+  const [status, setStatus] = useState(
+    new URLSearchParams(window.location.search).get("status") || "PUBLISHED"
   );
 
   const [challenges, setChallenges] = useState([]);
   const [detailView, setDetailView] = useState(false);
   const [challenge, setChallenge] = useState({});
-  const status =
-    new URLSearchParams(window.location.search).get("status") || "ALL";
+  const [search, setSearch] = useState("");
+  const [language, setLanguage] = useState("ALL");
+  const [myChallenges, setMyChallenges] = useState(false);
+  const [sort, setSort] = useState("NEWEST");
 
   const onChallengeClick = (challenge) => {
     setChallenge(challenge);
@@ -90,16 +100,30 @@ const ChallengesView = () => {
     setPage(page + 1); // react-paginate starts from 0 but our API starts from 1
   };
 
+  const url = `challenges/?status=${status}&to_language=${language}&sort_by=${sort}&page=${page}${
+    myChallenges ? `&created_by=${user?.user_id}` : ""
+  }${search ? `&name=${search}` : ""}`;
+
   useEffect(() => {
-    fetchLocalJSONAPI(`challenges/?status=${status}&page=${page}`).then(
-      (data) => {
-        setChallenges(data);
-      }
-    );
-  }, [status, page]);
+    fetchLocalJSONAPI(url).then((data) => {
+      setChallenges(data);
+    });
+  }, [url]);
 
   return (
     <div className="pt-2 pb-2">
+      <ChallengeFilter
+        status={status}
+        sort={sort}
+        search={search}
+        language={language}
+        myChallenges={myChallenges}
+        setStatus={setStatus}
+        setLanguage={setLanguage}
+        setSearch={setSearch}
+        setSort={setSort}
+        setMyChallenges={setMyChallenges}
+      />
       {detailView ? (
         <WithDetailView
           challenges={challenges?.challenges}
