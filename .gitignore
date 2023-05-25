@@ -9,3 +9,4 @@
 .pdm.toml
 localizer.env
 *.zip
+*.tar.gz
