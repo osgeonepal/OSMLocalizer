@@ -28,3 +28,8 @@
 .title{
   font-family: 'Roboto Condensed', sans-serif;
 }
+
+.react-switch {
+  vertical-align: middle;
+  margin-left: 4px;
+}
