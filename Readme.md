@@ -7,12 +7,14 @@
 
 OSMLocalizer is a web-based app that allows users to localize elements in OpenStreetMap. Challenge creators can draw an area on the map and provide an Overpass query to create a challenge. Users can then select a challenge to work on and will be provided a random element from the challenge area. They can make changes and upload their changes directly to OSM from the tool.
 
-Getting Started
+**Getting Started**
+
 To get started with OSMLocalizer, simply create an account and log in using your OSM credentials. Once you are logged in, you can select a challenge to work on. You will be provided a random element from the challenge area to localize in OpenStreetMap.
 
 In the editor view, you can edit the name tags of the element to localize it in the desired language. Once you have completed localizing the element, you can save your changes and move on to the next element in the challenge. When you have completed making changes, your can uploaded them directly to OSM from the application itself.
 
-Features
+**Features**
+
 OSMLocalizer includes the following features:
 
 - User authentication and authorization using OSM OAuth2
