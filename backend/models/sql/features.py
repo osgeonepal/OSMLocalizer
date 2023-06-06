@@ -85,7 +85,10 @@ class Feature(db.Model):
 
     def lock_to_validate(self, user_id: int):
         """Lock feature to validate"""
-        self.status = FeatureStatus.LOCKED_TO_VALIDATE.value
+        self.last_status = self.status  # Save last status before locking
+        self.status = (
+            FeatureStatus.LOCKED_TO_VALIDATE.value
+        )  # Set status to locked to validate
         self.locked_by = user_id
         self.update()
 
@@ -110,32 +113,70 @@ class Feature(db.Model):
         return feature
 
     @staticmethod
-    def get_random_task(challenge_id: int):
+    def get_random_task(challenge_id: int, validationMode: bool = False):
         """Get random task"""
-        return (
+        statuses = [FeatureStatus.TO_LOCALIZE.value]
+        if validationMode:
+            statuses = [
+                FeatureStatus.LOCALIZED.value,
+                FeatureStatus.INVALID_DATA.value,
+                FeatureStatus.OTHER.value,
+                FeatureStatus.TOO_HARD.value,
+                FeatureStatus.ALREADY_LOCALIZED.value,
+            ]
+        feature = (
             Feature.query.filter_by(challenge_id=challenge_id)
-            .filter_by(status=FeatureStatus.TO_LOCALIZE.value)
+            .filter(Feature.status.in_(statuses))
             .order_by(db.func.random())
             .first()
         )
+        if not feature:
+            error_subcode = (
+                "NO_FEATURES_TO_VALIDATE"
+                if validationMode
+                else "NO_FEATURES_TO_LOCALIZE"
+            )
+            raise NotFound(error_subcode)
+        return feature
 
     @staticmethod
-    def get_nearby(feature_id, challenge_id):
+    def get_nearby(feature_id, challenge_id, validationMode):
         """Get nearby features"""
         feature_geom = Feature.get_by_id(feature_id, challenge_id).geometry
-        nearby = db.engine.execute(
-            f"""
+        query = f"""
             SELECT id, geometry <-> ('{feature_geom}') AS distance
             FROM feature
             WHERE challenge_id = {challenge_id}
-            AND status = {FeatureStatus.TO_LOCALIZE.value}
+            AND status={FeatureStatus.TO_LOCALIZE.value}
             AND id != {feature_id}
             ORDER BY distance
             LIMIT 1;
         """
-        ).fetchall()
+        if validationMode:
+            statuses = (
+                FeatureStatus.LOCALIZED.value,
+                FeatureStatus.INVALID_DATA.value,
+                FeatureStatus.OTHER.value,
+                FeatureStatus.TOO_HARD.value,
+                FeatureStatus.ALREADY_LOCALIZED.value,
+            )
+            query = f"""
+                SELECT id, geometry <-> ('{feature_geom}') AS distance
+                FROM feature
+                WHERE challenge_id = {challenge_id}
+                AND status IN {statuses}
+                AND id != {feature_id}
+                ORDER BY distance
+                LIMIT 1;
+            """
+        nearby = db.engine.execute(query).fetchall()
         if nearby:
             feature = Feature.get_by_id(nearby[0][0], challenge_id)
         else:
-            raise NotFound("NO_FEATURES_TO_LOCALIZE")
+            error_subcode = (
+                "NO_FEATURES_TO_VALIDATE"
+                if validationMode
+                else "NO_FEATURES_TO_LOCALIZE"
+            )
+            raise NotFound(error_subcode)
         return feature

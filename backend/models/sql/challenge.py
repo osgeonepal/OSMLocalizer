@@ -134,7 +134,9 @@ class Challenge(db.Model):
         if dto.country:
             query = query.filter_by(country=dto.country)
         if dto.name:
-            query = query.filter(func.lower(Challenge.name).ilike(f"%{dto.name.lower()}%"))
+            query = query.filter(
+                func.lower(Challenge.name).ilike(f"%{dto.name.lower()}%")
+            )
         if dto.to_language and dto.to_language != "ALL":
             query = query.filter_by(to_language=dto.to_language)
         if dto.created_by:

@@ -11,6 +11,7 @@ class FeatureStatus(Enum):
     TOO_HARD = 6
     OTHER = 7
     ALREADY_LOCALIZED = 8
+    INVALIDATED = 9
 
 
 class ChallengeStatus(Enum):
