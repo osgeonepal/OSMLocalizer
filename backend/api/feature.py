@@ -34,5 +34,8 @@ class GetFeatureToLocalizeAPI(Resource):
     def get(self, challenge_id: int):
         current_user = auth.current_user()
         lastFeature = request.args.get("lastFeature")
+        validationMode = request.args.get("validationMode")
         FeatureService.reset_expired_tasks(challenge_id)
-        return FeatureService.get_random_task(challenge_id, current_user, lastFeature)
+        return FeatureService.get_random_task(
+            challenge_id, current_user, lastFeature, validationMode
+        )

@@ -1,7 +1,6 @@
 import datetime
 
 from backend.services.utills import timestamp, parse_duration
-from backend.errors import NotFound
 from backend.models.sql.features import Feature
 from backend.services.challenge_service import ChallengeService
 from backend.models.sql.enum import FeatureStatus
@@ -66,15 +65,21 @@ class FeatureService:
         return {"feature": feature.as_geojson()}
 
     @staticmethod
-    def get_random_task(challenge_id: int, user_id, lastFeature: int = None):
+    def get_random_task(
+        challenge_id: int,
+        user_id,
+        lastFeature: int = None,
+        validationMode: bool = False,
+    ):
         """Get a random task"""
         if lastFeature:
-            feature = Feature.get_nearby(lastFeature, challenge_id)
+            feature = Feature.get_nearby(lastFeature, challenge_id, validationMode)
         else:
-            feature = Feature.get_random_task(challenge_id)
-        if not feature:
-            raise NotFound("NO_FEATURES_TO_LOCALIZE")
-        feature.lock_to_localize(user_id)
+            feature = Feature.get_random_task(challenge_id, validationMode)
+        if validationMode:
+            feature.lock_to_validate(user_id)
+        else:
+            feature.lock_to_localize(user_id)
         return {"feature": feature.as_geojson()}
 
     @staticmethod
@@ -158,7 +163,7 @@ class FeatureService:
             "INVALID_DATA",
         ]:
             feature.localized_by = user_id
-        if status == "VALIDATED":
+        if status in "VALIDATED" or status in "INVALIDATED":
             feature.validated_by = user_id
 
         # Unlock the feature if it is locked
