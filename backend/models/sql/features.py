@@ -42,6 +42,7 @@ class Feature(db.Model):
         default=None,
         nullable=True,
     )
+    last_status = db.Column(db.Integer, nullable=True)
 
     def create(self):
         """Create new entry"""
