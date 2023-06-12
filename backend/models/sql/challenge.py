@@ -6,7 +6,7 @@ from geoalchemy2 import Geometry
 from flask import json
 
 from backend.models.sql.enum import ChallengeStatus, TranslateEngine, FeatureStatus
-from backend.models.sql.features import Feature
+from backend.models.sql.features import Feature, User
 from backend.models.dtos.challenge_dto import (
     ChallengeDTO,
     ChallengeSummaryDTO,
@@ -74,15 +74,16 @@ class Challenge(db.Model):
             description=self.description,
             country=self.country,
             to_language=self.to_language,
-            due_date=self.due_date,
-            created=self.created,
-            last_updated=self.last_updated,
+            due_date=(self.due_date - timestamp()).days,
+            created=to_strfdate(self.created),
+            last_updated=get_last_updated(self.last_updated),
             language_tags=", ".join(self.language_tags),
             translate_engine=TranslateEngine(self.translate_engine).name
             if self.translate_engine
             else None,
             feature_instructions=self.feature_instructions,
         )
+        challenge_dto.author = User.get_by_id(self.created_by).username
         challenge_dto.bbox = json.loads(
             db.engine.execute(self.bbox.ST_AsGeoJSON()).scalar()
         )
