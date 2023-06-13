@@ -2,6 +2,7 @@ from backend import db
 from geoalchemy2 import Geometry
 import json
 
+from backend.models.sql.user import User
 from backend.models.sql.enum import FeatureStatus
 from backend.services.utills import timestamp, to_strftime
 from backend.errors import NotFound
@@ -60,6 +61,12 @@ class Feature(db.Model):
 
     def as_geojson(self):
         """Convert to geojson"""
+        localized_by = (
+            User.get_by_id(self.localized_by).username if self.localized_by else None
+        )
+        validated_by = (
+            User.get_by_id(self.validated_by).username if self.validated_by else None
+        )
         return {
             "type": "Feature",
             "properties": {
@@ -67,8 +74,11 @@ class Feature(db.Model):
                 "osm_type": self.osm_type,
                 "challenge_id": self.challenge_id,
                 "status": self.status,
-                "localized_by": self.localized_by,
-                "validated_by": self.validated_by,
+                "last_status": FeatureStatus(self.last_status).name
+                if self.last_status
+                else None,
+                "localized_by": localized_by,
+                "validated_by": validated_by,
                 "last_updated": to_strftime(self.last_updated),
             },
             "geometry": json.loads(
