@@ -1,5 +1,7 @@
 from flask_restful import Resource
 from flask import request
+from distutils.util import strtobool
+
 from backend.services.feature_service import FeatureService
 from backend.services.user_service import auth
 
@@ -34,7 +36,7 @@ class GetFeatureToLocalizeAPI(Resource):
     def get(self, challenge_id: int):
         current_user = auth.current_user()
         lastFeature = request.args.get("lastFeature")
-        validationMode = request.args.get("validationMode")
+        validationMode = bool(strtobool(request.args.get("validationMode")))
         FeatureService.reset_expired_tasks(challenge_id)
         return FeatureService.get_random_task(
             challenge_id, current_user, lastFeature, validationMode
