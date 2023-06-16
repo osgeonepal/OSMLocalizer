@@ -158,7 +158,7 @@ class Feature(db.Model):
             SELECT id, geometry <-> ('{feature_geom}') AS distance
             FROM feature
             WHERE challenge_id = {challenge_id}
-            AND status={(FeatureStatus.TO_LOCALIZE.value, FeatureStatus.INVALIDATED.value)}
+            AND status IN {(FeatureStatus.TO_LOCALIZE.value, FeatureStatus.INVALIDATED.value)}
             AND id != {feature_id}
             ORDER BY distance
             LIMIT 1;
