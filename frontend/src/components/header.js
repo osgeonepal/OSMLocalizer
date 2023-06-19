@@ -158,7 +158,10 @@ function NavBar() {
   const breakpoint = 995;
   return (
     <>
-      <nav className="navbar navbar-expand-lg bg-body-tertiary border-bottom App">
+      <nav
+        className="navbar navbar-expand-lg bg-body-tertiary border-bottom App"
+        style={{ height: "8vh" }}
+      >
         <div className="container">
           <NavLink
             className="navbar-brand d-flex align-items-center"
