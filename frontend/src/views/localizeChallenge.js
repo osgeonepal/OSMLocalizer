@@ -10,6 +10,7 @@ export const LocalizeChallengeView = () => {
   const [challenge, setChallenge] = useState({});
   const [isChallenegeLoaded, setIsChallengeLoaded] = useState(false);
   const [nearbyTask, setNearbyTask] = useState(true);
+  const [validationMode, setValidationMode] = useState(false);
   const [error, setError] = useState(null);
   const { id } = useParams();
   useEffect(() => {
@@ -30,6 +31,8 @@ export const LocalizeChallengeView = () => {
             <ChallengeInstructions
               challenge={challenge}
               nearbyTask={nearbyTask}
+              validationMode={validationMode}
+              setValidationMode={setValidationMode}
               setNearbyTask={setNearbyTask}
             />
           </div>
@@ -39,6 +42,7 @@ export const LocalizeChallengeView = () => {
               challengeTags={challenge.language_tags}
               translateEngine={challenge.translate_engine}
               nearbyTask={nearbyTask}
+              validationMode={validationMode}
               translate_to={challenge.to_language}
             />
           </div>
