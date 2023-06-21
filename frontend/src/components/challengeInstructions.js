@@ -3,6 +3,8 @@ import React from "react";
 export function ChallengeInstructions({
   challenge,
   nearbyTask,
+  validationMode,
+  setValidationMode,
   setNearbyTask,
 }) {
   return (
@@ -15,7 +17,13 @@ export function ChallengeInstructions({
       </div>
       <div className="p-2 mt-2">
         <div className="form-check form-switch ms-2">
-          <input className="form-check-input" type="checkbox" role="switch" />
+          <input
+            className="form-check-input"
+            type="checkbox"
+            role="switch"
+            checked={validationMode}
+            onChange={() => setValidationMode(!validationMode)}
+          />
           <label className="form-check-label" htmlFor="flexSwitchCheckDefault">
             Validation Mode
           </label>
