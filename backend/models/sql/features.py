@@ -100,6 +100,7 @@ class Feature(db.Model):
             FeatureStatus.LOCKED_TO_VALIDATE.value
         )  # Set status to locked to validate
         self.locked_by = user_id
+        self.last_updated = timestamp()
         self.update()
 
     @staticmethod
