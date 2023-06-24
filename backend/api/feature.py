@@ -3,6 +3,7 @@ from flask import request
 from distutils.util import strtobool
 
 from backend.services.feature_service import FeatureService
+from backend.models.sql.enum import FeatureStatus
 from backend.services.user_service import auth
 
 
@@ -26,6 +27,7 @@ class FeatureRestAPI(Resource):
         current_user = auth.current_user()
         featureIds = request.get_json()["featureIds"]
         status = request.get_json()["status"]
+        status = FeatureStatus[status].value
         return FeatureService.update_feature(
             featureIds, challenge_id, status, current_user
         )

@@ -137,7 +137,7 @@ class FeatureService:
         if feature.status == FeatureStatus.LOCKED_TO_LOCALIZE.value:
             feature.status = FeatureStatus.TO_LOCALIZE.value
         if feature.status == FeatureStatus.LOCKED_TO_VALIDATE.value:
-            feature.status = FeatureStatus.LOCALIZED.value
+            feature.status = feature.last_status
         feature.locked_by = None
         feature.last_updated = timestamp()
         feature.update()
@@ -151,19 +151,22 @@ class FeatureService:
             FeatureStatus.LOCKED_TO_LOCALIZE.value,
             FeatureStatus.LOCKED_TO_VALIDATE.value,
         ]:
-            feature.status = FeatureStatus[status].value
+            feature.status = status
             feature.last_updated = timestamp()
 
         # Update the user id if the status is localized or validated
         if status in [
-            "LOCALIZED",
-            "OTHER",
-            "ALREADY_LOCALIZED",
-            "TOO_HARD",
-            "INVALID_DATA",
+            FeatureStatus.LOCALIZED.value,
+            FeatureStatus.OTHER.value,
+            FeatureStatus.ALREADY_LOCALIZED.value,
+            FeatureStatus.TOO_HARD.value,
+            FeatureStatus.INVALID_DATA.value,
         ]:
             feature.localized_by = user_id
-        if status in "VALIDATED" or status in "INVALIDATED":
+        elif status in [
+            FeatureStatus.VALIDATED.value,
+            FeatureStatus.INVALIDATED.value,
+        ]:
             feature.validated_by = user_id
 
         # Unlock the feature if it is locked
