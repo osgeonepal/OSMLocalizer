@@ -126,7 +126,7 @@ class Feature(db.Model):
     @staticmethod
     def get_random_task(challenge_id: int, validationMode: bool = False):
         """Get random task"""
-        statuses = [FeatureStatus.TO_LOCALIZE.value]
+        statuses = [FeatureStatus.TO_LOCALIZE.value, FeatureStatus.INVALIDATED.value]
         if validationMode:
             statuses = [
                 FeatureStatus.LOCALIZED.value,
@@ -158,7 +158,7 @@ class Feature(db.Model):
             SELECT id, geometry <-> ('{feature_geom}') AS distance
             FROM feature
             WHERE challenge_id = {challenge_id}
-            AND status={FeatureStatus.TO_LOCALIZE.value}
+            AND status={(FeatureStatus.TO_LOCALIZE.value, FeatureStatus.INVALIDATED.value)}
             AND id != {feature_id}
             ORDER BY distance
             LIMIT 1;
