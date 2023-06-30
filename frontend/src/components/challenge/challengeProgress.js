@@ -1,5 +1,4 @@
 import React from "react";
-import { Link } from "react-router-dom";
 import { Tooltip } from "react-tooltip";
 import "react-tooltip/dist/react-tooltip.css";
 
@@ -25,12 +24,25 @@ const ProgressBar = (props) => {
   );
 };
 
+const ProgressText = ({label, total, value}) => {
+  return (
+    <div>
+      <span className="text-primary me-2 fw-bold">{ Math.round((value/total)*100, 2)}%</span>
+      <span className="text-secondary me-2">{label}</span>
+      <span className="text-secondary">({value}/{total})</span>
+    </div>
+  );
+};
+
 export const ChallengeProgress = (props) => {
   const stats = props.challenge.stats;
 
   const getPercentage = (value) => {
     return Math.round((value / stats.total) * 100, 2);
   };
+
+  const totalLocalized = stats.localized + stats.already_localized + stats.too_hard + stats.invalid_data + stats.skipped + stats.validated;
+
 
   const featureStatuses = {
     localized: {
@@ -62,15 +74,11 @@ export const ChallengeProgress = (props) => {
 
   return (
     <div
-      className="challenge-progress align-bottom d-flex flex-column justify-content-end"
-      style={{ height: "15vh" }}
+      className="challenge-progress align-bottom"
     >
-      <div className="d-flex flex-row p-2">
+      <div className="d-flex flex-row pb-2">
         <span className="text-secondary flex-grow-1">
-          {props.challenge.total_contributors} Contributors
-        </span>
-        <span className="text-secondary">
-          Task Data Sourced: {props.challenge.created}
+          Last Contribution: {props.challenge.last_updated}
         </span>
       </div>
       <div className="progress-stacked">
@@ -82,30 +90,29 @@ export const ChallengeProgress = (props) => {
               color={featureStatuses[status]["color"]}
               label={
                 featureStatuses[status]["label"] +
-                `- (${featureStatuses[status]["value"]}%)`
+                `: (${featureStatuses[status]["value"]}%)`
               }
             />
           );
         })}
       </div>
-      <div className="d-flex p-2 mt-2">
-        <div className="flex-grow-1">
-          <div className="badge border border-secondary-subtle text-secondary rounded-0 p-2">
+      <div className="pt-2 d-flex justify-content-between align-items-center">
+        <div>
+          <ProgressText
+            value={totalLocalized}
+            total={stats.total}
+            label="Localized"
+          />
+          <ProgressText
+            value={stats.validated}
+            total={stats.total}
+            label="Validated"
+          />
+        </div>
+        <div className="badge border border-secondary text-secondary rounded-0 p-2">
             <i className="fa fa-clock-o" aria-hidden="true"></i>
             <span className=""> {props.challenge.due_date} days left</span>
-          </div>
         </div>
-        <Link to={`/challenge/${props.challenge.id}/leaderboard`} className="">
-          <button className="btn btn-light me-2">Leaderboard</button>
-        </Link>
-        <Link to={`/challenge/${props.challenge.id}`} className="">
-          <button
-            className="btn btn-primary"
-            disabled={props.challenge.stats.to_localize === 0}
-          >
-            Localize
-          </button>
-        </Link>
       </div>
     </div>
   );
