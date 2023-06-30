@@ -168,7 +168,7 @@ export const ChallengeMap = (props) => {
     <div
       id="map-container"
       className="map-container"
-      style={{ height: "35vh", width: "100%" }}
+      style={{ height: props.height||"35vh", width: "100%" }}
     />
   );
 };

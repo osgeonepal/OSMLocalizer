@@ -4,6 +4,7 @@ import { useSelector } from "react-redux";
 import { Tooltip } from "react-tooltip";
 import "react-tooltip/dist/react-tooltip.css";
 
+import { useViewport } from "../utills/hooks";
 import { fetchLocalJSONAPI } from "../utills/fetch";
 import { ChallengeMap } from "../components/challenge/challengeMap";
 import { ChallengeProgress } from "../components/challenge/challengeProgress";
@@ -166,28 +167,67 @@ const ChallengeDetailFooter = ({ id, stats }) => {
       </div>
     </div>)
 }
+
+
+const ChallengeDetailLg = ({ challenge }) => {
+  return (
+    <div>
+      <div className="row" style={{ "height": "84vh" }}>
+        <div className="col-6">
+          <ChallengeHeader id={challenge.id} name={challenge.name} />
+          <ChallengeInfoSection challenge={challenge} height="76vh" />
+        </div>
+        <div className="col-6">
+          <ChallengeMap challenge={challenge} height={"84vh"} />
+        </div>
+      </div>
+      <ChallengeDetailFooter id={challenge.id} stats={challenge.stats} />
+    </div>
+  )
+}
+
+const ChallengeDetailSm = ({ challenge }) => {
+  return (
+    <div>
+      <div style={{ "height": "84vh" }} >
+        <ChallengeHeader id={challenge.id} name={challenge.name} />
+        <ChallengeMap challenge={challenge} height={"30vh"} />
+        <ChallengeInfoSection challenge={challenge} height={"46vh"} />
+      </div>
+      <ChallengeDetailFooter id={challenge.id} stats={challenge.stats} />
+    </div>
+  )
+}
+
+
 export default function ChallengeDetailView() {
+  const { id } = useParams();
   const [challenge, setChallenge] = useState({});
   const [isChallenegeLoaded, setIsChallengeLoaded] = useState(false);
+
+  const breakpoint = 768;
+  const { width } = useViewport();
+
   useEffect(() => {
-    fetchLocalJSONAPI("challenge/1/").then((data) => {
+    fetchLocalJSONAPI(`challenge/${id}/`).then((data) => {
       setChallenge(data);
       setIsChallengeLoaded(true);
     });
-  }, []);
+  }, [id]);
 
   return (
     <div>
       {isChallenegeLoaded ? (
-        <div className="row">
-          <div className="col-6">
-            <ChallengeInfo challenge={challenge} />
-          </div>
-          <div className="col-6"></div>
+        <div>
+          {width > breakpoint ?
+            < ChallengeDetailLg challenge={challenge} />
+            : <ChallengeDetailSm challenge={challenge} />
+          }
         </div>
       ) : (
         <div>Loading...</div>
-      )}
-    </div>
+      )
+      }
+    </div >
   );
 }
