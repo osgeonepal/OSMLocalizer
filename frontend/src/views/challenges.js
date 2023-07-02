@@ -3,12 +3,10 @@ import { useSelector } from "react-redux";
 
 import { fetchLocalJSONAPI } from "../utills/fetch";
 import ChallengeCard from "../components/challenge/challengeCard";
-import ChallengeInfo from "../components/challenge/challengeInfo";
 import Pagination from "../components/pagination";
-import { useViewport } from "../utills/hooks";
 import { ChallengeFilter } from "../components/challenge/challengeFilter";
 
-const WithoutDetailView = ({ challenges, onChallengeClick, detailView }) => {
+const ChallengeList = ({ challenges }) => {
   return (
     <div className="row gap-2">
       {challenges?.length > 0
@@ -16,54 +14,9 @@ const WithoutDetailView = ({ challenges, onChallengeClick, detailView }) => {
             <ChallengeCard
               challenge={challenge}
               key={challenge.id}
-              onChallengeClick={onChallengeClick}
-              detailView={detailView}
             />
           ))
         : null}
-    </div>
-  );
-};
-
-const WithDetailView = ({
-  challenges,
-  challenge,
-  onChallengeClick,
-  onChallengeInfoClose,
-  detailView,
-}) => {
-  const { width } = useViewport();
-  const breakpoint = 995;
-  return (
-    <div className="row">
-      <div className="col-xs-12 col-sm-12 col-md-12 col-lg-6">
-        {width > breakpoint ? (
-          <WithoutDetailView
-            challenges={challenges}
-            onChallengeClick={onChallengeClick}
-            detailView={detailView}
-          />
-        ) : (
-          <ChallengeInfo
-            challenge={challenge}
-            onChallengeInfoClose={onChallengeInfoClose}
-          />
-        )}
-      </div>
-      <div className="col-xs-12 col-sm-12 col-md-12 col-lg-6">
-        {width > breakpoint ? (
-          <ChallengeInfo
-            challenge={challenge}
-            onChallengeInfoClose={onChallengeInfoClose}
-          />
-        ) : (
-          <WithoutDetailView
-            challenges={challenges}
-            onChallengeClick={onChallengeClick}
-            detailView={detailView}
-          />
-        )}
-      </div>
     </div>
   );
 };
@@ -80,21 +33,10 @@ const ChallengesView = () => {
   );
 
   const [challenges, setChallenges] = useState([]);
-  const [detailView, setDetailView] = useState(false);
-  const [challenge, setChallenge] = useState({});
   const [search, setSearch] = useState("");
   const [language, setLanguage] = useState("ALL");
   const [myChallenges, setMyChallenges] = useState(false);
   const [sort, setSort] = useState("NEWEST");
-
-  const onChallengeClick = (challenge) => {
-    setChallenge(challenge);
-    setDetailView(true);
-  };
-
-  const onChallengeInfoClose = () => {
-    setDetailView(false);
-  };
 
   const onPageChange = (page) => {
     setPage(page + 1); // react-paginate starts from 0 but our API starts from 1
@@ -124,21 +66,9 @@ const ChallengesView = () => {
         setSort={setSort}
         setMyChallenges={setMyChallenges}
       />
-      {detailView ? (
-        <WithDetailView
+        <ChallengeList
           challenges={challenges?.challenges}
-          challenge={challenge}
-          onChallengeInfoClose={onChallengeInfoClose}
-          detailView={detailView}
-          onChallengeClick={onChallengeClick}
         />
-      ) : (
-        <WithoutDetailView
-          challenges={challenges?.challenges}
-          onChallengeClick={onChallengeClick}
-          detailView={detailView}
-        />
-      )}
       <Pagination
         pageCount={challenges?.pagination?.total_pages}
         onPageChange={onPageChange}
