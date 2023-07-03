@@ -44,6 +44,13 @@ const ChallengeInfoSection = ({ challenge, height }) => {
   const maxMargin = "mt-2"
   const maxPadding = "pt-2"
 
+  const createdDate = new Date(challenge.created);
+  const formattedDate = createdDate.toLocaleDateString('en-US', {
+    day: '2-digit',
+    month: 'short',
+    year: 'numeric'
+  });
+
   return (
     <div
       className={`d-flex flex-column justify-content-between pb-4 ${maxPadding}`}
@@ -58,7 +65,7 @@ const ChallengeInfoSection = ({ challenge, height }) => {
 
           <div className="mt-1">
             <span className={headingClass}>Challenge Data Sourced:</span>
-            <span className="text-secondary ms-2">{challenge.created}</span>
+            <span className="text-secondary ms-2">{formattedDate}</span>
           </div>
         </div>
 
