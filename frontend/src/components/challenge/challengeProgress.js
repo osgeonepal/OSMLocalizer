@@ -60,6 +60,14 @@ export const ChallengeProgress = (props) => {
     },
   };
 
+  const createdDate = new Date(props.challenge.created);
+  const formattedDate = createdDate.toLocaleDateString('en-US', {
+    day: '2-digit',
+    month: 'short',
+    year: 'numeric'
+  });
+
+
   return (
     <div
       className="challenge-progress align-bottom d-flex flex-column justify-content-end"
@@ -70,7 +78,7 @@ export const ChallengeProgress = (props) => {
           {props.challenge.total_contributors} Contributors
         </span>
         <span className="text-secondary">
-          Task Data Sourced: {props.challenge.created}
+          Task Data Sourced: {formattedDate}
         </span>
       </div>
       <div className="progress-stacked">
