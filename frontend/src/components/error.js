@@ -24,6 +24,10 @@ const errorMessages = {
     title: "Challenge not found",
     message: "We are sorry, the challenge you are looking for does not exist.",
   },
+  NOT_VALIDATOR: {
+    title: "User is not a validator",
+    message: "You should be a validator to access this page.",
+  },
 };
 
 const ShowError = ({ error, setError }) => {
