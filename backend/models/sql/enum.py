@@ -24,3 +24,9 @@ class TranslateEngine(Enum):
     GOOGLE = 0
     YANDEX = 1
     MICROSOFT = 2
+
+
+class UserRoles(Enum):
+    Mapper = 0
+    ADMIN = 1
+    VALIDATOR = 2

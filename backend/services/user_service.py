@@ -6,7 +6,7 @@ from flask_httpauth import HTTPTokenAuth
 from backend.models.sql.user import User
 from backend.models.dtos.user_dto import UserLoginDTO, UserAllDTO
 from backend.services.utills import timestamp
-from backend.errors import Unauthorized
+from backend.errors import Unauthorized, NotFound
 
 # Validate jwt token
 auth = HTTPTokenAuth(scheme="Bearer")
@@ -30,7 +30,7 @@ class UserService:
         """Get a user by id."""
         user = User.get_by_id(user_id)
         if user is None:
-            raise Exception("User not found")
+            raise NotFound("USER_NOT_FOUND")
         return user
 
     @staticmethod
@@ -83,6 +83,15 @@ class UserService:
         """
         user = UserService.get_user_by_id(user_id)
         return user.role == 1
+
+    @staticmethod
+    def can_user_validate(user_id: int) -> bool:
+        """Check if user is validator.
+        :param user_id: The id of the user.
+        :return: True if user is validator else False.
+        """
+        user = UserService.get_user_by_id(user_id)
+        return user.role == 2 or user.role == 1
 
     @staticmethod
     def get_all_users():

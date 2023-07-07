@@ -108,6 +108,7 @@ const ChallengeInfoSection = ({ challenge, height }) => {
 
 const ChallengeDetailFooter = ({ id, stats }) => {
   const navigate = useNavigate();
+  const { user } = useSelector((state) => state.auth);
   const toValidate = stats.localized + stats.already_localized + stats.too_hard + stats.invalid_data + stats.skipped;
 
   return (
@@ -121,19 +122,20 @@ const ChallengeDetailFooter = ({ id, stats }) => {
       >
         Leaderboard
       </button>
-      <div
-        data-tooltip-id="validate"
-        data-tooltip-content="No features are available to validate"
-      >
-        <button
-          onClick={() => navigate(`/challenge/validate/${id}`)}
-          className="btn btn-secondary me-3"
-          disabled={toValidate === 0}
+      {(user?.role === "1" || user?.role === "2") && ( // only show validate button to admins and validators
+        <div
+          data-tooltip-id="validate"
+          data-tooltip-content="No features are available to validate"
         >
-          Validate
-        </button>
-        {
-          toValidate === 0 &&
+          <button
+            onClick={() => navigate(`/challenge/validate/${id}`)}
+            className="btn btn-secondary me-3"
+            disabled={toValidate === 0}
+          >
+            Validate
+          </button>
+          {
+            toValidate === 0 &&
             <Tooltip
               place="top"
               className="bg-secondary z-3"
@@ -141,8 +143,8 @@ const ChallengeDetailFooter = ({ id, stats }) => {
               style={{ fontSize: "0.8rem" }}
               id="validate"
             />
-        }
-      </div>
+          }
+        </div>)}
       <div
         data-tooltip-id="localize"
         data-tooltip-content="No features are available to localize"
@@ -156,13 +158,13 @@ const ChallengeDetailFooter = ({ id, stats }) => {
         </button>
         {
           stats.to_localize === 0 &&
-            <Tooltip
-              place="top"
-              className="bg-primary z-3"
-              effect="solid"
-              style={{ fontSize: "0.8rem" }}
-              id="localize"
-            />
+          <Tooltip
+            place="top"
+            className="bg-primary z-3"
+            effect="solid"
+            style={{ fontSize: "0.8rem" }}
+            id="localize"
+          />
         }
       </div>
     </div>)
