@@ -1,5 +1,6 @@
 import React from "react";
 import { Tooltip } from "react-tooltip";
+import { useNavigate } from "react-router-dom";
 import "react-tooltip/dist/react-tooltip.css";
 
 const ChallengeCard = ({ challenge, onChallengeClick, detailView }) => {
@@ -13,13 +14,16 @@ const ChallengeCard = ({ challenge, onChallengeClick, detailView }) => {
     ((skipped + localized) / challenge.stats.total) * 100,
     2
   );
+  const navigate = useNavigate();
 
   const cardClass = detailView
     ? "col-xs-10 col-sm-8 col-md-5 col-lg-5 card overflow-hidden"
     : "col-xs-10 col-sm-8 col-md-4 col-lg-3 card overflow-hidden";
   return (
     <div
-      onClick={() => onChallengeClick(challenge)}
+      onClick={() => {
+        navigate(`/challenge/${challenge.id}`);
+      }}
       className={cardClass}
       style={{ height: "368px", cursor: "pointer" }}
     >

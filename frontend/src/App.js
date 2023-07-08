@@ -18,6 +18,7 @@ import AboutView from "./views/about";
 import CreateChallenge from "./views/createChallenge";
 import { Notfound } from "./views/notFound";
 import { fetchLocalJSONAPI } from "./utills/fetch";
+import ChallengeDetailView from "./views/challengeDetail";
 import ShowError from "./components/error";
 
 function App() {
@@ -56,10 +57,26 @@ function App() {
           <Route path="/create" element={<CreateChallenge />} />
           <Route path="/about" element={<AboutView />} />
           <Route
+            path="/challenge/localize/:id"
+            element={
+              <LoggedInRoute>
+                <LocalizeChallengeView validationMode={false}/>
+              </LoggedInRoute>
+            }
+          />
+          <Route
+            path="/challenge/validate/:id"
+            element={
+              <LoggedInRoute>
+                <LocalizeChallengeView validationMode={true} />
+              </LoggedInRoute>
+            }
+          />
+          <Route
             path="/challenge/:id"
             element={
               <LoggedInRoute>
-                <LocalizeChallengeView />
+                <ChallengeDetailView />
               </LoggedInRoute>
             }
           />

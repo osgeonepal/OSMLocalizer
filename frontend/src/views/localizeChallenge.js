@@ -6,11 +6,10 @@ import { fetchLocalJSONAPI } from "../utills/fetch";
 import { ChallengeInstructions } from "../components/challengeInstructions";
 import ShowError from "../components/error";
 
-export const LocalizeChallengeView = () => {
+export const LocalizeChallengeView = ({validationMode}) => {
   const [challenge, setChallenge] = useState({});
   const [isChallenegeLoaded, setIsChallengeLoaded] = useState(false);
   const [nearbyTask, setNearbyTask] = useState(true);
-  const [validationMode, setValidationMode] = useState(false);
   const [error, setError] = useState(null);
   const { id } = useParams();
   useEffect(() => {
@@ -31,8 +30,6 @@ export const LocalizeChallengeView = () => {
             <ChallengeInstructions
               challenge={challenge}
               nearbyTask={nearbyTask}
-              validationMode={validationMode}
-              setValidationMode={setValidationMode}
               setNearbyTask={setNearbyTask}
             />
           </div>
