@@ -10,6 +10,8 @@ from backend.errors import Forbidden
 
 class FeaturesAllAPI(Resource):
     def get(self, challenge_id: int):
+        # Reset expired tasks before getting all features
+        FeatureService.reset_expired_tasks(challenge_id)
         return FeatureService.get_all_features_as_geojson(challenge_id)
 
 
