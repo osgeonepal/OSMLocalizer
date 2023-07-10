@@ -74,7 +74,7 @@ class Challenge(db.Model):
             description=self.description,
             country=self.country,
             to_language=self.to_language,
-            due_date=(self.due_date - timestamp()).days,
+            due_date=self.due_date,
             created=to_strfdate(self.created),
             last_updated=get_last_updated(self.last_updated),
             language_tags=", ".join(self.language_tags),

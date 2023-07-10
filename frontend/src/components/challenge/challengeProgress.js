@@ -24,10 +24,10 @@ const ProgressBar = (props) => {
   );
 };
 
-const ProgressText = ({label, total, value}) => {
+const ProgressText = ({ label, total, value }) => {
   return (
     <div>
-      <span className="text-primary me-2 fw-bold">{ Math.round((value/total)*100, 2)}%</span>
+      <span className="text-primary me-2 fw-bold">{Math.round((value / total) * 100, 2)}%</span>
       <span className="text-secondary me-2">{label}</span>
       <span className="text-secondary">({value}/{total})</span>
     </div>
@@ -42,7 +42,7 @@ export const ChallengeProgress = (props) => {
   };
 
   const totalLocalized = stats.localized + stats.already_localized + stats.too_hard + stats.invalid_data + stats.skipped + stats.validated;
-
+  const daysLeft = Math.round((new Date(props.challenge.due_date) - new Date()) / (1000 * 60 * 60 * 24));
 
   const featureStatuses = {
     localized: {
@@ -110,8 +110,8 @@ export const ChallengeProgress = (props) => {
           />
         </div>
         <div className="badge border border-secondary text-secondary rounded-0 p-2">
-            <i className="fa fa-clock-o" aria-hidden="true"></i>
-            <span className=""> {props.challenge.due_date} days left</span>
+          <i className="fa fa-clock-o" aria-hidden="true"></i>
+          <span className=""> {daysLeft > 0 ? `${daysLeft} days left` : "Expired"}</span>
         </div>
       </div>
     </div>

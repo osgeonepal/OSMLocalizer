@@ -1,5 +1,7 @@
-from pydantic import BaseModel, constr, validator
 from typing import Optional
+from datetime import datetime
+
+from pydantic import BaseModel, constr, validator
 
 from backend.models.sql.enum import ChallengeStatus
 
@@ -77,7 +79,7 @@ class ChallengeDTO(BaseModel):
     status: str
     country: str
     to_language: str
-    due_date: str
+    due_date: datetime
     created: str
     last_updated: str
     bbox: Optional[dict]
