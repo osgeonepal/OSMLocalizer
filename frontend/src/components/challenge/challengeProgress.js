@@ -89,7 +89,7 @@ export const ChallengeProgress = (props) => {
           {props.challenge.total_contributors} Contributors
         </span>
         <span className="text-secondary">
-          Task Data Sourced: {props.challenge.created}
+          Task Data Sourced: {formattedDate}
         </span>
       </div>
       <div className="progress-stacked">
