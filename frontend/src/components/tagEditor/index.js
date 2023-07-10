@@ -19,6 +19,7 @@ export default function TagEditor({
   challengeTags,
   translateEngine,
   nearbyTask,
+  validationMode,
   translate_to,
 }) {
   const [element, setElement] = useState();
@@ -41,9 +42,9 @@ export default function TagEditor({
   var auth = osmAuth(options);
 
   const getFeature = async () => {
-    let url = `challenge/${challenge_id}/feature/get-feature-to-localize/`;
+    let url = `challenge/${challenge_id}/feature/get-feature-to-localize/?validationMode=${validationMode}`;
     if (nearbyTask && feature) {
-      url = url + `?lastFeature=${feature.feature.properties.id}`;
+      url = url + `&lastFeature=${feature.feature.properties.id}`;
     }
     const data = await fetchLocalJSONAPI(url, jwt_token).catch((error) => {
       setError(error.message);
@@ -54,7 +55,7 @@ export default function TagEditor({
   useEffect(() => {
     setLoading(true);
     fetchLocalJSONAPI(
-      `challenge/${challenge_id}/feature/get-feature-to-localize/`,
+      `challenge/${challenge_id}/feature/get-feature-to-localize/?validationMode=${validationMode}`,
       jwt_token
     )
       .then((data) => {
@@ -64,7 +65,7 @@ export default function TagEditor({
       .catch((error) => {
         setError(error.message);
       });
-  }, [challenge_id, jwt_token]);
+  }, [challenge_id, jwt_token, validationMode]);
 
   useEffect(() => {
     feature &&
@@ -115,6 +116,16 @@ export default function TagEditor({
     getFeature();
   };
 
+  const onValidate = async () => {
+    await changeFeatureStatus([feature.feature.properties.id], "VALIDATED");
+    getFeature();
+  };
+
+  const onInvalidate = async (status) => {
+    await changeFeatureStatus([feature.feature.properties.id], "INVALIDATED");
+    getFeature();
+  };
+
   const onDelete = (key) => {
     const newAllChanges = { ...allChanges };
     delete newAllChanges[key];
@@ -135,16 +146,21 @@ export default function TagEditor({
           <div className="col-8 border border-secondary-subtle p-2 pt-0">
             <Map element={element} isLoading={isLoading} />
             <TagEditorForm
+              feature={feature}
               element={element}
               allChanges={allChanges}
               setElement={setElement}
               setAllChanges={setAllChanges}
               onDone={onDone}
               onSkip={onSkip}
+              onValidate={onValidate}
+              onInvalidate={onInvalidate}
+              getFeature={getFeature}
               tags={challengeTags}
               translateEngine={translateEngine}
               challenge_id={challenge_id}
               translate_to={translate_to}
+              validationMode={validationMode}
             />
           </div>
           <div className="col-4 p-0 border border-start-0 border-secondary-subtle">

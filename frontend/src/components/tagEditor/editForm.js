@@ -8,7 +8,7 @@ import InputToolForm from "./inputToolForm";
 import TranslateComponent from "./translate";
 import { CHANGES_UPLOAD_LIMIT } from "../../config";
 
-export const inputComponnent = (key, value) => {
+export const inputComponnent = (key, value, disabled) => {
   return (
     <div className="input-group input-group-sm p-2" key={key}>
       <span className="input-group-text sm" id={key}>
@@ -19,6 +19,7 @@ export const inputComponnent = (key, value) => {
         name={key}
         component="input"
         initialValue={value ? value : ""}
+        disabled={disabled}
       />
     </div>
   );
@@ -97,6 +98,14 @@ export function TagEditorForm(props) {
   // Sort editTags array so that the order of tags is consistent
   editTags.sort();
 
+  const [editMode, setEditMode] = useState(false);
+
+  const isFormDisabled = props.validationMode && !editMode;
+
+  const featureStatus = props.feature?.feature.properties.last_status
+    ?.replace("_", " ")
+    .toLowerCase();
+
   const exceededMessage = `You have made more than ${CHANGES_UPLOAD_LIMIT} changes. Please upload your changes first.`;
   const disabledMessage =
     Object.keys(props.allChanges).length >= CHANGES_UPLOAD_LIMIT
@@ -121,8 +130,19 @@ export function TagEditorForm(props) {
 
   return (
     <div>
-      <div className="p-2 pb-0 fs-6 text-secondary">
-        <span>{props.element.type}: </span> <span>{props.element.id}</span>
+      <div className="p-2 pb-0 fs-6 text-secondary d-flex justify-content-between align-items-center">
+        <div>
+          <span>{props.element.type}: </span>
+          <span>{props.element.id}</span>
+        </div>
+        <button
+          className="btn btn-outline-secondary btn-sm"
+          type="button"
+          onClick={() => setEditMode(!editMode)}
+        >
+          <i className="fa fa-pencil me-2" aria-hidden="true"></i>
+          Edit
+        </button>
       </div>
       <Form
         onSubmit={onSubmitChange}
@@ -138,76 +158,155 @@ export function TagEditorForm(props) {
           >
             <div className="border border-secondary-subtle p-2 m-2 rounded">
               {editTags.map((key) => {
-                return inputComponnent(key, props.element["tags"][key]);
+                return inputComponnent(
+                  key,
+                  props.element["tags"][key],
+                  isFormDisabled
+                );
               })}
             </div>
-            <div className="border border-secondary-subtle rounded overflow-y-auto m-2 mb-1">
-              {props.translateEngine ? (
-                <TranslateComponent
-                  text={text}
-                  translateEngine={props.translateEngine}
-                  challenge_id={props.challenge_id}
-                />
-              ) : (
-                <div className="mt-1 p-2">
-                  <a
-                    className="btn btn-sm btn-secondary p-2 pt-1 pb-1"
-                    href={`https://translate.google.com/#view=home&op=translate&sl=en&tl=${props.translate_to}&text=${text}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
+            {isFormDisabled ? (
+              <div className="p-2 ps-4 d-flex">
+                <span>
+                  This feature was set as
+                  <span
+                    className="text-primary fw-semibold"
+                    style={{ textTransform: "capitalize" }}
                   >
-                    Translate
-                    <i
-                      className="fa fa-external-link ms-1"
-                      aria-hidden="true"
-                    ></i>
-                  </a>
+                    {" "}
+                    {featureStatus}{" "}
+                  </span>
+                  by
+                  <span className="fw-semibold ms-1">
+                    {props.feature?.feature.properties["localized_by"]}
+                  </span>
+                </span>
+              </div>
+            ) : (
+              <div className="border border-secondary-subtle rounded overflow-y-auto m-2 mb-1">
+                {props.translateEngine ? (
+                  <TranslateComponent
+                    text={text}
+                    translateEngine={props.translateEngine}
+                    challenge_id={props.challenge_id}
+                  />
+                ) : (
+                  <div className="mt-1 p-2">
+                    <a
+                      className="btn btn-sm btn-secondary p-2 pt-1 pb-1"
+                      href={`https://translate.google.com/#view=home&op=translate&sl=en&tl=${props.translate_to}&text=${text}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      Translate
+                      <i
+                        className="fa fa-external-link ms-1"
+                        aria-hidden="true"
+                      ></i>
+                    </a>
+                  </div>
+                )}
+                <InputToolForm translate_to={props.translate_to} />
+              </div>
+            )}
+            <div>
+              {isFormDisabled ? (
+                <div className="p-2 ps-4">
+                  <p>Are the status and tags for this feature correct?</p>
+                  <div className="d-flex">
+                    <button
+                      className="btn btn-primary me-2"
+                      type="button"
+                      onClick={() => props.onValidate()}
+                    >
+                      <i
+                        className="fa fa-check-circle me-2"
+                        aria-hidden="true"
+                      ></i>
+                      Valid
+                    </button>
+                    <button
+                      className="btn btn-danger me-2"
+                      type="button"
+                      onClick={() => props.onInvalidate()}
+                    >
+                      <i
+                        className="fa fa-times-circle me-2"
+                        aria-hidden="true"
+                      ></i>
+                      Invalid
+                    </button>
+                    <button
+                      className="btn btn-secondary me-2"
+                      type="button"
+                      onClick={() => {
+                        form.reset({});
+                        props.getFeature();
+                      }}
+                    >
+                      <i
+                        className="fa fa-fast-forward me-2"
+                        aria-hidden="true"
+                      ></i>
+                      Skip
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <div className="d-flex">
+                  {editMode ? (
+                    <button
+                      className="btn btn-secondary me-2"
+                      type="button"
+                      onClick={() => setEditMode(!editMode)}
+                    >
+                      Cancel
+                    </button>
+                  ) : (
+                    <SkipDropdown
+                      onSkip={(value) => {
+                        form.reset({});
+                        props.onSkip(value);
+                      }}
+                    />
+                  )}
+                  <div
+                    data-tooltip-id="disable"
+                    data-tooltip-content={disabledMessage}
+                  >
+                    <button
+                      className="btn btn-primary ms-2"
+                      type="submit"
+                      // Disable the button if there are more than required changes or if changes are not made to the element
+                      disabled={
+                        Object.keys(props.allChanges).length >=
+                          CHANGES_UPLOAD_LIMIT ||
+                        (pristine &&
+                          // Allow done on no changes
+                          // if it is already in the allChanges object i.e while updating the changes
+                          !Object.keys(props.allChanges).includes(elementKey))
+                      }
+                    >
+                      Done
+                    </button>
+                    {
+                      // Same logic as done button disabled
+                      Object.keys(props.allChanges).length >=
+                        CHANGES_UPLOAD_LIMIT ||
+                      (pristine &&
+                        !Object.keys(props.allChanges).includes(elementKey)) ? (
+                        <Tooltip
+                          place="top-start"
+                          className="bg-danger text-dark"
+                          effect="float"
+                          id="disable"
+                          style={{ fontSize: "0.7rem" }}
+                        />
+                      ) : null
+                    }
+                  </div>
                 </div>
               )}
-              <InputToolForm translate_to={props.translate_to} />
-            </div>
-            <div className="p-2 ps-4 d-flex">
-              <SkipDropdown
-                onSkip={(value) => {
-                  form.reset({});
-                  props.onSkip(value);
-                }}
-              />
-              <div
-                data-tooltip-id="disable"
-                data-tooltip-content={disabledMessage}
-              >
-                <button
-                  className="btn btn-primary ms-2"
-                  type="submit"
-                  // Disable the button if there are more than required changes or if changes are not made to the element
-                  disabled={
-                    Object.keys(props.allChanges).length >=
-                      CHANGES_UPLOAD_LIMIT ||
-                    (pristine &&
-                      // Allow done on no changes
-                      // if it is already in the allChanges object i.e while updating the changes
-                      !Object.keys(props.allChanges).includes(elementKey))
-                  }
-                >
-                  Done
-                </button>
-                {
-                  // Same logic as done button disabled
-                  Object.keys(props.allChanges).length >=
-                    CHANGES_UPLOAD_LIMIT ||
-                  (pristine &&
-                    !Object.keys(props.allChanges).includes(elementKey)) ? (
-                    <Tooltip
-                      place="top-start"
-                      className="bg-danger text-dark"
-                      effect="float"
-                      id="disable"
-                      style={{ fontSize: "0.7rem" }}
-                    />
-                  ) : null
-                }
-              </div>
             </div>
           </form>
         )}

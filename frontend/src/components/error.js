@@ -7,6 +7,11 @@ const errorMessages = {
     message:
       "Congratulations! There are no more features left to localize in this challenge. You can either validate features or check out other challenges.",
   },
+  NO_FEATURES_TO_VALIDATE: {
+    title: "No features to validate",
+    message:
+      "There are no features left to validate in this challenge. You can either localize features or check out other challenges.",
+  },
   SESSION_EXPIRED: {
     title: "Session expired",
     message: "Your session has expired. Please login again to continue.",
@@ -18,6 +23,10 @@ const errorMessages = {
   CHALLENGE_NOT_FOUND: {
     title: "Challenge not found",
     message: "We are sorry, the challenge you are looking for does not exist.",
+  },
+  NOT_VALIDATOR: {
+    title: "User is not a validator",
+    message: "You should be a validator to access this page.",
   },
 };
 

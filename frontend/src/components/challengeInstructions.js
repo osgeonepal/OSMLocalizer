@@ -15,12 +15,6 @@ export function ChallengeInstructions({
       </div>
       <div className="p-2 mt-2">
         <div className="form-check form-switch ms-2">
-          <input className="form-check-input" type="checkbox" role="switch" />
-          <label className="form-check-label" htmlFor="flexSwitchCheckDefault">
-            Validation Mode
-          </label>
-        </div>
-        <div className="form-check form-switch ms-2">
           <input
             className="form-check-input"
             type="checkbox"

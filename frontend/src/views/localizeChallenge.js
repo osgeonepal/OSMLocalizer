@@ -6,7 +6,7 @@ import { fetchLocalJSONAPI } from "../utills/fetch";
 import { ChallengeInstructions } from "../components/challengeInstructions";
 import ShowError from "../components/error";
 
-export const LocalizeChallengeView = () => {
+export const LocalizeChallengeView = ({validationMode}) => {
   const [challenge, setChallenge] = useState({});
   const [isChallenegeLoaded, setIsChallengeLoaded] = useState(false);
   const [nearbyTask, setNearbyTask] = useState(true);
@@ -39,6 +39,7 @@ export const LocalizeChallengeView = () => {
               challengeTags={challenge.language_tags}
               translateEngine={challenge.translate_engine}
               nearbyTask={nearbyTask}
+              validationMode={validationMode}
               translate_to={challenge.to_language}
             />
           </div>

@@ -12,5 +12,6 @@
     "INTERNAL_SERVER_ERROR": "An internal server error occurred",
     "CONFLICT": "The request could not be completed due to a conflict with the current state of the target resource",
     "NO_FEATURES_TO_LOCALIZE": "No features are left to localize.",
-    "NO_FEATURE_TO_VALIDATE": "No feature are left to validate."
+    "NO_FEATURES_TO_VALIDATE": "No feature are left to validate.",
+    "NOT_VALIDATOR": "The user is not a validator and cannot perform this action."
 }

@@ -6,7 +6,7 @@ from geoalchemy2 import Geometry
 from flask import json
 
 from backend.models.sql.enum import ChallengeStatus, TranslateEngine, FeatureStatus
-from backend.models.sql.features import Feature
+from backend.models.sql.features import Feature, User
 from backend.models.dtos.challenge_dto import (
     ChallengeDTO,
     ChallengeSummaryDTO,
@@ -75,14 +75,15 @@ class Challenge(db.Model):
             country=self.country,
             to_language=self.to_language,
             due_date=self.due_date,
-            created=self.created,
-            last_updated=self.last_updated,
+            created=to_strfdate(self.created),
+            last_updated=get_last_updated(self.last_updated),
             language_tags=", ".join(self.language_tags),
             translate_engine=TranslateEngine(self.translate_engine).name
             if self.translate_engine
             else None,
             feature_instructions=self.feature_instructions,
         )
+        challenge_dto.author = User.get_by_id(self.created_by).username
         challenge_dto.bbox = json.loads(
             db.engine.execute(self.bbox.ST_AsGeoJSON()).scalar()
         )
@@ -134,7 +135,9 @@ class Challenge(db.Model):
         if dto.country:
             query = query.filter_by(country=dto.country)
         if dto.name:
-            query = query.filter(func.lower(Challenge.name).ilike(f"%{dto.name.lower()}%"))
+            query = query.filter(
+                func.lower(Challenge.name).ilike(f"%{dto.name.lower()}%")
+            )
         if dto.to_language and dto.to_language != "ALL":
             query = query.filter_by(to_language=dto.to_language)
         if dto.created_by:

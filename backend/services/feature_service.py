@@ -1,7 +1,6 @@
 import datetime
 
 from backend.services.utills import timestamp, parse_duration
-from backend.errors import NotFound
 from backend.models.sql.features import Feature
 from backend.services.challenge_service import ChallengeService
 from backend.models.sql.enum import FeatureStatus
@@ -66,15 +65,21 @@ class FeatureService:
         return {"feature": feature.as_geojson()}
 
     @staticmethod
-    def get_random_task(challenge_id: int, user_id, lastFeature: int = None):
+    def get_random_task(
+        challenge_id: int,
+        user_id,
+        lastFeature: int = None,
+        validationMode: bool = False,
+    ):
         """Get a random task"""
         if lastFeature:
-            feature = Feature.get_nearby(lastFeature, challenge_id)
+            feature = Feature.get_nearby(lastFeature, challenge_id, validationMode)
         else:
-            feature = Feature.get_random_task(challenge_id)
-        if not feature:
-            raise NotFound("NO_FEATURES_TO_LOCALIZE")
-        feature.lock_to_localize(user_id)
+            feature = Feature.get_random_task(challenge_id, validationMode)
+        if validationMode:
+            feature.lock_to_validate(user_id)
+        else:
+            feature.lock_to_localize(user_id)
         return {"feature": feature.as_geojson()}
 
     @staticmethod
@@ -132,7 +137,7 @@ class FeatureService:
         if feature.status == FeatureStatus.LOCKED_TO_LOCALIZE.value:
             feature.status = FeatureStatus.TO_LOCALIZE.value
         if feature.status == FeatureStatus.LOCKED_TO_VALIDATE.value:
-            feature.status = FeatureStatus.LOCALIZED.value
+            feature.status = feature.last_status
         feature.locked_by = None
         feature.last_updated = timestamp()
         feature.update()
@@ -146,19 +151,22 @@ class FeatureService:
             FeatureStatus.LOCKED_TO_LOCALIZE.value,
             FeatureStatus.LOCKED_TO_VALIDATE.value,
         ]:
-            feature.status = FeatureStatus[status].value
+            feature.status = status
             feature.last_updated = timestamp()
 
         # Update the user id if the status is localized or validated
         if status in [
-            "LOCALIZED",
-            "OTHER",
-            "ALREADY_LOCALIZED",
-            "TOO_HARD",
-            "INVALID_DATA",
+            FeatureStatus.LOCALIZED.value,
+            FeatureStatus.OTHER.value,
+            FeatureStatus.ALREADY_LOCALIZED.value,
+            FeatureStatus.TOO_HARD.value,
+            FeatureStatus.INVALID_DATA.value,
         ]:
             feature.localized_by = user_id
-        if status == "VALIDATED":
+        elif status in [
+            FeatureStatus.VALIDATED.value,
+            FeatureStatus.INVALIDATED.value,
+        ]:
             feature.validated_by = user_id
 
         # Unlock the feature if it is locked
