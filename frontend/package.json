@@ -33,7 +33,7 @@
     "react-select": "^5.7.3",
     "react-switch": "^7.0.0",
     "react-tooltip": "^5.10.4",
-    "web-vitals": "^2.1.4"
+    "web-vitals": "^3.4.0"
   },
   "scripts": {
     "preparation": "bash -c \"if (test -a ../localizer.env); then grep -hs ^ ../localizer.env .env.expand > .env; else cp .env.expand .env; fi\"",
