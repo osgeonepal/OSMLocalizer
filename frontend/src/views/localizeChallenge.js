@@ -6,7 +6,7 @@ import { fetchLocalJSONAPI } from "../utills/fetch";
 import { ChallengeInstructions } from "../components/challengeInstructions";
 import ShowError from "../components/error";
 
-export const LocalizeChallengeView = ({validationMode}) => {
+export const LocalizeChallengeView = ({ validationMode }) => {
   const [challenge, setChallenge] = useState({});
   const [isChallenegeLoaded, setIsChallengeLoaded] = useState(false);
   const [nearbyTask, setNearbyTask] = useState(true);

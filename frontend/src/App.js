@@ -60,7 +60,7 @@ function App() {
             path="/challenge/localize/:id"
             element={
               <LoggedInRoute>
-                <LocalizeChallengeView validationMode={false}/>
+                <LocalizeChallengeView validationMode={false} />
               </LoggedInRoute>
             }
           />

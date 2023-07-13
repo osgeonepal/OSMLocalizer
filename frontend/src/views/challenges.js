@@ -11,10 +11,7 @@ const ChallengeList = ({ challenges }) => {
     <div className="row gap-2">
       {challenges?.length > 0
         ? challenges.map((challenge) => (
-            <ChallengeCard
-              challenge={challenge}
-              key={challenge.id}
-            />
+            <ChallengeCard challenge={challenge} key={challenge.id} />
           ))
         : null}
     </div>
@@ -66,9 +63,7 @@ const ChallengesView = () => {
         setSort={setSort}
         setMyChallenges={setMyChallenges}
       />
-        <ChallengeList
-          challenges={challenges?.challenges}
-        />
+      <ChallengeList challenges={challenges?.challenges} />
       <Pagination
         pageCount={challenges?.pagination?.total_pages}
         onPageChange={onPageChange}

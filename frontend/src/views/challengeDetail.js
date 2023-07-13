@@ -25,24 +25,22 @@ const ChallengeHeader = ({ id, name }) => {
         {user?.role === "1" && (
           <button
             className="btn btn-sm btn-outline-primary ms-2 ps-2 pe-2"
-            onClick={() =>
-              navigate(`/manage/challenge/${id}`)
-            }
+            onClick={() => navigate(`/manage/challenge/${id}`)}
           >
             Edit
           </button>
         )}
       </div>
     </div>
-  )
-}
-
+  );
+};
 
 const ChallengeInfoSection = ({ challenge, height }) => {
   const headingClass = "text-secondary fw-bold";
-  const badgeClass = "badge border border-secondary text-secondary rounded-0 p-2"
-  const maxMargin = "mt-2"
-  const maxPadding = "pt-2"
+  const badgeClass =
+    "badge border border-secondary text-secondary rounded-0 p-2";
+  const maxMargin = "mt-2";
+  const maxPadding = "pt-2";
 
   return (
     <div
@@ -51,7 +49,7 @@ const ChallengeInfoSection = ({ challenge, height }) => {
     >
       <div>
         <div>
-          <div className={maxMargin} >
+          <div className={maxMargin}>
             <span className={headingClass}>Created by:</span>
             <span className="text-secondary ms-2">{challenge.author}</span>
           </div>
@@ -71,7 +69,6 @@ const ChallengeInfoSection = ({ challenge, height }) => {
             {challenge.description}
           </div>
         </div>
-
       </div>
 
       <div>
@@ -86,25 +83,22 @@ const ChallengeInfoSection = ({ challenge, height }) => {
               <div className="mt-2">
                 {challenge.language_tags.split(",").map((tag) => {
                   return (
-                    <span
-                      key={tag}
-                      className={`${badgeClass} me-2`}
-                    >
+                    <span key={tag} className={`${badgeClass} me-2`}>
                       {tag}
                     </span>
                   );
-                }
-                )}
+                })}
               </div>
             </div>
-          </div>) : null}
+          </div>
+        ) : null}
         <div className="mt-4">
           <ChallengeProgress challenge={challenge} />
         </div>
       </div>
     </div>
   );
-}
+};
 
 const ChallengeDetailFooter = ({ id, stats }) => {
   const navigate = useNavigate();
@@ -140,8 +134,7 @@ const ChallengeDetailFooter = ({ id, stats }) => {
           >
             Validate
           </button>
-          {
-            toValidate === 0 &&
+          {toValidate === 0 && (
             <Tooltip
               place="top"
               className="bg-secondary z-3"
@@ -149,8 +142,9 @@ const ChallengeDetailFooter = ({ id, stats }) => {
               style={{ fontSize: "0.8rem" }}
               id="validate"
             />
-          }
-        </div>)}
+          )}
+        </div>
+      )}
       <div
         data-tooltip-id="localize"
         data-tooltip-content="No features are available to localize"
@@ -162,8 +156,7 @@ const ChallengeDetailFooter = ({ id, stats }) => {
         >
           Localize
         </button>
-        {
-          stats.to_localize === 0 &&
+        {stats.to_localize === 0 && (
           <Tooltip
             place="top"
             className="bg-primary z-3"
@@ -171,16 +164,16 @@ const ChallengeDetailFooter = ({ id, stats }) => {
             style={{ fontSize: "0.8rem" }}
             id="localize"
           />
-        }
+        )}
       </div>
-    </div>)
-}
-
+    </div>
+  );
+};
 
 const ChallengeDetailLg = ({ challenge }) => {
   return (
     <div>
-      <div className="row" style={{ "height": "84vh" }}>
+      <div className="row" style={{ height: "84vh" }}>
         <div className="col-6">
           <ChallengeHeader id={challenge.id} name={challenge.name} />
           <ChallengeInfoSection challenge={challenge} height="76vh" />
@@ -191,22 +184,21 @@ const ChallengeDetailLg = ({ challenge }) => {
       </div>
       <ChallengeDetailFooter id={challenge.id} stats={challenge.stats} />
     </div>
-  )
-}
+  );
+};
 
 const ChallengeDetailSm = ({ challenge }) => {
   return (
     <div>
-      <div style={{ "height": "84vh" }} >
+      <div style={{ height: "84vh" }}>
         <ChallengeHeader id={challenge.id} name={challenge.name} />
         <ChallengeMap challenge={challenge} height={"30vh"} />
         <ChallengeInfoSection challenge={challenge} height={"46vh"} />
       </div>
       <ChallengeDetailFooter id={challenge.id} stats={challenge.stats} />
     </div>
-  )
-}
-
+  );
+};
 
 export default function ChallengeDetailView() {
   const { id } = useParams();
@@ -227,15 +219,15 @@ export default function ChallengeDetailView() {
     <div>
       {isChallenegeLoaded ? (
         <div>
-          {width > breakpoint ?
-            < ChallengeDetailLg challenge={challenge} />
-            : <ChallengeDetailSm challenge={challenge} />
-          }
+          {width > breakpoint ? (
+            <ChallengeDetailLg challenge={challenge} />
+          ) : (
+            <ChallengeDetailSm challenge={challenge} />
+          )}
         </div>
       ) : (
         <div>Loading...</div>
-      )
-      }
-    </div >
+      )}
+    </div>
   );
 }
