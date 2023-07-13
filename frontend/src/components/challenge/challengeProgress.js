@@ -27,9 +27,13 @@ const ProgressBar = (props) => {
 const ProgressText = ({ label, total, value }) => {
   return (
     <div>
-      <span className="text-primary me-2 fw-bold">{Math.round((value / total) * 100, 2)}%</span>
+      <span className="text-primary me-2 fw-bold">
+        {Math.round((value / total) * 100, 2)}%
+      </span>
       <span className="text-secondary me-2">{label}</span>
-      <span className="text-secondary">({value}/{total})</span>
+      <span className="text-secondary">
+        ({value}/{total})
+      </span>
     </div>
   );
 };
@@ -80,9 +84,7 @@ export const ChallengeProgress = (props) => {
   };
 
   return (
-    <div
-      className="challenge-progress align-bottom"
-    >
+    <div className="challenge-progress align-bottom">
       <div className="d-flex flex-row pb-2">
         <span className="text-secondary flex-grow-1">
           Last Contribution: {props.challenge.last_updated}
@@ -118,7 +120,10 @@ export const ChallengeProgress = (props) => {
         </div>
         <div className="badge border border-secondary text-secondary rounded-0 p-2">
           <i className="fa fa-clock-o" aria-hidden="true"></i>
-          <span className=""> {daysLeft > 0 ? `${daysLeft} days left` : "Expired"}</span>
+          <span className="">
+            {" "}
+            {daysLeft > 0 ? `${daysLeft} days left` : "Expired"}
+          </span>
         </div>
       </div>
     </div>
