@@ -116,7 +116,13 @@ const ChallengeInfoSection = ({ challenge, height }) => {
 const ChallengeDetailFooter = ({ id, stats }) => {
   const navigate = useNavigate();
   const { user } = useSelector((state) => state.auth);
-  const toValidate = stats.localized + stats.already_localized + stats.too_hard + stats.invalid_data + stats.skipped;
+  const toValidate =
+    stats.localized +
+    stats.already_localized +
+    stats.too_hard +
+    stats.invalid_data +
+    stats.skipped -
+    stats.validated;
 
   return (
     <div
