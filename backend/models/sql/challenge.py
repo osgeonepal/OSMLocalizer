@@ -1,7 +1,7 @@
 from backend import db
 from datetime import timedelta
 from sqlalchemy.dialects.postgresql import ARRAY
-from sqlalchemy.sql import func
+from sqlalchemy.sql import func, and_, or_
 from geoalchemy2 import Geometry
 from flask import json
 
@@ -152,28 +152,55 @@ class Challenge(db.Model):
         )
         return paginated_results
 
+    def calculalate_status_count(self, status):
+        """
+        Calculate status count
+        -----------
+        For example, if a feature is localized and validated, it should be counted as localized.
+        As we have a status and last_status, we need to check both. So we use combination of and_ and or_
+        operators to say Count the feature as localized if:
+        1. status is VALIDATED and last_status is LOCALIZED
+        2. status is LOCALIZED
+
+        Parameters:
+        -----------
+        status: FeatureStatus
+            status to calculate count for
+
+        Returns:
+        -----------
+        count: int
+            count of features with given status
+        """
+        count = self.features.filter(
+            or_(
+                and_(
+                    Feature.status == FeatureStatus.VALIDATED.value,
+                    Feature.last_status == status.value,
+                ),
+                Feature.status == status.value,
+            )
+        ).count()
+        return count
+
     def get_challenge_progress(self):
         """Get challenge progress"""
         challenge_stats_dto = ChallengeStatsDTO(
             total=self.features.count(),
-            localized=self.features.filter_by(
-                status=FeatureStatus.LOCALIZED.value
+            localized=self.calculalate_status_count(FeatureStatus.LOCALIZED),
+            skipped=self.calculalate_status_count(FeatureStatus.OTHER),
+            already_localized=self.calculalate_status_count(
+                FeatureStatus.ALREADY_LOCALIZED
+            ),
+            validated=self.features.filter(
+                Feature.status == FeatureStatus.VALIDATED.value
             ).count(),
-            skipped=self.features.filter_by(status=FeatureStatus.OTHER.value).count(),
-            already_localized=self.features.filter_by(
-                status=FeatureStatus.ALREADY_LOCALIZED.value
-            ).count(),
-            validated=self.features.filter_by(
-                status=FeatureStatus.VALIDATED.value
-            ).count(),
-            too_hard=self.features.filter_by(
-                status=FeatureStatus.TOO_HARD.value
-            ).count(),
-            invalid_data=self.features.filter_by(
-                status=FeatureStatus.INVALID_DATA.value
-            ).count(),
-            to_localize=self.features.filter_by(
-                status=FeatureStatus.TO_LOCALIZE.value
+            too_hard=self.calculalate_status_count(FeatureStatus.TOO_HARD),
+            invalid_data=self.calculalate_status_count(FeatureStatus.INVALID_DATA),
+            to_localize=self.features.filter(
+                Feature.status.in_(
+                    [FeatureStatus.TO_LOCALIZE.value, FeatureStatus.INVALIDATED.value]
+                )
             ).count(),
         )
 

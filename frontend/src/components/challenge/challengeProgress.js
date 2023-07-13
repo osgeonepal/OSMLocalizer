@@ -41,8 +41,15 @@ export const ChallengeProgress = (props) => {
     return Math.round((value / stats.total) * 100, 2);
   };
 
-  const totalLocalized = stats.localized + stats.already_localized + stats.too_hard + stats.invalid_data + stats.skipped + stats.validated;
-  const daysLeft = Math.round((new Date(props.challenge.due_date) - new Date()) / (1000 * 60 * 60 * 24));
+  const totalLocalized =
+    stats.localized +
+    stats.already_localized +
+    stats.too_hard +
+    stats.invalid_data +
+    stats.skipped;
+  const daysLeft = Math.round(
+    (new Date(props.challenge.due_date) - new Date()) / (1000 * 60 * 60 * 24)
+  );
 
   const featureStatuses = {
     localized: {

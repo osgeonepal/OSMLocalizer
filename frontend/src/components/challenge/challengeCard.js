@@ -10,7 +10,13 @@ const ChallengeCard = ({ challenge, onChallengeClick, detailView }) => {
     challenge.stats.too_hard;
   const localized =
     challenge.stats.localized + challenge.stats.already_localized;
-  const progress = Math.round(
+
+  const validatedProgress = Math.round(
+    (challenge.stats.validated / challenge.stats.total) * 100,
+    2
+  );
+
+  const localizedProgress = Math.round(
     ((skipped + localized) / challenge.stats.total) * 100,
     2
   );
@@ -72,21 +78,34 @@ const ChallengeCard = ({ challenge, onChallengeClick, detailView }) => {
           </div>
         </div>
         <div>
-          {/* <div className="text-muted pt-2" style={{ fontSize: "0.8rem" }}>
-            Last contribution {challenge.last_updated}
-          </div> */}
           <div
-            className="progress rounded-0 mt-2"
-            style={{ height: "8px" }}
+            className="position-relative pt-2 pb-2"
             data-tooltip-id={"progress-" + challenge.id}
-            data-tooltip-content={`
-              ${progress}% (${localized} out of ${challenge.stats.total} localized, ${skipped} skipped)`}
+            data-tooltip-content={` 
+            ${localizedProgress}% localized, ${validatedProgress}% validated)`}
           >
             <div
-              className="progress-bar"
-              role="progressbar"
-              style={{ width: progress + "%" }}
+              className="bg-body-secondary position-absolute rounded-0 w-100"
+              style={{ height: "8px" }}
+            >
+              {" "}
+            </div>
+            <div
+              className="bg-secondary position-absolute"
+              style={{ width: localizedProgress + "%", height: "8px" }}
+              aria-valuenow={localizedProgress}
+              aria-valuemin={0}
+              aria-valuemax={100}
             ></div>
+            <div
+              className="bg-primary position-absolute"
+              // role="progressbar"
+              style={{ width: validatedProgress + "%", height: "8px" }}
+              aria-valuenow={validatedProgress}
+              aria-valuemin={0}
+              aria-valuemax={100}
+            ></div>
+
             <Tooltip
               place="top-start"
               className="bg-primary"
