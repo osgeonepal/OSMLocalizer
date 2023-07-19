@@ -14,6 +14,10 @@ class UserStatsDTO(BaseModel):
     total_challenges: Optional[int]
     total_localized: int
     total_skipped: int
+    total_validated_by_me: int
+    total_invalidated_by_me: int
+    total_my_validated: int
+    total_my_invalidated: int
 
 
 class ListUserStatsDTO(BaseModel):

@@ -52,6 +52,22 @@ class StatsService:
                     )
                 )
             ).filter_by(localized_by=user_id)
+        elif action.upper() == "VALIDATED_BY_ME":
+            query = Feature.query.filter_by(
+                status=FeatureStatus.VALIDATED.value, validated_by=user_id
+            )
+        elif action.upper() == "INVALIDATED_BY_ME":
+            query = Feature.query.filter_by(
+                status=FeatureStatus.INVALIDATED.value, validated_by=user_id
+            )
+        elif action.upper() == "MY_VALIDATED":
+            query = Feature.query.filter_by(
+                status=FeatureStatus.VALIDATED.value, localized_by=user_id
+            )
+        elif action.upper() == "MY_INVALIDATED":
+            query = Feature.query.filter_by(
+                status=FeatureStatus.INVALIDATED.value, localized_by=user_id
+            )
         else:
             raise Exception("Invalid action")
         if start_date:
@@ -74,6 +90,18 @@ class StatsService:
         total_skipped = StatsService.get_user_stats_by_status(
             user_id, "SKIPPED", challenge_id, start_date, end_date
         )
+        total_validated_by_me = StatsService.get_user_stats_by_status(
+            user_id, "VALIDATED_BY_ME", challenge_id, start_date, end_date
+        )
+        total_invalidated_by_me = StatsService.get_user_stats_by_status(
+            user_id, "INVALIDATED_BY_ME", challenge_id, start_date, end_date
+        )
+        total_my_validated = StatsService.get_user_stats_by_status(
+            user_id, "MY_VALIDATED", challenge_id, start_date, end_date
+        )
+        total_my_invalidated = StatsService.get_user_stats_by_status(
+            user_id, "MY_INVALIDATED", challenge_id, start_date, end_date
+        )
         # Total challenges is the number of challenges the user has contributed to
         total_challenges = StatsService.get_user_challenegs_count(user_id)
         stats_dto = UserStatsDTO(
@@ -81,6 +109,10 @@ class StatsService:
             picture_url=user.picture_url,
             total_localized=total_localized,
             total_skipped=total_skipped,
+            total_validated_by_me=total_validated_by_me,
+            total_invalidated_by_me=total_invalidated_by_me,
+            total_my_validated=total_my_validated,
+            total_my_invalidated=total_my_invalidated,
         )
         if not challenge_id:
             stats_dto.total_challenges = total_challenges
