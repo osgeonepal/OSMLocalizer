@@ -152,12 +152,23 @@ export const ChallengeLeaderBoard = () => {
   const [error, setError] = useState(null);
   const { id } = useParams();
 
+  const calculateScore = (user) => {
+    const validated_by_me =
+      user.total_validated_by_me + user.total_invalidated_by_me;
+    return (
+      user.total_localized * 3 +
+      user.total_skipped +
+      user.total_my_validated * 2 +
+      validated_by_me * 4
+    );
+  };
+
   useEffect(() => {
     fetchLocalJSONAPI(`challenge/${id}/user-stats/`)
       .then((data) => {
         // set score = (total_localized*3 + total_skipped*1) and sort by score
         data.users.forEach((user) => {
-          user.score = user.total_localized * 3 + user.total_skipped;
+          user.score = calculateScore(user);
         });
         data.users.sort((a, b) => b.score - a.score);
         setLeaderboard(data);
@@ -205,12 +216,23 @@ export const LeaderboardView = () => {
   const [isLeaderboardLoaded, setIsLeaderboardLoaded] = useState(false);
   const [error, setError] = useState(null);
 
+  const calculateScore = (user) => {
+    const validated_by_me =
+      user.total_validated_by_me + user.total_invalidated_by_me;
+    return (
+      user.total_localized * 3 +
+      user.total_skipped +
+      user.total_my_validated * 4 +
+      validated_by_me * 2
+    );
+  };
+
   useEffect(() => {
     fetchLocalJSONAPI("user/leaderboard/")
       .then((data) => {
         // set score = (total_localized*3 + total_skipped*1) and sort by score
         data.users.forEach((user) => {
-          user.score = user.total_localized * 3 + user.total_skipped;
+          user.score = calculateScore(user);
         });
         data.users.sort((a, b) => b.score - a.score);
         setLeaderboard(data);
