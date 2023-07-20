@@ -91,8 +91,9 @@ const SkipDropdown = (props) => {
 };
 
 export function TagEditorForm(props) {
-  const name = props.element["tags"]["name"] ? "name" : "name:en";
-  const text = encodeURIComponent(props.element["tags"][name]);
+  const elementTags = props.element.tags ? props.element.tags : {};
+  const name = elementTags.name ? "name" : "name:en";
+  const text = encodeURIComponent(elementTags[name]);
   const elementKey = `${props.element.type}-${props.element.id}`;
   const editTags = props.tags.split(",").map((tag) => tag.trim());
   // Sort editTags array so that the order of tags is consistent
@@ -158,11 +159,7 @@ export function TagEditorForm(props) {
           >
             <div className="border border-secondary-subtle p-2 m-2 rounded">
               {editTags.map((key) => {
-                return inputComponnent(
-                  key,
-                  props.element["tags"][key],
-                  isFormDisabled
-                );
+                return inputComponnent(key, elementTags[key], isFormDisabled);
               })}
             </div>
             {isFormDisabled ? (
