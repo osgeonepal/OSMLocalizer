@@ -126,6 +126,8 @@ export function TagEditorForm(props) {
     }
     updateElement().then(() => {
       props.onDone();
+      // Reset editMode to false so that validation buttons are shown for the next feature
+      if (editMode) setEditMode(!editMode);
     });
   };
 
