@@ -43,10 +43,10 @@ const ChallengeInfoSection = ({ challenge, height }) => {
   const maxPadding = "pt-2";
 
   const createdDate = new Date(challenge.created);
-  const formattedDate = createdDate.toLocaleDateString('en-US', {
-    day: '2-digit',
-    month: 'short',
-    year: 'numeric'
+  const formattedDate = createdDate.toLocaleDateString("en-US", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
   });
 
   return (
