@@ -1,4 +1,5 @@
 from cachetools import cached, TTLCache
+from sqlalchemy import or_, and_
 
 from backend.services.user_service import UserService
 from backend.models.sql.enum import FeatureStatus
@@ -13,8 +14,14 @@ class StatsService:
     def get_home_page_stats():
         """Get home page stats"""
         total_challenges = Challenge.query.count()
-        total_localized = Feature.query.filter_by(
-            status=FeatureStatus.LOCALIZED.value
+        total_localized = Feature.query.filter(
+            or_(
+                and_(
+                    Feature.status == FeatureStatus.VALIDATED.value,
+                    Feature.last_status == FeatureStatus.LOCALIZED.value,
+                ),
+                Feature.status == FeatureStatus.LOCALIZED.value,
+            )
         ).count()
         total_users = User.query.count()
         return HomeStatsDTO(
