@@ -8,7 +8,7 @@ import InputToolForm from "./inputToolForm";
 import TranslateComponent from "./translate";
 import { CHANGES_UPLOAD_LIMIT } from "../../config";
 
-export const inputComponnent = (key, value, disabled) => {
+export const inputComponent = (key, value, disabled) => {
   return (
     <div className="input-group input-group-sm p-2" key={key}>
       <span className="input-group-text sm" id={key}>
@@ -159,7 +159,7 @@ export function TagEditorForm(props) {
           >
             <div className="border border-secondary-subtle p-2 m-2 rounded">
               {editTags.map((key) => {
-                return inputComponnent(key, elementTags[key], isFormDisabled);
+                return inputComponent(key, elementTags[key], isFormDisabled);
               })}
             </div>
             {isFormDisabled ? (
