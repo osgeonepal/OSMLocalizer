@@ -1,5 +1,16 @@
 import React from "react";
 
+export const ChallengeTitle = ({ challenge }) => {
+  return (
+    <div className="text-align-center p-2 title pb-0">
+      <span className="text-secondary fs-5">#{challenge.id}</span>
+      <span className="text-body fs-5 fw-bold text-uppercase ms-2">
+        {challenge.name}
+      </span>
+    </div>
+  );
+};
+
 export function ChallengeInstructions({
   challenge,
   nearbyTask,
@@ -7,12 +18,6 @@ export function ChallengeInstructions({
 }) {
   return (
     <div className="bg-body-tertiary">
-      <div className="text-align-center p-2 title">
-        <span className="text-secondary fs-5">#{challenge.id}</span>
-        <span className="text-body fs-5 fw-bold text-uppercase ms-2">
-          {challenge.name}
-        </span>
-      </div>
       <div className="p-2 mt-2">
         <div className="form-check form-switch ms-2">
           <input
