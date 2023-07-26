@@ -2,7 +2,6 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import { Provider } from "react-redux";
 import * as Sentry from "@sentry/react";
-import { BrowserTracing } from "@sentry/tracing";
 
 import "./index.css";
 import App from "./App";
@@ -15,8 +14,10 @@ if (SENTRY_FRONTEND_DSN) {
   Sentry.init({
     dsn: SENTRY_FRONTEND_DSN,
     environment: SENTRY_ENVIRONMENT,
-    integrations: [new BrowserTracing()],
+    integrations: [new Sentry.BrowserTracing(), new Sentry.Replay()],
     tracesSampleRate: 0.1,
+    replaysSessionSampleRate: 0.1,
+    replaysOnErrorSampleRate: 1.0,
   });
 }
 
