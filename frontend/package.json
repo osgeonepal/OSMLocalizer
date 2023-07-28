@@ -21,7 +21,7 @@
     "mapbox-gl": "^2.15.0",
     "osm-auth": "^2.0.1",
     "osmtogeojson": "^3.0.0-beta.5",
-    "prettier": "^2.8.7",
+    "prettier": "^3.0.0",
     "react": "^18.2.0",
     "react-detect-click-outside": "^1.1.7",
     "react-dom": "^18.2.0",
