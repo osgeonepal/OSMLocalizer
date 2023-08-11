@@ -25,7 +25,7 @@ const EditorHeader = (props) => {
   const user = useSelector((state) => state.auth.user);
   return (
     <div className="border-bottom border-secondary-subtle overflow-hidden">
-      <div className="row p-3 pb-2">
+      <div className="row ps-2 pb-2">
         <div className="col-7 d-flex justify-content-start border border-secondary-subtle p-1">
           {user ? (
             <div className="row ">
@@ -225,23 +225,27 @@ const ChangesCard = ({ change, onDelete, onElementClick }) => {
   );
 };
 
-const ChangesTab = (props) => {
-  const height = props.displayUploadDialog ? "40%" : "85%";
+export const ChangesTab = ({
+  allChanges,
+  onDelete,
+  onElementClick,
+  height,
+}) => {
   return (
     <div className="overflow-auto" style={{ height: height }}>
       <div className="text-secondary fw-bold">Changes</div>
       <div>
-        {Object.keys(props.allChanges).length === 0 ? (
+        {Object.keys(allChanges).length === 0 ? (
           <div className="text-secondary">No changes to upload</div>
         ) : (
           <div className="text-secondary">
-            {Object.keys(props.allChanges).map((key, index) => {
+            {Object.keys(allChanges).map((key, index) => {
               return (
                 <ChangesCard
-                  change={props.allChanges[key]}
+                  change={allChanges[key]}
                   key={index}
-                  onDelete={props.onDelete}
-                  onElementClick={props.onElementClick}
+                  onDelete={onDelete}
+                  onElementClick={onElementClick}
                 />
               );
             })}
@@ -252,35 +256,42 @@ const ChangesTab = (props) => {
   );
 };
 
-export const SideBar = (props) => {
-  const isDisabled =
-    props.isUploading || Object.keys(props.allChanges).length === 0
-      ? true
-      : false;
-  const [displayUploadDialog, setDisplayUploadDialog] = useState(false);
+export const SideBar = ({
+  isUploading,
+  allChanges,
+  onUpload,
+  onDelete,
+  onElementClick,
+  displayUploadDialog,
+  setDisplayUploadDialog,
+}) => {
+  const isDisabled = isUploading || Object.keys(allChanges).length === 0;
 
   return (
     <div className="p-2 pt-2 overflow-auto">
       <EditorHeader
-        isUploading={props.isUploading}
-        onUpload={props.onUpload}
-        allChanges={props.allChanges}
+        isUploading={isUploading}
+        onUpload={onUpload}
+        allChanges={allChanges}
         isDisabled={isDisabled}
         setDisplayUploadDialog={setDisplayUploadDialog}
       />
       {displayUploadDialog ? (
         <UploadDialog
-          isUploading={props.isUploading}
-          onUpload={props.onUpload}
+          isModal={false}
+          isUploading={isUploading}
+          onUpload={onUpload}
           isDisabled={isDisabled}
+          displayUploadDialog={displayUploadDialog}
           setDisplayUploadDialog={setDisplayUploadDialog}
         />
       ) : null}
       <ChangesTab
-        allChanges={props.allChanges}
+        height={displayUploadDialog ? "40%" : "85%"}
+        allChanges={allChanges}
         displayUploadDialog={displayUploadDialog}
-        onDelete={props.onDelete}
-        onElementClick={props.onElementClick}
+        onDelete={onDelete}
+        onElementClick={onElementClick}
       />
     </div>
   );
