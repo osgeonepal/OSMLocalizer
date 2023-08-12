@@ -14,6 +14,68 @@ import { uploadToOSM } from "../../utills/osm";
 import { SideBar } from "./sideBar";
 import { OAUTH_CLIENT_ID, OAUTH_CLIENT_SECRET } from "../../config";
 
+const EditorNavBar = ({
+  activeTab,
+  onTabClick,
+  onUpload,
+  isUploading,
+  allChanges,
+  displayUploadDialog,
+  setDisplayUploadDialog,
+}) => {
+  const editorTabs = ["Editor", "Instructions", "Changes"];
+  const isDisabled = isUploading || Object.keys(allChanges).length === 0;
+
+  const EditorTab = (name, activeTab, onTabClick) => {
+    return (
+      <li className="nav-item">
+        <span
+          className={`nav-link + ${
+            activeTab === name ? "active text-body" : "text-secondary"
+          }`}
+          onClick={() => onTabClick(name)}
+        >
+          {name}
+        </span>
+      </li>
+    );
+  };
+
+  return (
+    <div className="col-12 d-flex justify-content-between align-items-center pb-3 pt-3 bg-white border-top border-secondary-subtle">
+      <ul className="nav nav-tabs">
+        {editorTabs.map((name) => EditorTab(name, activeTab, onTabClick))}
+      </ul>
+      <div className="">
+        <button
+          className="btn btn-secondary"
+          type="submit"
+          disabled={isDisabled}
+          onClick={() => setDisplayUploadDialog(true)}
+        >
+          {isUploading ? (
+            <i className="fa fa-spinner fa-spin"></i>
+          ) : (
+            <div>
+              <i className="fa fa-upload"></i>
+              <span className="badge">{Object.keys(allChanges).length}</span>
+            </div>
+          )}
+        </button>
+        {displayUploadDialog ? (
+          <UploadDialog
+            isModal={true}
+            isUploading={isUploading}
+            isDisabled={isDisabled}
+            onUpload={onUpload}
+            setDisplayUploadDialog={setDisplayUploadDialog}
+          />
+        ) : null}
+      </div>
+    </div>
+  );
+};
+
 export default function TagEditor({
   challenge_id,
   challengeTags,
