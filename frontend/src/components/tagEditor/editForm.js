@@ -7,6 +7,7 @@ import "react-tooltip/dist/react-tooltip.css";
 import InputToolForm from "./inputToolForm";
 import TranslateComponent from "./translate";
 import { CHANGES_UPLOAD_LIMIT } from "../../config";
+import Map from "./map";
 
 export const inputComponent = (key, value, disabled) => {
   return (
@@ -25,7 +26,7 @@ export const inputComponent = (key, value, disabled) => {
   );
 };
 
-const SkipDropdown = (props) => {
+const SkipDropdown = ({ onSkip }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const ref = useDetectClickOutside({
     onTriggered: () => setIsDropdownOpen(false),
@@ -40,19 +41,19 @@ const SkipDropdown = (props) => {
 
   const onClick = (status) => {
     setIsDropdownOpen(!isDropdownOpen);
-    props.onSkip(status);
+    onSkip(status);
   };
 
-  const DropDownItem = (props) => {
+  const DropDownItem = ({ key, label, value, onClick }) => {
     return (
       <li className="border border-bottom border-secondary-subtle">
         <span
           className="dropdown-item"
           onClick={() => {
-            props.onClick(props.value);
+            onClick(value);
           }}
         >
-          {props.label}
+          {label}
         </span>
       </li>
     );
@@ -90,54 +91,20 @@ const SkipDropdown = (props) => {
   );
 };
 
-export function TagEditorForm(props) {
-  const elementTags = props.element.tags ? props.element.tags : {};
-  const name = elementTags.name ? "name" : "name:en";
-  const text = encodeURIComponent(elementTags[name]);
-  const elementKey = `${props.element.type}-${props.element.id}`;
-  const editTags = props.tags.split(",").map((tag) => tag.trim());
-  // Sort editTags array so that the order of tags is consistent
-  editTags.sort();
-
-  const [editMode, setEditMode] = useState(false);
-
-  const isFormDisabled = props.validationMode && !editMode;
-
-  const featureStatus = props.feature?.feature.properties.last_status
-    ?.replace("_", " ")
-    .toLowerCase();
-
-  const exceededMessage = `You have made more than ${CHANGES_UPLOAD_LIMIT} changes. Please upload your changes first.`;
-  const disabledMessage =
-    Object.keys(props.allChanges).length >= CHANGES_UPLOAD_LIMIT
-      ? exceededMessage
-      : "You have not made any changes";
-
-  const onSubmitChange = (values) => {
-    async function updateElement() {
-      const newElementTmp = { ...props.element };
-      newElementTmp["tags"] = { ...props.element["tags"] };
-      for (const [key, value] of Object.entries(values)) {
-        newElementTmp["tags"][key] = value;
-      }
-      const allChangesTmp = { ...props.allChanges };
-      allChangesTmp[elementKey] = newElementTmp;
-      props.setAllChanges(allChangesTmp);
-    }
-    updateElement().then(() => {
-      props.onDone();
-      // Reset editMode to false so that validation buttons are shown for the next feature
-      if (editMode) setEditMode(!editMode);
-    });
-  };
-
+const EditorHeader = ({
+  elementId,
+  elementType,
+  editMode,
+  setEditMode,
+  validationMode,
+}) => {
   return (
-    <div>
-      <div className="p-2 pb-0 fs-6 text-secondary d-flex justify-content-between align-items-center">
-        <div>
-          <span>{props.element.type}: </span>
-          <span>{props.element.id}</span>
-        </div>
+    <div className="p-2 pb-0 fs-6 text-secondary d-flex justify-content-between align-items-center">
+      <div>
+        <span>{elementType}: </span>
+        <span>{elementId}</span>
+      </div>
+      {validationMode ? (
         <button
           className="btn btn-outline-secondary btn-sm"
           type="button"
@@ -146,6 +113,11 @@ export function TagEditorForm(props) {
           <i className="fa fa-pencil me-2" aria-hidden="true"></i>
           Edit
         </button>
+      ) : null}
+    </div>
+  );
+};
+
 const LocalizedStatus = ({ featureStatus, localizedBy }) => {
   return (
     <div className="p-2 ps-4 d-flex">
@@ -296,6 +268,116 @@ const EditorFooter = ({
     </div>
   );
 };
+
+export function TagEditorForm({
+  element,
+  tags,
+  isLoading,
+  validationMode,
+  feature,
+  allChanges,
+  setAllChanges,
+  onDone,
+  onValidate,
+  onInvalidate,
+  onSkip,
+  getFeature,
+  translateEngine,
+  challenge_id,
+  translate_to,
+}) {
+  const elementTags = element.tags ? element.tags : {};
+  const name = elementTags.name ? "name" : "name:en";
+  const text = encodeURIComponent(elementTags[name]);
+  const elementKey = `${element.type}-${element.id}`;
+  const editTags = tags.split(",").map((tag) => tag.trim());
+  // Sort editTags array so that the order of tags is consistent
+  editTags.sort();
+
+  const [editMode, setEditMode] = useState(false);
+
+  const isFormDisabled = validationMode && !editMode;
+
+  const featureStatus = feature?.feature.properties.last_status
+    ?.replace("_", " ")
+    .toLowerCase();
+
+  const onSubmitChange = (values) => {
+    async function updateElement() {
+      const newElementTmp = { ...element };
+      newElementTmp["tags"] = { ...element["tags"] };
+      for (const [key, value] of Object.entries(values)) {
+        newElementTmp["tags"][key] = value;
+      }
+      const allChangesTmp = { ...allChanges };
+      allChangesTmp[elementKey] = newElementTmp;
+      setAllChanges(allChangesTmp);
+      console.log(allChangesTmp);
+    }
+    updateElement().then(() => {
+      onDone();
+      // Reset editMode to false so that validation buttons are shown for the next feature
+      if (editMode) setEditMode(!editMode);
+    });
+  };
+
+  return (
+    <div>
+      <Map element={element} isLoading={isLoading} />
+      <EditorHeader
+        elementId={element.id}
+        elementType={element.type}
+        editMode={editMode}
+        setEditMode={setEditMode}
+        validationMode={validationMode}
+      />
+      <Form
+        onSubmit={onSubmitChange}
+        render={({ handleSubmit, pristine, form }) => (
+          <form
+            className=""
+            initialValues={element["tags"]}
+            onSubmit={(e) => {
+              e.preventDefault();
+              handleSubmit();
+              form.reset({});
+            }}
+          >
+            <div className="border border-secondary-subtle p-2 m-2 rounded">
+              {editTags.map((key) => {
+                return inputComponent(key, elementTags[key], isFormDisabled);
+              })}
+            </div>
+
+            {isFormDisabled ? (
+              <LocalizedStatus
+                featureStatus={featureStatus}
+                localizedBy={feature?.feature.properties.localized_by}
+              />
+            ) : (
+              <div className="border border-secondary-subtle rounded overflow-y-auto m-2 mb-1">
+                <TranslateComponent
+                  text={text}
+                  translateEngine={translateEngine}
+                  challenge_id={challenge_id}
+                  translateTo={translate_to}
+                />
+                <InputToolForm translate_to={translate_to} />
+              </div>
+            )}
+            <EditorFooter
+              form={form}
+              pristine={pristine}
+              allChanges={allChanges}
+              elementKey={elementKey}
+              onValidate={onValidate}
+              onInvalidate={onInvalidate}
+              onSkip={onSkip}
+              getFeature={getFeature}
+              editMode={editMode}
+              setEditMode={setEditMode}
+              isFormDisabled={isFormDisabled}
+            />
           </form>
         )}
       />
