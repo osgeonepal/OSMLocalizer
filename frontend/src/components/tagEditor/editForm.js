@@ -146,167 +146,156 @@ export function TagEditorForm(props) {
           <i className="fa fa-pencil me-2" aria-hidden="true"></i>
           Edit
         </button>
+const LocalizedStatus = ({ featureStatus, localizedBy }) => {
+  return (
+    <div className="p-2 ps-4 d-flex">
+      <span>
+        This feature was set as
+        <span
+          className="text-primary fw-semibold"
+          style={{ textTransform: "capitalize" }}
+        >
+          {" "}
+          {featureStatus}{" "}
+        </span>
+        by
+        <span className="fw-semibold ms-1">{localizedBy}</span>
+      </span>
+    </div>
+  );
+};
+
+const SubmitButton = ({ pristine, allChanges, elementKey }) => {
+  const exceededMessage = `You have made more than ${CHANGES_UPLOAD_LIMIT} changes. Please upload your changes first.`;
+  const disabledMessage =
+    Object.keys(allChanges).length >= CHANGES_UPLOAD_LIMIT
+      ? exceededMessage
+      : "You have not made any changes";
+
+  const isButtonDisabled =
+    // Disable the button if there are more than required changes or if changes are not made to the element
+    Object.keys(allChanges).length >= CHANGES_UPLOAD_LIMIT ||
+    (pristine &&
+      // Enable button if the element is already in the allChanges object i.e while updating the element
+      // even if the element is not changed.
+      !Object.keys(allChanges).includes(elementKey));
+
+  return (
+    <div data-tooltip-id="disable" data-tooltip-content={disabledMessage}>
+      <button
+        className="btn btn-primary ms-2"
+        type="submit"
+        disabled={isButtonDisabled}
+      >
+        Done
+      </button>
+      {isButtonDisabled ? (
+        <Tooltip
+          place="top-start"
+          className="bg-danger text-dark"
+          effect="float"
+          id="disable"
+          style={{ fontSize: "0.7rem" }}
+        />
+      ) : null}
+    </div>
+  );
+};
+
+const ValidationButtons = ({
+  onValidate,
+  onInvalidate,
+  onReset,
+  getFeature,
+}) => {
+  return (
+    <>
+      <p>Are the status and tags for this feature correct?</p>
+      <div className="d-flex">
+        <button
+          className="btn btn-primary me-2"
+          type="button"
+          onClick={() => onValidate()}
+        >
+          <i className="fa fa-check-circle me-2" aria-hidden="true"></i>
+          Valid
+        </button>
+        <button
+          className="btn btn-danger me-2"
+          type="button"
+          onClick={() => onInvalidate()}
+        >
+          <i className="fa fa-times-circle me-2" aria-hidden="true"></i>
+          Invalid
+        </button>
+        <button
+          className="btn btn-secondary me-2"
+          type="button"
+          onClick={() => {
+            onReset();
+            getFeature();
+          }}
+        >
+          <i className="fa fa-fast-forward me-2" aria-hidden="true"></i>
+          Skip
+        </button>
       </div>
-      <Form
-        onSubmit={onSubmitChange}
-        render={({ handleSubmit, pristine, form }) => (
-          <form
-            className=""
-            initialValues={props.element["tags"]}
-            onSubmit={(e) => {
-              e.preventDefault();
-              handleSubmit();
-              form.reset({});
-            }}
-          >
-            <div className="border border-secondary-subtle p-2 m-2 rounded">
-              {editTags.map((key) => {
-                return inputComponent(key, elementTags[key], isFormDisabled);
-              })}
-            </div>
-            {isFormDisabled ? (
-              <div className="p-2 ps-4 d-flex">
-                <span>
-                  This feature was set as
-                  <span
-                    className="text-primary fw-semibold"
-                    style={{ textTransform: "capitalize" }}
-                  >
-                    {" "}
-                    {featureStatus}{" "}
-                  </span>
-                  by
-                  <span className="fw-semibold ms-1">
-                    {props.feature?.feature.properties["localized_by"]}
-                  </span>
-                </span>
-              </div>
-            ) : (
-              <div className="border border-secondary-subtle rounded overflow-y-auto m-2 mb-1">
-                {props.translateEngine ? (
-                  <TranslateComponent
-                    text={text}
-                    translateEngine={props.translateEngine}
-                    challenge_id={props.challenge_id}
-                  />
-                ) : (
-                  <div className="mt-1 p-2">
-                    <a
-                      className="btn btn-sm btn-secondary p-2 pt-1 pb-1"
-                      href={`https://translate.google.com/#view=home&op=translate&sl=en&tl=${props.translate_to}&text=${text}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      Translate
-                      <i
-                        className="fa fa-external-link ms-1"
-                        aria-hidden="true"
-                      ></i>
-                    </a>
-                  </div>
-                )}
-                <InputToolForm translate_to={props.translate_to} />
-              </div>
-            )}
-            <div>
-              {isFormDisabled ? (
-                <div className="p-2 ps-4">
-                  <p>Are the status and tags for this feature correct?</p>
-                  <div className="d-flex">
-                    <button
-                      className="btn btn-primary me-2"
-                      type="button"
-                      onClick={() => props.onValidate()}
-                    >
-                      <i
-                        className="fa fa-check-circle me-2"
-                        aria-hidden="true"
-                      ></i>
-                      Valid
-                    </button>
-                    <button
-                      className="btn btn-danger me-2"
-                      type="button"
-                      onClick={() => props.onInvalidate()}
-                    >
-                      <i
-                        className="fa fa-times-circle me-2"
-                        aria-hidden="true"
-                      ></i>
-                      Invalid
-                    </button>
-                    <button
-                      className="btn btn-secondary me-2"
-                      type="button"
-                      onClick={() => {
-                        form.reset({});
-                        props.getFeature();
-                      }}
-                    >
-                      <i
-                        className="fa fa-fast-forward me-2"
-                        aria-hidden="true"
-                      ></i>
-                      Skip
-                    </button>
-                  </div>
-                </div>
-              ) : (
-                <div className="d-flex">
-                  {editMode ? (
-                    <button
-                      className="btn btn-secondary me-2"
-                      type="button"
-                      onClick={() => setEditMode(!editMode)}
-                    >
-                      Cancel
-                    </button>
-                  ) : (
-                    <SkipDropdown
-                      onSkip={(value) => {
-                        form.reset({});
-                        props.onSkip(value);
-                      }}
-                    />
-                  )}
-                  <div
-                    data-tooltip-id="disable"
-                    data-tooltip-content={disabledMessage}
-                  >
-                    <button
-                      className="btn btn-primary ms-2"
-                      type="submit"
-                      // Disable the button if there are more than required changes or if changes are not made to the element
-                      disabled={
-                        Object.keys(props.allChanges).length >=
-                          CHANGES_UPLOAD_LIMIT ||
-                        (pristine &&
-                          // Allow done on no changes
-                          // if it is already in the allChanges object i.e while updating the changes
-                          !Object.keys(props.allChanges).includes(elementKey))
-                      }
-                    >
-                      Done
-                    </button>
-                    {
-                      // Same logic as done button disabled
-                      Object.keys(props.allChanges).length >=
-                        CHANGES_UPLOAD_LIMIT ||
-                      (pristine &&
-                        !Object.keys(props.allChanges).includes(elementKey)) ? (
-                        <Tooltip
-                          place="top-start"
-                          className="bg-danger text-dark"
-                          effect="float"
-                          id="disable"
-                          style={{ fontSize: "0.7rem" }}
-                        />
-                      ) : null
-                    }
-                  </div>
-                </div>
-              )}
-            </div>
+    </>
+  );
+};
+
+const EditorFooter = ({
+  form,
+  pristine,
+  allChanges,
+  elementKey,
+  onValidate,
+  onInvalidate,
+  onSkip,
+  getFeature,
+  editMode,
+  setEditMode,
+  isFormDisabled,
+}) => {
+  return (
+    <div>
+      {isFormDisabled ? (
+        <div className="p-2 ps-4">
+          <ValidationButtons
+            onValidate={onValidate}
+            onInvalidate={onInvalidate}
+            onReset={form.reset}
+            getFeature={getFeature}
+          />
+        </div>
+      ) : (
+        <div className="d-flex ps-2 pt-2">
+          {editMode ? (
+            <button
+              className="btn btn-secondary me-2"
+              type="button"
+              onClick={() => setEditMode(!editMode)}
+            >
+              Cancel
+            </button>
+          ) : (
+            <SkipDropdown
+              onSkip={(value) => {
+                form.reset({});
+                onSkip(value);
+              }}
+            />
+          )}
+          <SubmitButton
+            pristine={pristine}
+            allChanges={allChanges}
+            elementKey={elementKey}
+          />
+        </div>
+      )}
+    </div>
+  );
+};
           </form>
         )}
       />
