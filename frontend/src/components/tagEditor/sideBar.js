@@ -71,7 +71,13 @@ const EditorHeader = (props) => {
   );
 };
 
-const UploadDialog = (props) => {
+export const UploadDialog = ({
+  isModal,
+  isUploading,
+  isDisabled,
+  onUpload,
+  setDisplayUploadDialog,
+}) => {
   const [changesetComment, setChangesetComment] = useState(
     DEFAULT_CHANGESET_COMMENT
   );
@@ -82,77 +88,99 @@ const UploadDialog = (props) => {
     setChangesetComment(e.target.value);
   };
 
-  const onUpload = () => {
+  const onUploadClick = () => {
     async function upload() {
-      await props.onUpload(changesetComment, reviewEdits);
+      await onUpload(changesetComment, reviewEdits);
       setUploaded(true);
       setTimeout(() => {
         setUploaded(false);
-        props.setDisplayUploadDialog(false);
-      }, 1200);
+        setDisplayUploadDialog(false);
+      }, 1500);
     }
     upload();
   };
 
   return (
-    <div className="border-bottom border-secondary-subtle pb-4">
-      <div className="text-secondary fw-bold pb-2 d-block text-center">
-        Upload to OpenstreetMap
-      </div>
-      <div className="pb-3">
-        <span
-          className="text-secondary border d-block p-1 bg-light"
-          style={{ fontSize: "0.9rem" }}
-        >
-          Changeset comment
-        </span>
-        <textarea
-          className="form-control border border-top-0 p-1 rounded-bottom"
-          name="changeset_comment"
-          type="text"
-          defaultValue={changesetComment}
-          onChange={(e) => onChangesetComment(e)}
-          rows="3"
-        />
-      </div>
-      <div className="text-secondary pb-3" style={{ fontSize: "0.9rem" }}>
-        {/* <div className="pb-4">
-                        <span>The changes you upload as </span>
-                        <a href={`https://openstreetmap.org/user/${props.username}`} >{props.username}</a>
-                        <span> will be visible on all maps that use OpenStreetMap data.</span>
-                    </div> */}
-        <div className="form-check">
-          <input
-            type="checkbox"
-            className="form-check-input"
-            checked={reviewEdits}
-            onChange={() => setReviewEdits(!reviewEdits)}
-          />
-          <span className="form-check-label">
-            I would like someone to review my edits.
-          </span>
+    <div>
+      <div
+        className={`${
+          isModal
+            ? "d-block modal fade show"
+            : "border-bottom border-secondary-subtle pb-4"
+        }`}
+      >
+        <div className={`${isModal ? "modal-dialog" : ""}`}>
+          <div className={`${isModal ? "modal-content" : ""}`}>
+            <div
+              className={`${
+                isModal
+                  ? "modal-header"
+                  : "text-secondary fw-bold pb-2 d-block text-center"
+              }`}
+            >
+              Upload to OpenstreetMap
+            </div>
+            <div className={`${isModal ? "modal-body pb-2" : "pb-3"}`}>
+              <span
+                className="text-secondary border d-block p-1 bg-light"
+                style={{ fontSize: "0.9rem" }}
+              >
+                Changeset comment
+              </span>
+              <textarea
+                className="form-control border border-top-0 p-1 rounded-0"
+                name="changeset_comment"
+                type="text"
+                defaultValue={changesetComment}
+                onChange={(e) => onChangesetComment(e)}
+                rows="3"
+              />
+              <div
+                className="text-secondary pt-1"
+                style={{ fontSize: "0.9rem" }}
+              >
+                <div className="form-check">
+                  <input
+                    type="checkbox"
+                    className="form-check-input"
+                    checked={reviewEdits}
+                    onChange={() => setReviewEdits(!reviewEdits)}
+                  />
+                  <span className="form-check-label">
+                    I would like someone to review my edits.
+                  </span>
+                </div>
+              </div>
+            </div>
+            <div
+              className={`${
+                isModal ? "modal-footer" : "d-flex justify-content-evenly"
+              }`}
+            >
+              <button
+                className="btn btn-secondary"
+                onClick={() => setDisplayUploadDialog(false)}
+              >
+                Cancel
+              </button>
+              <button
+                className="btn btn-primary"
+                disabled={isDisabled}
+                onClick={() => onUploadClick()}
+              >
+                {isUploading ? (
+                  <i className="fa fa-spinner fa-spin"></i>
+                ) : (
+                  "Upload"
+                )}
+              </button>
+            </div>
+          </div>
         </div>
+
+        {isUploaded ? <UploadSuccess setUploaded={setUploaded} /> : null}
       </div>
-      <div className="d-flex justify-content-evenly">
-        <button
-          className="btn btn-secondary"
-          onClick={() => props.setDisplayUploadDialog(false)}
-        >
-          Cancel
-        </button>
-        <button
-          className="btn btn-primary"
-          disabled={props.isDisabled}
-          onClick={() => onUpload()}
-        >
-          {props.isUploading ? (
-            <i className="fa fa-spinner fa-spin"></i>
-          ) : (
-            "Upload"
-          )}
-        </button>
-      </div>
-      {isUploaded ? <UploadSuccess setUploaded={setUploaded} /> : null}
+      {isModal && <div className="modal-backdrop fade show"></div>}
     </div>
   );
 };
