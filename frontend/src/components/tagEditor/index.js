@@ -8,10 +8,14 @@ import {
   fetchLocalJSONAPI,
   pushToLocalJSONAPI,
 } from "../../utills/fetch";
-import Map from "./map";
 import { TagEditorForm } from "./editForm";
 import { uploadToOSM } from "../../utills/osm";
-import { SideBar } from "./sideBar";
+import { SideBar, ChangesTab, UploadDialog } from "./sideBar";
+import {
+  ChallengeInstructions,
+  ChallengeTitle,
+} from "../challengeInstructions";
+import { useViewport } from "../../utills/hooks";
 import { OAUTH_CLIENT_ID, OAUTH_CLIENT_SECRET } from "../../config";
 
 const EditorNavBar = ({
@@ -77,12 +81,10 @@ const EditorNavBar = ({
 };
 
 export default function TagEditor({
-  challenge_id,
-  challengeTags,
-  translateEngine,
+  challenge,
   nearbyTask,
+  setNearbyTask,
   validationMode,
-  translate_to,
 }) {
   const [element, setElement] = useState();
   const [allChanges, setAllChanges] = useState({});
@@ -92,6 +94,21 @@ export default function TagEditor({
   const osm_token = useSelector((state) => state.auth.osmToken);
   const jwt_token = useSelector((state) => state.auth.jwtToken);
   const [error, setError] = useState();
+  const [activeTab, setActiveTab] = useState("Editor");
+  const [displayUploadDialog, setDisplayUploadDialog] = useState(false);
+
+  const onTabClick = (name) => {
+    setActiveTab(name);
+  };
+
+  const challenge_id = challenge.id;
+
+  const { width } = useViewport();
+  const breakpoint = 768;
+  const isMobileView = width < breakpoint;
+  const getMobileClass = (tabName) => {
+    return `col-12 pb-2 ${activeTab === tabName ? "d-block" : "d-none"}`;
+  };
 
   const options = {
     url: "https://www.openstreetmap.org",
@@ -166,7 +183,6 @@ export default function TagEditor({
     await changeFeatureStatus(changedFeatures, "LOCALIZED");
     setAllChanges({});
     setUploading(false);
-    // getFeature();
   };
 
   const onDone = async () => {
@@ -201,15 +217,50 @@ export default function TagEditor({
 
   return (
     <div className="">
-      {element === undefined ? (
-        <div>Loading...</div>
-      ) : (
+      {element ? (
         <div className="row">
-          <div className="col-8 border border-secondary-subtle p-2 pt-0">
-            <Map element={element} isLoading={isLoading} />
+          <div
+            className={`${
+              isMobileView
+                ? null
+                : "col-3 p-0 border border-end-0 border-secondary-subtle"
+            }`}
+          >
+            <ChallengeTitle challenge={challenge} />
+            <div className="d-md-none">
+              <EditorNavBar
+                activeTab={activeTab}
+                onTabClick={onTabClick}
+                onUpload={onUpload}
+                isUploading={isUploading}
+                allChanges={allChanges}
+                displayUploadDialog={displayUploadDialog}
+                setDisplayUploadDialog={setDisplayUploadDialog}
+              />
+            </div>
+            <div
+              className={`${
+                isMobileView ? getMobileClass("Instructions") : "p-0"
+              }`}
+            >
+              <ChallengeInstructions
+                challenge={challenge}
+                nearbyTask={nearbyTask}
+                setNearbyTask={setNearbyTask}
+              />
+            </div>
+          </div>
+          <div
+            className={`${
+              isMobileView
+                ? getMobileClass("Editor")
+                : "col-5 border border-secondary-subtle p-2 pt-0"
+            }`}
+          >
             <TagEditorForm
               feature={feature}
               element={element}
+              isLoading={isLoading}
               allChanges={allChanges}
               setElement={setElement}
               setAllChanges={setAllChanges}
@@ -218,23 +269,37 @@ export default function TagEditor({
               onValidate={onValidate}
               onInvalidate={onInvalidate}
               getFeature={getFeature}
-              tags={challengeTags}
-              translateEngine={translateEngine}
-              challenge_id={challenge_id}
-              translate_to={translate_to}
+              tags={challenge.language_tags}
+              translateEngine={challenge.translate_engine}
+              challenge_id={challenge.id}
+              translate_to={challenge.to_language}
               validationMode={validationMode}
             />
           </div>
-          <div className="col-4 p-0 border border-start-0 border-secondary-subtle">
+          <div
+            className={`col-3 p-0 border border-start-0 border-secondary-subtle d-none d-md-block`}
+          >
             <SideBar
               allChanges={allChanges}
               onUpload={onUpload}
               isUploading={isUploading}
               onDelete={onDelete}
               onElementClick={onElementClick}
+              displayUploadDialog={displayUploadDialog}
+              setDisplayUploadDialog={setDisplayUploadDialog}
+            />
+          </div>
+          <div className={`d-md-none ${getMobileClass("Changes")}`}>
+            <ChangesTab
+              height="80vh"
+              allChanges={allChanges}
+              onDelete={onDelete}
+              onElementClick={onElementClick}
             />
           </div>
         </div>
+      ) : (
+        <div>Loading...</div>
       )}
       {error && <ShowError error={error} setError={setError} />}
     </div>
