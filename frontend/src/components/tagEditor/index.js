@@ -46,7 +46,7 @@ const EditorNavBar = ({
   };
 
   return (
-    <div className="col-12 d-flex justify-content-between align-items-center pb-3 pt-3 bg-white border-top border-secondary-subtle">
+    <div className="col-12 d-flex justify-content-between align-items-center pb-3 pt-3 bg-white border-top border-light-subtle">
       <ul className="nav nav-tabs">
         {editorTabs.map((name) => EditorTab(name, activeTab, onTabClick))}
       </ul>
@@ -223,7 +223,7 @@ export default function TagEditor({
             className={`${
               isMobileView
                 ? null
-                : "col-3 p-0 border border-end-0 border-secondary-subtle"
+                : "col-3 p-0 border border-end-0 border-light-subtle"
             }`}
           >
             <ChallengeTitle challenge={challenge} />
@@ -254,7 +254,7 @@ export default function TagEditor({
             className={`${
               isMobileView
                 ? getMobileClass("Editor")
-                : "col-5 border border-secondary-subtle p-2 pt-0"
+                : "col-5 border border-light-subtle p-2 pt-0"
             }`}
           >
             <TagEditorForm
@@ -277,7 +277,7 @@ export default function TagEditor({
             />
           </div>
           <div
-            className={`col-3 p-0 border border-start-0 border-secondary-subtle d-none d-md-block`}
+            className={`col-3 p-0 border border-start-0 border-light-subtle d-none d-md-block`}
           >
             <SideBar
               allChanges={allChanges}

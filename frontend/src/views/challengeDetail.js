@@ -14,7 +14,7 @@ const ChallengeHeader = ({ id, name }) => {
   const navigate = useNavigate();
   return (
     <div
-      className="d-flex border-bottom border-secondary-subtle pb-2 justify-content-between align-items-center"
+      className="d-flex border-bottom border-light-subtle pb-2 justify-content-between align-items-center"
       style={{ height: "8vh" }}
     >
       <div className="title fw-bold text-wrap">
@@ -120,7 +120,7 @@ const ChallengeDetailFooter = ({ id, stats }) => {
 
   return (
     <div
-      className="d-flex p-3 pe-0 bg-light border-top border-secondary-subtle justify-content-end align-items-center"
+      className="d-flex p-3 pe-0 bg-light border-top border-light-subtle justify-content-end align-items-center"
       style={{ height: "8vh" }}
     >
       <button

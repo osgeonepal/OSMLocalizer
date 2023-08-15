@@ -46,7 +46,7 @@ const SkipDropdown = ({ onSkip }) => {
 
   const DropDownItem = ({ key, label, value, onClick }) => {
     return (
-      <li className="border border-bottom border-secondary-subtle">
+      <li className="border border-bottom border-light-subtle">
         <span
           className="dropdown-item"
           onClick={() => {
@@ -343,7 +343,7 @@ export function TagEditorForm({
               form.reset({});
             }}
           >
-            <div className="border border-secondary-subtle p-2 m-2 rounded">
+            <div className="border border-light-subtle p-2 m-2 rounded">
               {editTags.map((key) => {
                 return inputComponent(key, elementTags[key], isFormDisabled);
               })}
@@ -355,7 +355,7 @@ export function TagEditorForm({
                 localizedBy={feature?.feature.properties.localized_by}
               />
             ) : (
-              <div className="border border-secondary-subtle rounded overflow-y-auto m-2 mb-1">
+              <div className="border border-light-subtle rounded overflow-y-auto m-2 mb-1">
                 <TranslateComponent
                   text={text}
                   translateEngine={translateEngine}

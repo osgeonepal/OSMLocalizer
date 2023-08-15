@@ -24,9 +24,9 @@ export const UploadSuccess = (props) => {
 const EditorHeader = (props) => {
   const user = useSelector((state) => state.auth.user);
   return (
-    <div className="border-bottom border-secondary-subtle overflow-hidden">
+    <div className="border-bottom border-light-subtle overflow-hidden">
       <div className="row ps-2 pb-2">
-        <div className="col-7 d-flex justify-content-start border border-secondary-subtle p-1">
+        <div className="col-7 d-flex justify-content-start border border-light-subtle p-1">
           {user ? (
             <div className="row ">
               <div className="col-4">
@@ -106,7 +106,7 @@ export const UploadDialog = ({
         className={`${
           isModal
             ? "d-block modal fade show"
-            : "border-bottom border-secondary-subtle pb-4"
+            : "border-bottom border-light-subtle pb-4"
         }`}
       >
         <div className={`${isModal ? "modal-dialog" : ""}`}>
@@ -198,7 +198,7 @@ const ChangesCard = ({ change, onDelete, onElementClick }) => {
   const key = `${change.type}-${change.id}`;
   return (
     <div
-      className=" d-flex p-1 align-items-center border-bottom border-secondary-subtle"
+      className=" d-flex p-1 align-items-center border-bottom border-light-subtle"
       style={{ fontSize: "0.9rem" }}
     >
       <div
@@ -209,13 +209,13 @@ const ChangesCard = ({ change, onDelete, onElementClick }) => {
         <span className="text-primary">{change.tags.name}</span>
       </div>
       <button
-        className="btn btn-sm btn-light border border-secondary-subtle"
+        className="btn btn-sm btn-light border border-light-subtle"
         onClick={() => handleCopy(change.tags.name)}
       >
         <i className="fa fa-clone text-secondary"></i>
       </button>
       <button
-        className="btn btn-sm btn-light ps-2 border border-secondary-subtle"
+        className="btn btn-sm btn-light ps-2 border border-light-subtle"
         onClick={() => onDelete(key)}
       >
         <i className="fa fa-trash text-danger"></i>

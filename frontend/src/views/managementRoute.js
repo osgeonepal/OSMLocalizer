@@ -8,7 +8,7 @@ const NotAuthorized = () => {
       style={{ height: "30vh" }}
     >
       <div
-        className="col-7 d-flex justify-content-center flex-column align-items-center border border-secondary-subtle rounded"
+        className="col-7 d-flex justify-content-center flex-column align-items-center border border-light-subtle rounded"
         style={{ height: "100%" }}
       >
         <div className="p-4">

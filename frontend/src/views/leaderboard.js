@@ -128,7 +128,7 @@ const LeaderboardHeader = () => (
       style={{ left: "15%", top: "15%" }}
     >
       <div className="d-flex align-items-center align-middle">
-        <div className="d-flex justify-content-centerbg-secondary-subtle shadow border border-secondary-subtle">
+        <div className="d-flex justify-content-centerbg-secondary-subtle shadow border border-light-subtle">
           <img
             src={leaderboardIcon}
             alt="leaderboard"
