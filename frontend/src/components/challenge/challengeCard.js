@@ -37,7 +37,7 @@ const ChallengeCard = ({ challenge, onChallengeClick, detailView }) => {
         <div>
           <div className="d-flex justify-content-end mb-2">
             <div className="flex-grow-1">
-              <div className="badge border border-secondary-subtle text-secondary rounded-0 p-3 pt-2 pb-2">
+              <div className="badge border border-light-subtle text-secondary rounded-0 p-3 pt-2 pb-2">
                 <i
                   className="fa fa-map-marker me-1 text-primary"
                   aria-hidden="true"
@@ -45,7 +45,7 @@ const ChallengeCard = ({ challenge, onChallengeClick, detailView }) => {
                 <span className=""> {challenge.country} </span>
               </div>
             </div>
-            <div className="badge border border-secondary-subtle text-secondary rounded-0 p-2">
+            <div className="badge border border-light-subtle text-secondary rounded-0 p-2">
               <i className="fa fa-clock-o" aria-hidden="true"></i>
               <span className=""> {challenge.due_date} days left</span>
             </div>
