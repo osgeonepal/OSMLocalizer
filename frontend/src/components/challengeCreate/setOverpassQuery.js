@@ -3,6 +3,8 @@ import Select from "react-select";
 import { Tooltip } from "react-tooltip";
 import "react-tooltip/dist/react-tooltip.css";
 
+import { fetchLocalJSONAPI } from "../../utills/fetch";
+import { MAX_FEATURE_COUNT } from "../../config";
 import popularTags from "../../assets/json/popular_tags.json";
 
 const ElementButtons = ({ setOverpassQuery, overpass_query }) => {
@@ -77,8 +79,8 @@ const ElementButtons = ({ setOverpassQuery, overpass_query }) => {
 
   const subTagOptions = selectedTag
     ? popularTags[selectedTag]["values"].map((sub_tag) => {
-        return { value: sub_tag, label: sub_tag };
-      })
+      return { value: sub_tag, label: sub_tag };
+    })
     : [];
 
   return (
@@ -117,9 +119,8 @@ const ElementButtons = ({ setOverpassQuery, overpass_query }) => {
           <p className="fw-bold text-dark mb-1">Or add your custom tag here:</p>
           <div className="d-flex align-items-center">
             <input
-              className={`btn btn-sm mb-2 bg-white text-dark rounded-end-0 ${
-                customTagError ? "btn-outline-danger" : "btn-outline-primary"
-              }`}
+              className={`btn btn-sm mb-2 bg-white text-dark rounded-end-0 ${customTagError ? "btn-outline-danger" : "btn-outline-primary"
+                }`}
               type="text"
               placeholder="Add tag in key=value format"
               onChange={onCustomTagChange}
@@ -187,6 +188,7 @@ export const OverpassQuery = ({ challenge, setChallenge, step, setStep }) => {
   const [src, setSrc] = useState("https://overpass-turbo.eu/map.html");
   const [isTested, setIsTested] = useState(false);
   const [isTestLoading, setIsTestLoading] = useState(false);
+  const [featureCount, setFeatureCount] = useState(0);
 
   const setOverpassQuery = (query) => {
     setChallenge({
@@ -212,14 +214,20 @@ export const OverpassQuery = ({ challenge, setChallenge, step, setStep }) => {
     // Replace {{bbox}} with bbox and set bbox to lng, lat form lat, lng to test query on overpass turbo
     const new_bbox = bbox[1] + "," + bbox[0] + "," + bbox[3] + "," + bbox[2];
     const bboxQuery = challenge.overpass_query.replace("{{bbox}}", new_bbox);
+
+    // Set src of iframe to run query on overpass turbo
     setSrc(
       "https://overpass-turbo.eu/map.html?Q=" + encodeURIComponent(bboxQuery)
     );
-    // Add some delay to set isTested to true so that the iframe is loaded
-    setTimeout(() => {
+
+    // Check if feature count is less than 1000
+    fetchLocalJSONAPI(
+      "challenge/get-feature-count-query/?overpassQuery=" + bboxQuery
+    ).then((res) => {
+      setFeatureCount(res.count);
       setIsTested(true);
       setIsTestLoading(false);
-    }, 5000); // 5 seconds
+    });
   };
 
   return (
@@ -266,6 +274,14 @@ export const OverpassQuery = ({ challenge, setChallenge, step, setStep }) => {
                       <i className="me-2 fa fa-play"></i>
                       Run query
                     </button>
+                    {isTested && (
+                      <div className="mt-3">
+                        <div className="d-flex flex-auto">
+                          <span className="mb-0 fw-bold">Total Features:</span>
+                          <span className="mb-0">{featureCount}</span>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </div>
                 <div className="col-7">
@@ -278,31 +294,45 @@ export const OverpassQuery = ({ challenge, setChallenge, step, setStep }) => {
                 </div>
               </div>
             </div>
-            <div className="modal-footer">
-              <button
-                className="btn btn-secondary"
-                onClick={() => {
-                  onBack();
-                }}
-              >
-                Back
-              </button>
-              <button
-                className={`btn btn-primary`}
-                disabled={isTestLoading}
-                onClick={() => {
-                  onNext();
-                }}
-              >
-                Next
-                {isTestLoading && (
-                  <span
-                    className="spinner-border spinner-border-sm ms-2"
-                    role="status"
-                    aria-hidden="true"
-                  ></span>
+            <div className="modal-footer d-flex align-items-center justify-content-between">
+              <div>
+                {featureCount > MAX_FEATURE_COUNT && (
+                  <div className="text-white bg-danger text-center p-1">
+                    <i className="fa fa-exclamation-triangle me-2"></i>
+                    <span>
+                      Feature count is greater than {MAX_FEATURE_COUNT}.
+                      Please refine your query or reduce the area.
+                    </span>
+                  </div>
                 )}
-              </button>
+              </div>
+              <div>
+                <button
+                  className="btn btn-secondary"
+                  onClick={() => {
+                    onBack();
+                  }}
+                >
+                  Back
+                </button>
+                <button
+                  className={`btn btn-primary ms-2`}
+                  disabled={isTestLoading || featureCount > MAX_FEATURE_COUNT}
+                  onClick={() => {
+                    onNext();
+                  }}
+                >
+                  Next
+                  {isTestLoading && (
+                    <span
+                      className="spinner-border spinner-border-sm ms-2"
+                      role="status"
+                      aria-hidden="true"
+                    ></span>
+                  )}
+                </button>
+              </div>
+
             </div>
           </div>
         </div>
