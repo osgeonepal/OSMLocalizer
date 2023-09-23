@@ -44,6 +44,7 @@ def create_app(config=EnvironmentConfig):
         FeatureRestAPI,
         FeaturesAllAPI,
         GetFeatureToLocalizeAPI,
+        GetFeatureCountQueryAPI,
     )
     from backend.api.user import (
         UserAuthorizationUrlAPI,
@@ -85,6 +86,10 @@ def create_app(config=EnvironmentConfig):
     api.add_resource(
         GetFeatureToLocalizeAPI,
         "/challenge/<int:challenge_id>/feature/get-feature-to-localize/",
+    )
+    api.add_resource(
+        GetFeatureCountQueryAPI,
+        "/challenge/get-feature-count-query/",
     )
 
     api.add_resource(UserAuthorizationUrlAPI, "/auth/url/")
