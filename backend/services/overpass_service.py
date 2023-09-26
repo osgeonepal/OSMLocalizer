@@ -30,6 +30,15 @@ class Overpass:
         api_result = self.api.query(query)
         return api_result.get_json()
 
+    def get_count(self, query: str) -> dict:
+        """Get the number of each feature types in the query"""
+        api_result = self.api.query(query)
+        return {
+            "node": len(api_result.nodes),
+            "way": len(api_result.ways),
+            "relation": len(api_result.relations),
+        }
+
     @staticmethod
     def node_to_features(node: overpy.Node) -> Feature:
         feature = Feature()
@@ -66,3 +75,14 @@ class Overpass:
         geometry = shape.from_shape(shapely_point, 4326)
         geom_4326 = db.engine.execute(ST_Transform(geometry, 4326)).scalar()
         return shape.to_shape(geom_4326)
+
+    @staticmethod
+    def get_query_feature_count(overpass_query: str) -> dict:
+        """Get the number of features in the user query"""
+        overpass = Overpass()
+
+        query_type = overpass_query.split("[")[0].split("(")[1]
+        # Convert bbox to [min_lat, min_lon, max_lat, max_lon] format for Overpass
+
+        result = overpass.get_count(overpass_query)
+        return {"count": result[query_type]}

@@ -3,6 +3,7 @@ from flask import request
 from distutils.util import strtobool
 
 from backend.services.feature_service import FeatureService
+from backend.services.overpass_service import Overpass
 from backend.services.user_service import UserService, auth
 from backend.models.sql.enum import FeatureStatus
 from backend.errors import Forbidden
@@ -49,3 +50,13 @@ class GetFeatureToLocalizeAPI(Resource):
         return FeatureService.get_random_task(
             challenge_id, current_user, last_feature, validation_mode
         )
+
+
+class GetFeatureCountQueryAPI(Resource):
+    def get(self):
+        """
+        Get the number of features in the overpass query of the challenge
+        This is used to display the number of features in the overpass query on while creating a challenge
+        """
+        overpass_query = request.args.get("overpassQuery")
+        return Overpass.get_query_feature_count(overpass_query)
