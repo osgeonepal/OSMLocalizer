@@ -8596,10 +8596,10 @@ react-switch@^7.0.0:
   dependencies:
     prop-types "^15.7.2"
 
-react-tooltip@^5.10.4:
-  version "5.10.4"
-  resolved "https://registry.npmjs.org/react-tooltip/-/react-tooltip-5.10.4.tgz"
-  integrity sha512-QUBX6k3+qjOyAy64ntV/NkwzZqaghjcEpZ6Q5pqVbYUYS8kGcmIgXznRc2syQDlffCtzeWJGGMz93JYKjGo2Pw==
+react-tooltip@^5.23.0:
+  version "5.23.0"
+  resolved "https://registry.yarnpkg.com/react-tooltip/-/react-tooltip-5.23.0.tgz#dbbc950194a10e00c1b3072e71cbe0b3fcb84dfe"
+  integrity sha512-MYqn6n+Af8NHHDL3zrSqzVSoK2LLqTNFp30CuuHCYlBEf+q88FWfg+8pSO+0GnDvOa5ZaryNDq9sAVQeNhnsgw==
   dependencies:
     "@floating-ui/dom" "^1.0.0"
     classnames "^2.3.0"
