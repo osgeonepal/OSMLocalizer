@@ -10,3 +10,4 @@
 localizer.env
 *.zip
 *.tar.gz
+.pdm-python
