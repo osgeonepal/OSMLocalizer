@@ -69,6 +69,8 @@ const LeaderboardTable = ({ leaderboard }) => {
             <th className="align-middle" scope="col">
               Score
             </th>
+            <th className="align-middle" scope="col">
+            </th>
           </tr>
         </thead>
         <tbody>
@@ -120,7 +122,7 @@ const LeaderboardTable = ({ leaderboard }) => {
 
 const LeaderboardHeader = () => (
   <div
-    className="bg-secondary-subtle p-4 pt-0 pb-0 position-relative mt-4"
+    className="bg-light p-4 pt-0 pb-0 position-relative mt-4"
     style={{ height: "100px" }}
   >
     <div
@@ -184,7 +186,7 @@ export const ChallengeLeaderBoard = () => {
       {isLeaderboardLoaded ? (
         <div className="col-11 p-4 mt-4">
           <LeaderboardHeader />
-          <div className="bg-secondary-subtle p-4 pt-0">
+          <div className="bg-light p-4 pt-0">
             {leaderboard.users.length > 0 && (
               <div className="row">
                 <h4 className="mt-0">Top Contributors</h4>
@@ -248,7 +250,7 @@ export const LeaderboardView = () => {
       {isLeaderboardLoaded ? (
         <div className="col-11 p-4 mt-4">
           <LeaderboardHeader />
-          <div className="bg-secondary-subtle p-4 pt-0">
+          <div className="bg-light p-4 pt-0">
             {leaderboard.users.length > 0 && (
               <div className="row">
                 <h4 className="mt-0">Top Contributors</h4>
