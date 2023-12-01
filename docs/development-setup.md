@@ -20,7 +20,7 @@ Now you can edit the `localizer.env` file to set the environment variables. The 
 - `MAPBOX_ACCESS_TOKEN`: The access token for the Mapbox API. This is used by the frontend to display the map.
 `MAX_CHALLENGE_AREA`: The maximum area of a challenge in square meters. This is used by the backend and frontend to validate challenges. The default value is `200`.
 - `CHANGES_UPLOAD_LIMIT`: The maximum number of changes that can be uploaded at once. This is used by the frontend to stop users making too many changes at once to ensure changes are being uploaded consistently to OSM. The default value is `25`.
-`APP_SECRET_KEY`: The secret key of the app. This is used by the backend to sign tokens.
+- `APP_SECRET_KEY`: The secret key of the app. This is used by the backend to sign tokens.
 
 ##### Login with OSM
 Create an OAuth2 application on the [OpenStreetMap website](https://www.openstreetmap.org/oauth2/applications/new).  It is important to provide `Read user preferences` and `Modify the map (read and write)` scopes. The redirect URI should be set to `http://127.0.0.1:3000/authorized` while developing locally.
@@ -55,11 +55,7 @@ sudo -u postgres createdb -O <username> <database_name>
 sudo -u postgres psql -d <database_name> -c "CREATE EXTENSION postgis;"
 ```
 6. Set the environment variables in the `localizer.env` file.   
-7. Run the following command to create the tables:
-```bash
-cd backend
-flask db upgrade
-```
+
 ##### Method 2: With Docker (Database)
 1. Install [Docker](https://docs.docker.com/get-docker/) (version 20.10 or higher recommended)
 2. Install [Docker Compose](https://docs.docker.com/compose/install/) (version 1.29 or higher recommended)
@@ -93,7 +89,7 @@ Your database should now be set up. Let's move on to the backend setup.
 pdm install
 ```
 2. Set the environment variables in the `localizer.env` file.
-3. Run the following command to create the tables:
+3. Run the following command to create the tables / apply migrations (skip this if```flask db upgrade``` is done):
 ```bash
 pdm run upgrade
 ```
@@ -141,7 +137,11 @@ docker-compose up -d
 docker-compose logs -f backend
 ```
 
-**Your backend should now be set up. Let's move on to the frontend setup.**
+**Your backend should now be set up.**
+
+Hit GET API ```/api/system/``` For health check of API to ensure backend is running successfully it should return healthy
+
+**Let's move on to the frontend setup.**
 
 
 ### Frontend setup
@@ -159,3 +159,7 @@ yarn start
 5. The frontend should now be running on [http://localhost:3000](http://localhost:3000)
 6. Now you need to navigate to [http://127.0.0.1:3000](http://127.0.0.1:3000) as login functionality doesn't work on [http://localhost:3000](http://localhost:3000). You should now be able to login with your OSM account.
 
+
+### Post SETUP 
+
+- After successful setup and login you will encounter permission issue during creation of challenge , Open Users table in your database , Alter your users role to 1 , Logout from frontend and Login again , You should be READY TO ROCK 

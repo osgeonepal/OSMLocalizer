@@ -23,4 +23,4 @@ OSMLocalizer includes the following features:
 - Editor view to edit name tags of elements to localize in the desired language
 - Direct upload of changes to OSM from the tool
 # Contributing
-Contributions to OSMLocalizer are welcome! If you would like to contribute, please fork the repository and submit a pull request. Please ensure that your pull request follows the [contribution guidelines](https://github.com/Aadesh-Baral/OSMLocalizer/blob/master/docs/contributing.md) and includes a detailed description of your changes. To set up the development environment, please follow the instructions in the [development setup guide](https://github.com/Aadesh-Baral/OSMLocalizer/blob/master/docs/development-setup.md).
+Contributions to OSMLocalizer are welcome! If you would like to contribute, please fork the repository and submit a pull request. Please ensure that your pull request follows the [contribution guidelines](./docs/contributing.md) and includes a detailed description of your changes. To set up the development environment, please follow the instructions in the [development setup guide](./docs/development-setup.md).
