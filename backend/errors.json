@@ -5,6 +5,7 @@
     "USER_NOT_FOUND": "The requested user was not found.",
     "NO_TRANSLATE_ENGINE": "No translation engine is set for the challenge.",
     "FORBIDDEN": "The request is not allowed",
+    "PRIVATE_PROJECT": "This is a private project and olny project creator is allowed to access it.",
     "UNAUTHORIZED": "The request is not authorized",
     "INVALID_TOKEN": "The token is invalid or has expired",
     "USER_NOT_ADMIN": "The user is not an administrator and cannot perform this action.",

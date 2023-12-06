@@ -40,6 +40,7 @@ class CreateChallengeDTO(BaseModel):
     due_date: Optional[str] = None
     created_by: int
     feature_instructions: Optional[str] = None
+    private: bool = False
 
     class Config:
         orm_mode = True
@@ -57,6 +58,7 @@ class UpdateChallengeDTO(BaseModel):
     api_key: Optional[str]
     due_date: Optional[str] = None
     feature_instructions: Optional[str] = None
+    private: bool = False
 
 
 class ChallengeStatsDTO(BaseModel):
@@ -88,6 +90,7 @@ class ChallengeDTO(BaseModel):
     translate_engine: Optional[str] = None
     stats: Optional[ChallengeStatsDTO] = None
     feature_instructions: Optional[str] = None
+    private: bool
     author: Optional[str] = None
 
     class Config:
@@ -112,6 +115,7 @@ class ChallengeSummaryDTO(BaseModel):
     bbox: Optional[dict] = None
     stats: Optional[ChallengeStatsDTO] = None
     total_contributors: Optional[int] = None
+    private: bool = False
 
     class Config:
         orm_mode = True

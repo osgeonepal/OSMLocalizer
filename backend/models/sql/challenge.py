@@ -47,6 +47,10 @@ class Challenge(db.Model):
     api_key = db.Column(db.String, nullable=True)
     feature_instructions = db.Column(db.String, nullable=True)
 
+    private = db.Column(
+        db.Boolean, default=False, nullable=False
+    )
+
     created_by = db.Column(
         db.BigInteger, db.ForeignKey("users.id", name="fk_users"), nullable=False
     )
@@ -82,6 +86,7 @@ class Challenge(db.Model):
             if self.translate_engine
             else None,
             feature_instructions=self.feature_instructions,
+            private=self.private
         )
         challenge_dto.author = User.get_by_id(self.created_by).username
         challenge_dto.bbox = json.loads(
@@ -105,6 +110,7 @@ class Challenge(db.Model):
             due_date=(self.due_date - timestamp()).days,
             last_updated=get_last_updated(self.last_updated),
             created=to_strfdate(self.created),
+            private=self.private
         )
         challenge_dto.centroid = json.loads(
             db.engine.execute(self.centroid.ST_AsGeoJSON()).scalar()
@@ -127,7 +133,7 @@ class Challenge(db.Model):
         return Challenge.query.all()
 
     @staticmethod
-    def get_all_challenges(dto: SearchChallengeDTO):
+    def get_all_challenges(dto: SearchChallengeDTO, current_user):
         """Get all challenges by status"""
         query = Challenge.query
         if dto.status is not None:
@@ -142,6 +148,12 @@ class Challenge(db.Model):
             query = query.filter_by(to_language=dto.to_language)
         if dto.created_by:
             query = query.filter_by(created_by=dto.created_by)
+        
+        if current_user:
+            query = query.filter(or_(Challenge.private==False, and_(Challenge.private==True, Challenge.created_by==current_user)))
+        else:
+            query = query.filter(Challenge.private==False)
+
         if dto.sort_by == "NEWEST":
             query = query.order_by(Challenge.id.desc())
         elif dto.sort_by == "OLDEST":

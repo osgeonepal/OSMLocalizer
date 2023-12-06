@@ -4,7 +4,7 @@ import requests
 from backend.config import EnvironmentConfig
 from geoalchemy2 import shape
 from shapely.geometry import box, Polygon, Point
-from backend.errors import BadRequest, NotFound
+from backend.errors import BadRequest, NotFound, Forbidden
 
 from backend import db
 from backend.models.sql.enum import ChallengeStatus, TranslateEngine
@@ -23,6 +23,7 @@ from backend.models.dtos.challenge_dto import (
 )
 from backend.services.overpass_service import Overpass
 from backend.services.stats_service import StatsService
+from backend.services.user_service import UserService
 
 # max area allowed for passed in bbox, calculation shown to help future maintenance
 # Total area of challenge to be allowed is 200 sq km. So max area of bbox is 100*100, 2 for square meter
@@ -58,6 +59,7 @@ class ChallengeService:
             language_tags=language_tags,
             due_date=challenge_dto.due_date,
             created_by=challenge_dto.created_by,
+            private=challenge_dto.private,
         )
         if challenge_dto.translate_engine:
             challenge.translate_engine = (
@@ -81,6 +83,7 @@ class ChallengeService:
         challenge.to_language = challenge_dto.to_language
         challenge.feature_instructions = challenge_dto.feature_instructions
         challenge.language_tags = language_tags
+        challenge.private = challenge_dto.private
         if challenge_dto.due_date:
             challenge.due_date = challenge_dto.due_date
         if challenge_dto.translate_engine:
@@ -99,15 +102,19 @@ class ChallengeService:
         return challenge
 
     @staticmethod
-    def get_challenge_as_dto(challenge_id: int) -> ChallengeDTO:
+    def get_challenge_as_dto(challenge_id: int, user_id: int) -> ChallengeDTO:
         """Get challenge by id"""
         challenge = ChallengeService.get_challenge_by_id(challenge_id)
-        return challenge.as_dto(stats=True)
+        if ChallengeService.can_user_view_challenge(challenge_id, user_id):
+            return challenge.as_dto(stats=True)
+        else:
+            raise Forbidden("PRIVATE_PROJECT")
 
     @staticmethod
-    def get_all_challenges(dto: SearchChallengeDTO) -> ChallengeListDTO:
+    def get_all_challenges(dto: SearchChallengeDTO, current_user) -> ChallengeListDTO:
         """Get all challenges"""
-        challenges = Challenge.get_all_challenges(dto)
+        challenges = Challenge.get_all_challenges(dto, current_user)
+
         challenges_dto = []
         for challenge in challenges.items:
             challenge_dto = challenge.as_dto_for_summary(stats=True)
@@ -211,3 +218,28 @@ class ChallengeService:
             for relation in result.relations:
                 feature = Overpass.relation_to_features(relation)
                 challenge.features.append(feature)
+
+    @staticmethod
+    def can_user_view_challenge(user_id, challenge_id):
+        """
+        Checks if user is allowed to view challenge
+
+        Parameters
+        ----------
+        user_id: int
+            Requesting user id
+        challenge_id: int
+            Id of challenge requested by user.
+
+        Returns
+        -------
+        True if user is permitted to view the challenge else False
+        """
+        if user_id and UserService.is_user_admin(user_id):
+            return True
+
+        challenge = Challenge.get_by_id(challenge_id)
+        if challenge.private & challenge.created_by.id == user_id:
+            return True
+        else:
+            return False
