@@ -20,6 +20,7 @@ const ChallengeList = ({ challenges }) => {
 
 const ChallengesView = () => {
   const user = useSelector((state) => state.auth.user);
+  const token = localStorage.getItem("jwt_token");
 
   const [page, setPage] = useState(
     new URLSearchParams(window.location.search).get("page") || 1
@@ -44,7 +45,7 @@ const ChallengesView = () => {
   }${search ? `&name=${search}` : ""}`;
 
   useEffect(() => {
-    fetchLocalJSONAPI(url).then((data) => {
+    fetchLocalJSONAPI(url, token).then((data) => {
       setChallenges(data);
     });
   }, [url]);

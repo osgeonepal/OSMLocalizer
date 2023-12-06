@@ -1,5 +1,5 @@
 import React from "react";
-import { Input, TextArea, Checkbox } from "../input";
+import { Input, TextArea, Checkbox, SwitchButton } from "../input";
 
 export const MetadataForm = ({ challenge, setChallenge, type }) => {
   const challengeStatusOption = [
@@ -57,6 +57,12 @@ export const MetadataForm = ({ challenge, setChallenge, type }) => {
         options={challengeStatusOption}
         onChange={onInputChange}
         value={challenge.status}
+      />
+      <SwitchButton
+        label="Private project"
+        onChange={()=> {setChallenge({...challenge, private: !challenge.private})}}
+        checked={challenge.private}
+        className="ps-0 p-2 pb-4"
       />
     </div>
   );

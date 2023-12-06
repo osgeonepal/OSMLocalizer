@@ -172,7 +172,7 @@ const CreateChallenge = () => {
       displayControlsDefault: false,
     }),
   });
-  const [challenge, setChallenge] = useState({ status: "PUBLISHED" });
+  const [challenge, setChallenge] = useState({ status: "PUBLISHED", private: false });
   const [isLoading, setIsLoading] = useState(false);
   const [isChallengeCreated, setIsChallengeCreated] = useState(false);
   const [error, setError] = useState(null);

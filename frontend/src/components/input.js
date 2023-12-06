@@ -107,7 +107,7 @@ export const Checkbox = (props) => {
 
 export const SwitchButton = (props) => {
   return (
-    <div>
+    <div className={props.className}>
       <Switch
         checked={props.checked}
         onChange={() => props.onChange()}
