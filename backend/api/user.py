@@ -3,8 +3,9 @@ from flask_restful import Resource
 
 from backend import osm, EnvironmentConfig
 from backend.services.user_service import UserService
-from backend.errors import NotFound, Unauthorized
+from backend.errors import NotFound, Unauthorized, BadRequest
 from backend.services.user_service import auth
+from backend.models.sql.enum import UserRoles
 
 
 class UserAuthorizationUrlAPI(Resource):
@@ -43,6 +44,24 @@ class UserTokenExpiryAPI(Resource):
 class UserAllAPI(Resource):
     @auth.login_required
     def get(self):
-        if not UserService.is_admin():
+        current_user = auth.current_user()
+        if not UserService.is_user_admin(current_user):
             raise Unauthorized("USER_NOT_ADMIN")
         return UserService.get_all_users()
+
+
+class UserRoleApi(Resource):
+    @auth.login_required
+    def post(self, user_id, role):
+        current_user = auth.current_user()
+        if not UserService.is_user_admin(current_user):
+            raise Unauthorized("USER_NOT_ADMIN")
+        if role not in [UserRoles.ADMIN.value, UserRoles.Mapper.value]:
+            raise BadRequest(
+                message="User role should be specified and can be one of ADMIN, MAPPER or VALIDATOR."
+            )
+
+        user = UserService.get_user_by_id(user_id)
+        user.role = role
+        user.update()
+        return {"message": "User role successfully updated"}
