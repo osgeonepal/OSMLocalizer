@@ -17,7 +17,6 @@ osm = OAuth2Session(
 
 
 def create_app(config=EnvironmentConfig):
-
     if config.SENTRY_BACKEND_DSN:
         sentry_sdk.init(
             dsn=EnvironmentConfig.SENTRY_BACKEND_DSN,
@@ -51,6 +50,7 @@ def create_app(config=EnvironmentConfig):
         UserTokenAPI,
         UserAllAPI,
         UserTokenExpiryAPI,
+        UserRoleApi,
     )
     from backend.api.translate import TranslateTextAPI
     from backend.api.statistics import (
@@ -97,6 +97,7 @@ def create_app(config=EnvironmentConfig):
     api.add_resource(UserTokenExpiryAPI, "/auth/token-expiry/")
 
     api.add_resource(UserAllAPI, "/users/")
+    api.add_resource(UserRoleApi, "/user/<int:user_id>/update/role/<int:role>/")
     api.add_resource(UserStatSAPI, "/user/<int:user_id>/stats/")
     api.add_resource(
         ChallengeContributorsStatsAPI, "/challenge/<int:challenge_id>/user-stats/"
