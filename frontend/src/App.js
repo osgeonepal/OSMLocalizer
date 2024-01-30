@@ -19,6 +19,7 @@ import CreateChallenge from "./views/createChallenge";
 import { Notfound } from "./views/notFound";
 import { fetchLocalJSONAPI } from "./utills/fetch";
 import ChallengeDetailView from "./views/challengeDetail";
+import ManageUsers from "./views/manageUsers";
 import ShowError from "./components/error";
 
 function App() {
@@ -49,6 +50,7 @@ function App() {
           <Route path="/manage" element={<ManagementSection />}>
             <Route path="challenge/:id" element={<UpdateChallengeView />} />
             <Route path="challenge/create" element={<CreateChallenge />} />
+            <Route path="users" element={<ManageUsers />} />
           </Route>
           <Route
             path="challenge/:id/leaderboard"
