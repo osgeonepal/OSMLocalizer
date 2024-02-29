@@ -17,7 +17,7 @@ cp example.env localizer.env
 
 Now you can edit the `localizer.env` file to set the environment variables. The following environment variables are required to run the app:
 - `API_BASE_URL`: The base URL of the API. This is used by the frontend to make API calls. The default value is `http://127.0.0.1:5000/`
-- `MAPBOX_ACCESS_TOKEN`: The access token for the Mapbox API. This is used by the frontend to display the map.
+- `MAPTILER_API_TOKEN`: The api token for the maptiler style API. This is used by the frontend to display the map.
 `MAX_CHALLENGE_AREA`: The maximum area of a challenge in square meters. This is used by the backend and frontend to validate challenges. The default value is `200`.
 - `CHANGES_UPLOAD_LIMIT`: The maximum number of changes that can be uploaded at once. This is used by the frontend to stop users making too many changes at once to ensure changes are being uploaded consistently to OSM. The default value is `25`.
 - `APP_SECRET_KEY`: The secret key of the app. This is used by the backend to sign tokens.

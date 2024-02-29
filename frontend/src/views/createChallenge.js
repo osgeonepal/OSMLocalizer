@@ -1,15 +1,17 @@
 import React, { useState, useRef, useEffect, useLayoutEffect } from "react";
 import { useSelector } from "react-redux";
-import mapboxgl from "mapbox-gl";
+import maplibregl from "maplibre-gl";
 import bbox from "@turf/bbox";
 import Area from "@turf/area";
 import { Tooltip } from "react-tooltip";
-import "react-tooltip/dist/react-tooltip.css";
 import MapboxDraw from "@mapbox/mapbox-gl-draw";
-import MapboxGeocoder from "@mapbox/mapbox-gl-geocoder";
-import "@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css";
+import MaplibreGeocoder from "@maplibre/maplibre-gl-geocoder";
+
+import "react-tooltip/dist/react-tooltip.css";
+import "maplibre-gl/dist/maplibre-gl.css";
+import "@maplibre/maplibre-gl-geocoder/dist/maplibre-gl-geocoder.css";
 import "@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css";
-import "mapbox-gl/dist/mapbox-gl.css";
+
 
 import { pushToLocalJSONAPI } from "../utills/fetch";
 import SetChallengeBBBOX from "../components/challengeCreate/setChallengeBBOX";
@@ -17,7 +19,9 @@ import { MetadataForm } from "../components/challengeCreate/setChallengeMetdata"
 import { TranslationForm } from "../components/challengeCreate/setChallengeTranslate";
 import { OverpassQuery } from "../components/challengeCreate/setOverpassQuery";
 import { LoadingModal } from "../components/loadingModal";
-import { MAPBOX_ACCESS_TOKEN, MAX_CHALLENGE_AREA } from "../config";
+import { MAX_CHALLENGE_AREA } from "../config";
+import { MAPTILER_OSM_STYLE } from "../utills/mapStyle";
+import { geocoderApi } from "../utills/geoCodeApi";
 
 const StepButtons = ({
   step,
@@ -184,26 +188,21 @@ const CreateChallenge = () => {
     error: null,
   });
 
-  mapboxgl.accessToken = MAPBOX_ACCESS_TOKEN;
 
   useEffect(() => {
-    const newMap = new mapboxgl.Map({
+    const newMap = new maplibregl.Map({
       container: mapContainer.current,
-      style: "mapbox://styles/mapbox/streets-v11",
+      style: MAPTILER_OSM_STYLE,
       center: [0, 0],
       zoom: 2,
     })
       .addControl(
-        new MapboxGeocoder({
-          accessToken: mapboxgl.accessToken,
-          mapboxgl: mapboxgl,
-          marker: false,
-          // collapsed: true,
+        new MaplibreGeocoder(geocoderApi, {
+          maplibregl: maplibregl
         }),
         "top-right"
       )
-      .addControl(new mapboxgl.NavigationControl(), "top-right");
-    // Add geocoder on top of the map
+      .addControl(new maplibregl.NavigationControl(), "top-right");
 
     newMap.on("load", () => {
       setMapObject({
