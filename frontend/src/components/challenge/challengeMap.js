@@ -1,8 +1,10 @@
 import React, { useRef, useEffect, useState } from "react";
-import mapboxGl from "mapbox-gl";
+import maplibregl from "maplibre-gl";
 import bbox from "@turf/bbox";
 
-import { MAPBOX_ACCESS_TOKEN } from "../../config";
+import "maplibre-gl/dist/maplibre-gl.css";
+
+import { OSM_STYLE } from "../../utills/mapStyle";
 import { fetchLocalJSONAPI } from "../../utills/fetch";
 import marker from "../../assets/icons/marker.png";
 
@@ -21,34 +23,14 @@ export const ChallengeMap = (props) => {
     );
   }, [props.challenge.id]);
 
-  // const osm_style = {
-  //     version: 8,
-  //     sources: {
-  //         osm: {
-  //             type: 'raster',
-  //             tiles: ["https://tile.openstreetmap.org/{z}/{x}/{y}.png"],
-  //             tileSize: 256,
-  //             attribution: ('Map tiles by <a target="_top" rel="noopener" href="https://tile.openstreetmap.org/">OpenStreetMap tile servers</a>,' +
-  //                 'under the <a target="_top" rel="noopener" href="https://operations.osmfoundation.org/policies/tiles/">tile usage policy</a>.' +
-  //                 'Data by <a target="_top" rel="noopener" href="http://openstreetmap.org">OpenStreetMap</a>')
-  //         }
-  //     },
-  //     layers: [{
-  //         id: 'osm',
-  //         type: 'raster',
-  //         source: 'osm',
-  //     }],
-  // }
-
   const mapContainerRef = useRef(null);
-  mapboxGl.accessToken = MAPBOX_ACCESS_TOKEN;
   useEffect(() => {
-    mapContainerRef.current = new mapboxGl.Map({
+    mapContainerRef.current = new maplibregl.Map({
       container: "map-container",
-      style: "mapbox://styles/mapbox/streets-v12",
+      style: OSM_STYLE,
       center: [85.324, 27.7172],
       zoom: 3,
-    }).addControl(new mapboxGl.NavigationControl(), "top-right");
+    }).addControl(new maplibregl.NavigationControl(), "top-right");
     return () => mapContainerRef.current && mapContainerRef.current.remove();
   }, [props.challenge.id]);
 

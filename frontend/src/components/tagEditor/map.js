@@ -1,50 +1,29 @@
 import React, { useEffect, useRef, useState } from "react";
 import bbox from "@turf/bbox";
-import mapboxgl from "mapbox-gl";
-import "mapbox-gl/dist/mapbox-gl.css";
+import maplibregl from "maplibre-gl";
 
-import { MAPBOX_ACCESS_TOKEN } from "../../config";
+import "maplibre-gl/dist/maplibre-gl.css";
+
+import { MAPTILER_API_TOKEN } from "../../config";
 import { fetchExternalJSONAPI } from "../../utills/fetch";
+import { OSM_STYLE } from "../../utills/mapStyle";
 
 var osmtogeojson = require("osmtogeojson");
-
-const osm_style = {
-  version: 8,
-  sources: {
-    osm: {
-      type: "raster",
-      tiles: ["https://tile.openstreetmap.org/{z}/{x}/{y}.png"],
-      tileSize: 256,
-      attribution:
-        'Map tiles by <a target="_top" rel="noopener" href="https://tile.openstreetmap.org/">OpenStreetMap tile servers</a>,' +
-        'under the <a target="_top" rel="noopener" href="https://operations.osmfoundation.org/policies/tiles/">tile usage policy</a>.' +
-        'Data by <a target="_top" rel="noopener" href="http://openstreetmap.org">OpenStreetMap</a>',
-    },
-  },
-  layers: [
-    {
-      id: "osm",
-      type: "raster",
-      source: "osm",
-    },
-  ],
-};
 
 const Map = (props) => {
   const [geojson, setGeojson] = useState({});
   const mapContainerRef = useRef(null);
-  mapboxgl.accessToken = MAPBOX_ACCESS_TOKEN;
-
   useEffect(() => {
     const zoom = props.element.type === "node" ? 18 : 12;
-    mapContainerRef.current = new mapboxgl.Map({
+    mapContainerRef.current = new maplibregl.Map({
       container: "map-container",
       style:
         props.element.type === "node"
-          ? osm_style
-          : "mapbox://styles/mapbox/streets-v11",
+          ? OSM_STYLE
+          : `https://api.maptiler.com/maps/openstreetmap/style.json?key=${MAPTILER_API_TOKEN}`,
       center: [0, 0],
       zoom: zoom,
+      attributionControl: false,
     });
     return () => mapContainerRef.current && mapContainerRef.current.remove();
   }, [props.element.type]);
@@ -65,7 +44,7 @@ const Map = (props) => {
   useEffect(() => {
     if (mapContainerRef.current.isStyleLoaded()) {
       if (props.element.type === "node") {
-        var marker = new mapboxgl.Marker();
+        var marker = new maplibregl.Marker();
         props.element &&
           marker
             .setLngLat([props.element.lon, props.element.lat])
