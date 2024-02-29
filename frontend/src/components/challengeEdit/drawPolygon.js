@@ -1,19 +1,19 @@
 import React, { useRef, useEffect } from "react";
-import mapboxGl from "mapbox-gl";
+import maplibregl from "maplibre-gl";
 import MapboxDraw from "@mapbox/mapbox-gl-draw";
 import bbox from "@turf/bbox";
-import "@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css";
-import "mapbox-gl/dist/mapbox-gl.css";
 
-import { MAPBOX_ACCESS_TOKEN } from "../../config";
+import "maplibre-gl/dist/maplibre-gl.css";
+import "@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css";
+
+import { OSM_STYLE } from "../../utills/mapStyle";
 
 export const DrawPolygon = (props) => {
   const mapContainerRef = useRef(null);
-  mapboxGl.accessToken = MAPBOX_ACCESS_TOKEN;
   useEffect(() => {
-    mapContainerRef.current = new mapboxGl.Map({
+    mapContainerRef.current = new maplibregl.Map({
       container: "map-container",
-      style: "mapbox://styles/mapbox/streets-v12",
+      style: OSM_STYLE,
       center: [85.324, 27.7172],
       zoom: 3,
     });
