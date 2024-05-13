@@ -1,6 +1,7 @@
 import math
 import geojson
 import requests
+import logging
 from backend.config import EnvironmentConfig
 from geoalchemy2 import shape
 from shapely.geometry import box, Polygon, Point
@@ -177,8 +178,15 @@ class ChallengeService:
         url = "{0}/reverse?format=jsonv2&lat={1}&lon={2}&accept-language=en".format(
             OSM_NOMINATIM_SERVER_URL, lat, lng
         )
+        headers = {"User-Agent": "OSMLocalizer"}
         try:
-            country_info = requests.get(url).json()  # returns a dict
+            country_info = requests.get(url, headers=headers)  # returns a dict
+            if country_info.status_code != 200:
+                logging.error(
+                    f"Error getting country from coordinates: {country_info.status_code}"
+                )
+                return None
+            country_info = country_info.json()
             if country_info["address"].get("country") is not None:
                 return [country_info["address"]["country"]][0]
         except (KeyError, AttributeError, requests.exceptions.ConnectionError):
