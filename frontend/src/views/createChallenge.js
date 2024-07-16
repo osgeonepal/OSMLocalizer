@@ -20,7 +20,7 @@ import { TranslationForm } from "../components/challengeCreate/setChallengeTrans
 import { OverpassQuery } from "../components/challengeCreate/setOverpassQuery";
 import { LoadingModal } from "../components/loadingModal";
 import { MAX_CHALLENGE_AREA } from "../config";
-import { MAPTILER_OSM_STYLE } from "../utills/mapStyle";
+import { OSM_STYLE } from "../utills/mapStyle";
 import { geocoderApi } from "../utills/geoCodeApi";
 
 const StepButtons = ({
@@ -192,7 +192,7 @@ const CreateChallenge = () => {
   useEffect(() => {
     const newMap = new maplibregl.Map({
       container: mapContainer.current,
-      style: MAPTILER_OSM_STYLE,
+      style: OSM_STYLE,
       center: [0, 0],
       zoom: 2,
     })
