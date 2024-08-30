@@ -10,19 +10,19 @@ marker.src = logo;
 
 const menuItems = [
   {
-    label: "CHALLENGES",
+    label: "Challenges",
     link: "challenges",
   },
   {
-    label: "CREATE",
+    label: "Create",
     link: "manage/challenge/create",
   },
   {
-    label: "LEADERBOARD",
+    label: "Leaderboard",
     link: "leaderboard",
   },
   {
-    label: "ABOUT",
+    label: "About",
     link: "about",
   },
 ];
@@ -88,7 +88,7 @@ const NavBarSmall = () => {
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    REPORT
+                    Report
                     <i
                       className="fa fa-external-link ms-1"
                       style={{ fontSize: "0.8rem" }}
@@ -113,11 +113,11 @@ const NavBarSmall = () => {
 const NavBarLarge = () => {
   const navClass = "nav-link ps-0 pe-0 ms-3 me-3";
   const navClassActive =
-    navClass + " border-bottom border-2 border-primary active";
+    navClass + " border-bottom border-2 border-secondary active";
   return (
     <>
-      <div className="collapse navbar-collapse" id="navbarText">
-        <ul className="navbar-nav me-auto">
+      <div className="collapse navbar-collapse d-flex" id="navbarText">
+        <ul className="navbar-nav me-auto flex-grow-1 d-flex justify-content-center">
           {menuItems.map((item) => (
             <li className="nav-item" key={item.link}>
               <NavLink
@@ -137,7 +137,7 @@ const NavBarLarge = () => {
               target="_blank"
               rel="noopener noreferrer"
             >
-              REPORT
+              Report
               <i
                 className="fa fa-external-link ms-1"
                 style={{ fontSize: "0.8rem" }}
@@ -145,7 +145,7 @@ const NavBarLarge = () => {
             </a>
           </li>
         </ul>
-        <div className="d-flex">
+        <div>
           <Login />
         </div>
       </div>
@@ -159,12 +159,12 @@ function NavBar() {
   return (
     <>
       <nav
-        className="navbar navbar-expand-lg bg-body-tertiary border-bottom App"
+        className="navbar navbar-expand-lg border border-0 App"
         style={{ height: "8vh" }}
       >
         <div className="container">
           <NavLink
-            className="navbar-brand d-flex align-items-center"
+            className="navbar-brand d-flex align-items-center m-0 p-0"
             to="/"
             key="/"
           >
@@ -174,7 +174,7 @@ function NavBar() {
               style={{ width: "35px", height: "35px", borderRadius: "50%" }}
               className="me-1"
             />
-            <span className="fs-4">OSM Localizer</span>
+            <span >OSMLocalizer</span>
           </NavLink>
           {width > breakpoint ? <NavBarLarge /> : <NavBarSmall />}
         </div>

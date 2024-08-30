@@ -87,12 +87,13 @@ const UserMenu = ({ username, user_picture, dispatch }) => {
           src={picture_url}
           alt="img"
           style={{ width: "35px", height: "35px", borderRadius: "50%" }}
+          onClick={onClick}
         />
         <span onClick={onClick}> {username} </span>
       </span>
-      <ul className="dropdown-menu d-flex flex-column mt-1 p-1 rounded-0">
-        {/* <li><a className="dropdown-item" href="#">Action</a></li>
-                <li><a className="dropdown-item" href="#">Another action</a></li> */}
+      <ul className="dropdown-menu d-flex flex-column mt-1 p-1 rounded-0 ">
+        {/* <li><a className="dropdown-item" href="">Profile</a></li>
+          <li><a className="dropdown-item" href="">Settings</a></li> */}
         <li>
           <span
             className="dropdown-item"
@@ -114,6 +115,7 @@ const UserMenu = ({ username, user_picture, dispatch }) => {
           src={picture_url}
           alt="img"
           style={{ width: "35px", height: "35px", borderRadius: "50%" }}
+          onClick={onClick}
         />
         <span onClick={onClick}> {username} </span>
       </span>
