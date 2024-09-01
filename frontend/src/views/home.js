@@ -11,8 +11,6 @@ import kll_icon from "../assets/icons/kll-logo.svg";
 import os_geo_nepal from "../assets/icons/osgeonepal.png";
 import osmnepal from "../assets/icons/osmnepal.jpg";
 
-import "react-responsive-carousel/lib/styles/carousel.min.css";
-
 const partners = [
   {
     name: "Kathmandu Living Labs",
