@@ -11,3 +11,4 @@ localizer.env
 *.zip
 *.tar.gz
 .pdm-python
+.DS_Store

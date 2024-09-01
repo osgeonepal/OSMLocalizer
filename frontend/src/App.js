@@ -5,14 +5,14 @@ import "./App.css";
 import Header from "./components/header";
 import Footer from "./components/footer";
 import ChallengesView from "./views/challenges";
-import { ChallengeLeaderBoard } from "./views/leaderboard";
-import { LeaderboardView } from "./views/leaderboard";
+import { ChallengeLeaderBoard, LeaderboardView } from "./views/leaderboard";
 import UpdateChallengeView from "./views/updateChallenge";
 import { LocalizeChallengeView } from "./views/localizeChallenge";
 import AuthorizedView from "./views/authorized";
 import { handleLogin } from "./store/store";
 import { LoginView } from "./views/login";
 import { LoggedInRoute } from "./views/privateRoute";
+import HomeView from "./views/home";
 import ManagementSection from "./views/managementRoute";
 import AboutView from "./views/about";
 import CreateChallenge from "./views/createChallenge";
@@ -45,7 +45,7 @@ function App() {
       <div className="container App">
         {error && <ShowError error={error} setError={setError} />}
         <Routes>
-          <Route path="/" element={<ChallengesView />} />
+          <Route path="/" element={<HomeView />} />
           <Route path="/challenges" element={<ChallengesView />} />
           <Route path="/manage" element={<ManagementSection />}>
             <Route path="challenge/:id" element={<UpdateChallengeView />} />
