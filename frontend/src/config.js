@@ -21,5 +21,9 @@ export const MAX_FEATURE_COUNT = Number(
   process.env.REACT_APP_MAX_FEATURE_COUNT || 1000
 );
 
+export const MAX_FILE_SIZE = Number(
+  process.env.REACT_APP_MAX_FILE_SIZE || 1000000 // 1MB
+);
+
 export const SENTRY_FRONTEND_DSN = process.env.REACT_APP_SENTRY_FRONTEND_DSN;
 export const SENTRY_ENVIRONMENT = process.env.REACT_APP_SENTRY_ENVIRONMENT;
