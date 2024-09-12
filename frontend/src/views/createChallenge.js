@@ -12,7 +12,6 @@ import "maplibre-gl/dist/maplibre-gl.css";
 import "@maplibre/maplibre-gl-geocoder/dist/maplibre-gl-geocoder.css";
 import "@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css";
 
-
 import { pushToLocalJSONAPI } from "../utills/fetch";
 import SetChallengeBBBOX from "../components/challengeCreate/setChallengeBBOX";
 import { MetadataForm } from "../components/challengeCreate/setChallengeMetdata";
@@ -228,7 +227,11 @@ const CreateChallenge = () => {
   };
 
   useLayoutEffect(() => {
-    if (mapObject.map && mapObject.map.isStyleLoaded()) {
+    if (mapObject.map?.isStyleLoaded()) {
+      if (mapObject.map.getLayer("draw")) {
+        mapObject.map.removeLayer("draw");
+        mapObject.map.removeSource("draw");
+      }
       mapObject.map.addControl(mapObject.draw);
 
       mapObject.map.on("draw.create", onDrawUpdate);
