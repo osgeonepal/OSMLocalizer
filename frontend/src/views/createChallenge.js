@@ -22,6 +22,10 @@ import { LoadingModal } from "../components/loadingModal";
 import { MAX_CHALLENGE_AREA } from "../config";
 import { OSM_STYLE } from "../utills/mapStyle";
 import { geocoderApi } from "../utills/geoCodeApi";
+import {
+  isValidGeojson,
+  convertToFeatureCollection,
+} from "../utills/geomUtills";
 
 const StepButtons = ({
   step,
@@ -260,7 +264,34 @@ const CreateChallenge = () => {
   };
 
   const onGeojsonUpload = (file) => {
-    console.log("File", file);
+    const supportedFileTypes = ["geojson", "json"];
+    const supportedGeometry = [
+      "FeatureCollection",
+      "Feature",
+      "Polygon",
+      "MultiPolygon",
+    ];
+    const reader = new FileReader();
+    const format = file[0].name.split(".").pop();
+
+    if (supportedFileTypes.includes(format)) {
+      reader.onload = (e) => {
+        const data = JSON.parse(e.target.result);
+
+        if (isValidGeojson(data, supportedGeometry)) {
+          const aoi = convertToFeatureCollection(data);
+          mapObject.draw.deleteAll();
+          mapObject.draw.add(aoi);
+          updateBBBOX(aoi);
+          mapObject.map.fitBounds(bbox(aoi), {
+            padding: 200,
+          });
+        };
+      };
+    } else {
+      alert("Invalid file format. Please upload a GeoJSON file.");
+    }
+    reader.readAsText(file[0]);
   }
 
   const isNextDisabled = () => {
