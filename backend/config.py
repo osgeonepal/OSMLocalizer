@@ -14,9 +14,9 @@ class EnvironmentConfig:
     # Assamble the database uri
     POSTGRES_USER = os.getenv("POSTGRES_USER", None)
     POSTGRES_PASSWORD = os.getenv("POSTGRES_PASSWORD", None)
-    POSTGRES_ENDPOINT = "db"
+    POSTGRES_ENDPOINT = os.getenv("POSTGRES_ENDPOINT", "postgresql")
     POSTGRES_DB = os.getenv("POSTGRES_DB", None)
-    POSTGRES_PORT = "5432"
+    POSTGRES_PORT = os.getenv("POSTGRES_PORT", "5432")
 
     SQLALCHEMY_DATABASE_URI = (
         f"postgresql://{POSTGRES_USER}"
