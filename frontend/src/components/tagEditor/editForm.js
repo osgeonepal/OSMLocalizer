@@ -335,6 +335,7 @@ export function TagEditorForm({
         onSubmit={onSubmitChange}
         render={({ handleSubmit, pristine, form }) => (
           <form
+            autoComplete="off"
             className=""
             initialValues={element["tags"]}
             onSubmit={(e) => {
