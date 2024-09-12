@@ -112,6 +112,8 @@ const HandleSteps = ({
   setStep,
   addDrawHandler,
   removeDrawHandler,
+  onGeojsonUpload,
+  bboxArea,
   challenge,
   setChallenge,
   isLoaded,
@@ -122,6 +124,8 @@ const HandleSteps = ({
         <SetChallengeBBBOX
           addDrawHandler={addDrawHandler}
           removeDrawHandler={removeDrawHandler}
+          onGeojsonUpload={onGeojsonUpload}
+          bboxArea={bboxArea}
           challenge={challenge}
           setChallenge={setChallenge}
           isLoaded={isLoaded}
@@ -188,7 +192,6 @@ const CreateChallenge = () => {
     error: null,
   });
 
-
   useEffect(() => {
     const newMap = new maplibregl.Map({
       container: mapContainer.current,
@@ -198,7 +201,7 @@ const CreateChallenge = () => {
     })
       .addControl(
         new MaplibreGeocoder(geocoderApi, {
-          maplibregl: maplibregl
+          maplibregl: maplibregl,
         }),
         "top-right"
       )
@@ -215,7 +218,7 @@ const CreateChallenge = () => {
   const updateBBBOX = (polygon) => {
     // Calculate area in square kilometers
     const bboxPolygon = bbox(polygon);
-    const areaPolygon = Math.floor(Area(polygon) / 1000000);
+    const areaPolygon = Math.floor(Area(polygon) / 1e6);
     setBboxArea(areaPolygon);
     setChallenge({ ...challenge, bbox: bboxPolygon });
   };
@@ -255,6 +258,10 @@ const CreateChallenge = () => {
     setChallenge({ ...challenge, bbox: null });
     setBboxArea(null);
   };
+
+  const onGeojsonUpload = (file) => {
+    console.log("File", file);
+  }
 
   const isNextDisabled = () => {
     if (step === 1) {
@@ -370,9 +377,11 @@ const CreateChallenge = () => {
               setStep={setStep}
               addDrawHandler={addDrawHandler}
               removeDrawHandler={removeDrawHandler}
+              onGeojsonUpload={onGeojsonUpload}
+              bboxArea={bboxArea}
               challenge={challenge}
               setChallenge={setChallenge}
-              isLoaded={mapObject.map && mapObject.map.isStyleLoaded()}
+              isLoaded={mapObject.map?.isStyleLoaded()}
             />
           </div>
           <div>
