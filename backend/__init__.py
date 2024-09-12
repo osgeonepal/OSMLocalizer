@@ -1,3 +1,4 @@
+import logging
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
@@ -16,7 +17,38 @@ osm = OAuth2Session(
 )
 
 
+def db_check():
+    """Temporary Check if the database connection exists.
+    We may need to change the database uri if the connection fails.
+    This is a workaround as we were not able to get into server to fix env file."
+    """
+    from sqlalchemy import create_engine
+    from sqlalchemy.exc import OperationalError
+
+    try:
+        engine = create_engine(EnvironmentConfig.SQLALCHEMY_DATABASE_URI, connect_args={'connect_timeout': 30})
+        connection = engine.connect()
+    except OperationalError:
+        # Rename endpoint with db and port with 5432.
+        POSTGRES_ENDPOINT = "db"
+        POSTGRES_PORT = "5432"
+        EnvironmentConfig.SQLALCHEMY_DATABASE_URI = (
+            f"postgresql://{EnvironmentConfig.POSTGRES_USER}"
+            + f":{EnvironmentConfig.POSTGRES_PASSWORD}"
+            + f"@{POSTGRES_ENDPOINT}:"
+            + f"{POSTGRES_PORT}"
+            + f"/{EnvironmentConfig.POSTGRES_DB}"
+        )
+        logging.error("Coundn't connect with DB. Using fallback.")
+    else:
+        connection.close()
+        logging.info("DB connection successful")
+
+
 def create_app(config=EnvironmentConfig):
+
+    db_check()
+
     if config.SENTRY_BACKEND_DSN:
         sentry_sdk.init(
             dsn=EnvironmentConfig.SENTRY_BACKEND_DSN,
