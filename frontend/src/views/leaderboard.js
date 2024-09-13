@@ -8,7 +8,7 @@ import userAvatar from "../assets/icons/user_avatar.png";
 import leaderboardIcon from "../assets/icons/leaderboard.png";
 
 const TopCard = ({ user, rank }) => {
-  const picture = user.picture_url ? user.picture_url : userAvatar;
+  var picture = user.picture_url ? user.picture_url : userAvatar;
   const background =
     rank === 1 ? "linear-gradient(45deg, #166ff4, #8fb8f7)" : "";
 
@@ -28,7 +28,11 @@ const TopCard = ({ user, rank }) => {
               className="circle-img mb-2 border border-3 border-white rounded-circle shadow-sm"
               height="70px"
               width="70px"
-              alt="User Img"
+              onError={(e) => {
+                e.target.onerror = null; // Prevent infinite loop if default image also fails
+                e.target.src = userAvatar;
+              }}
+              alt={user.username}
             />
             <h5 className="mb-0">{user.username}</h5>
             <p className="text-muted mb-0">
@@ -69,8 +73,7 @@ const LeaderboardTable = ({ leaderboard }) => {
             <th className="align-middle" scope="col">
               Score
             </th>
-            <th className="align-middle" scope="col">
-            </th>
+            <th className="align-middle" scope="col"></th>
           </tr>
         </thead>
         <tbody>
@@ -90,7 +93,11 @@ const LeaderboardTable = ({ leaderboard }) => {
                     className="me-2 border border-3 border-white rounded-circle shadow"
                     height="55px"
                     width="55px"
-                    alt="User Img"
+                    onError={(e) => {
+                      e.target.onerror = null; // Prevent infinite loop if default image also fails
+                      e.target.src = userAvatar;
+                    }}
+                    alt={user.username}
                   />
                 </div>
               </td>
@@ -107,7 +114,7 @@ const LeaderboardTable = ({ leaderboard }) => {
                   href={`https://openstreetmap.org/user/${user.username}`}
                   target="_blank"
                   rel="noreferrer"
-                  class="btn btn-outline-primary btn-sm"
+                  className="btn btn-outline-primary btn-sm"
                 >
                   View profile
                 </a>
