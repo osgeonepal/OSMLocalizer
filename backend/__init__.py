@@ -26,7 +26,10 @@ def db_check():
     from sqlalchemy.exc import OperationalError
 
     try:
-        engine = create_engine(EnvironmentConfig.SQLALCHEMY_DATABASE_URI, connect_args={'connect_timeout': 30})
+        engine = create_engine(
+            EnvironmentConfig.SQLALCHEMY_DATABASE_URI,
+            connect_args={"connect_timeout": 30},
+        )
         connection = engine.connect()
     except OperationalError:
         # Rename endpoint with db and port with 5432.
