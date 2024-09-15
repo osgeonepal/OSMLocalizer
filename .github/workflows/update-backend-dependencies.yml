@@ -17,17 +17,7 @@ jobs:
       - name: Update dependencies
         uses: pdm-project/update-deps-action@main
         with:
-            token: ${{ secrets.GH_TOKEN }}
-            commit-message: "chore: Update pdm.lock"
-            # The PR title
-            pr-title: "Update dependencies"
-            # The update strategy, can be 'reuse', 'eager' or 'all'
-            update-strategy: reuse
-            # The save strategy, can 'compatible', 'wildcard', 'exact' or 'minimum'
-            save-strategy: minimum
+            commit-message: "chore: Update backend dependencies"
             # Ignore the version constraint of packages in pyproject.toml
-            unconstrained: false
-            # Whether to install PDM plugins before update
-            install-plugins: "false"
-            # Whether commit message contains signed-off-by
-            sign-off-commit: "false"
+            # so that deps are updated to the latest version
+            unconstrained: true
