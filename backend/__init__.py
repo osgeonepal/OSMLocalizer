@@ -86,6 +86,7 @@ def create_app(config=EnvironmentConfig):
         UserAllAPI,
         UserTokenExpiryAPI,
         UserRoleApi,
+        UserInfoAPI,
     )
     from backend.api.translate import TranslateTextAPI
     from backend.api.statistics import (
@@ -134,6 +135,7 @@ def create_app(config=EnvironmentConfig):
     api.add_resource(UserAllAPI, "/users/")
     api.add_resource(UserRoleApi, "/user/<int:user_id>/update/role/<int:role>/")
     api.add_resource(UserStatSAPI, "/user/<int:user_id>/stats/")
+    api.add_resource(UserInfoAPI, "/user/<string:username>/")
     api.add_resource(
         ChallengeContributorsStatsAPI, "/challenge/<int:challenge_id>/user-stats/"
     )

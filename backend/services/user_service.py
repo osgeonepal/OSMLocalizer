@@ -98,3 +98,11 @@ class UserService:
         """Get all users."""
         users_list = [user.as_dto() for user in User.get_all()]
         return UserAllDTO(users=users_list).dict()
+
+    @staticmethod
+    def get_user_by_username(username: str) -> User:
+        """Get a user by username."""
+        user = User.get_by_username(username)
+        if user is None:
+            raise NotFound("USER_NOT_FOUND")
+        return user

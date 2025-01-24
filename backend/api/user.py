@@ -35,6 +35,15 @@ class UserTokenAPI(Resource):
         return UserService.login_user(user_info["user"], token["access_token"]).dict()
 
 
+class UserInfoAPI(Resource):
+    @auth.login_required
+    def get(self, username):
+        user = UserService.get_user_by_username(username)
+        if user is None:
+            raise NotFound("USER_NOT_FOUND")
+        return user.as_dto().dict()
+
+
 class UserTokenExpiryAPI(Resource):
     @auth.login_required
     def get(self):
