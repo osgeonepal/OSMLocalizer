@@ -21,6 +21,11 @@ class UserStatSAPI(Resource):
         return StatsService.get_user_stats(user_id, challenge_id).dict()
 
 
+class UserOSMStatsAPI(Resource):
+    def get(self, user_id):
+        return StatsService.get_user_osm_stats(user_id)
+
+
 class ChallengeContributorsStatsAPI(Resource):
     def get(self, challenge_id):
         start_date = request.args.get("startDate", None)

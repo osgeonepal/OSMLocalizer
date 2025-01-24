@@ -115,41 +115,39 @@ const NavBarLarge = () => {
   const navClassActive =
     navClass + " border-bottom border-2 border-secondary active";
   return (
-    <>
-      <div className="collapse navbar-collapse d-flex" id="navbarText">
-        <ul className="navbar-nav me-auto flex-grow-1 d-flex justify-content-center">
-          {menuItems.map((item) => (
-            <li className="nav-item" key={item.link}>
-              <NavLink
-                className={({ isActive }) =>
-                  isActive ? navClassActive : navClass
-                }
-                to={"/" + item.link}
-              >
-                <span className="pb-1">{item.label}</span>
-              </NavLink>
-            </li>
-          ))}
-          <li className="nav-item">
-            <a
-              className={navClass}
-              href="https://forms.gle/fmfeyPEXjSPZk1tX6"
-              target="_blank"
-              rel="noopener noreferrer"
+    <div className="collapse navbar-collapse d-flex" id="navbarText">
+      <ul className="navbar-nav me-auto flex-grow-1 d-flex justify-content-center">
+        {menuItems.map((item) => (
+          <li className="nav-item" key={item.link}>
+            <NavLink
+              className={({ isActive }) =>
+                isActive ? navClassActive : navClass
+              }
+              to={"/" + item.link}
             >
-              Report
-              <i
-                className="fa fa-external-link ms-1"
-                style={{ fontSize: "0.8rem" }}
-              ></i>
-            </a>
+              <span className="pb-1">{item.label}</span>
+            </NavLink>
           </li>
-        </ul>
-        <div>
-          <Login />
-        </div>
+        ))}
+        <li className="nav-item">
+          <a
+            className={navClass}
+            href="https://forms.gle/fmfeyPEXjSPZk1tX6"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Report
+            <i
+              className="fa fa-external-link ms-1"
+              style={{ fontSize: "0.8rem" }}
+            ></i>
+          </a>
+        </li>
+      </ul>
+      <div>
+        <Login />
       </div>
-    </>
+    </div>
   );
 };
 
@@ -174,7 +172,7 @@ function NavBar() {
               style={{ width: "35px", height: "35px", borderRadius: "50%" }}
               className="me-1"
             />
-            <span >OSMLocalizer</span>
+            <span>OSMLocalizer</span>
           </NavLink>
           {width > breakpoint ? <NavBarLarge /> : <NavBarSmall />}
         </div>

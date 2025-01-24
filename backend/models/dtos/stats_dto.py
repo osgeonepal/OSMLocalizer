@@ -18,6 +18,8 @@ class UserStatsDTO(BaseModel):
     total_invalidated_by_me: int
     total_my_validated: int
     total_my_invalidated: int
+    top_challenges_contributed: Optional[List[dict]]
+    total_contributions: Optional[int]
 
 
 class ListUserStatsDTO(BaseModel):

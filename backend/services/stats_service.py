@@ -33,11 +33,14 @@ class StatsService:
     @staticmethod
     def get_user_challenegs_count(user_id: int):
         """Get number of hallenges the user has contributed to"""
-        return (
-            Feature.query.filter_by(localized_by=user_id)
+        contributed_challenges_count = (
+            Feature.query.filter(
+                or_(Feature.localized_by == user_id, Feature.validated_by == user_id)
+            )
             .distinct(Feature.challenge_id)
             .count()
         )
+        return contributed_challenges_count
 
     @staticmethod
     def get_user_stats_by_status(
@@ -76,7 +79,7 @@ class StatsService:
                 status=FeatureStatus.INVALIDATED.value, localized_by=user_id
             )
         else:
-            raise Exception("Invalid action")
+            raise ValueError("Invalid action: {}".format(action))
         if start_date:
             query = query.filter(Feature.last_updated >= start_date)
         if end_date:
@@ -123,8 +126,36 @@ class StatsService:
         )
         if not challenge_id:
             stats_dto.total_challenges = total_challenges
+            top_challenges_contributed, total_contributions = StatsService.get_top_challenges_contributed(user_id)
+
+            stats_dto.top_challenges_contributed = top_challenges_contributed
+            stats_dto.total_contributions = total_contributions
 
         return stats_dto
+
+    @staticmethod
+    def get_top_challenges_contributed(user_id: int):
+        """Get top challenges contributed along with the number of contributions"""
+
+        query = Feature.query.filter(
+            or_(Feature.localized_by == user_id, Feature.validated_by == user_id)
+        )
+        challenges = (
+            query.with_entities(Feature.challenge_id, Challenge.name)
+            .join(Challenge, Feature.challenge_id == Challenge.id)
+            .distinct(Feature.challenge_id)
+            .all()
+        )
+        top_challenges = {}
+        for challenge in challenges:
+            challenge_id = challenge[0]
+            challenge_name = challenge[1]
+            count = query.filter_by(challenge_id=challenge_id).count()
+            top_challenges[challenge_name] = count
+        top_challenges = dict(
+            sorted(top_challenges.items(), key=lambda item: item[1], reverse=True)
+        )
+        return top_challenges, sum(top_challenges.values())
 
     @staticmethod
     def get_all_challenge_contributors(
@@ -188,3 +219,30 @@ class StatsService:
         for user in users:
             user_stats.append(StatsService.get_user_stats(user[0]))
         return ListUserStatsDTO(users=user_stats)
+
+    @staticmethod
+    def get_user_osm_stats(user_id: int):
+        """Get user osm stats in nodes, ways and relations"""
+        osm_stats = {"node": {}, "way": {}, "relation": {}}
+        for osm_type in osm_stats.keys():
+            osm_stats[osm_type]["localized"] = (
+                Feature.query.filter_by(localized_by=user_id)
+                .filter(Feature.osm_type == osm_type)
+                .count()
+            )
+        for osm_type in osm_stats.keys():
+            osm_stats[osm_type]["validated"] = (
+                Feature.query.filter_by(validated_by=user_id)
+                .filter_by(status=FeatureStatus.VALIDATED.value)
+                .filter(Feature.osm_type == osm_type)
+                .count()
+            )
+
+        for osm_type in osm_stats.keys():
+            osm_stats[osm_type]["invalidated"] = (
+                Feature.query.filter_by(localized_by=user_id)
+                .filter_by(status=FeatureStatus.INVALIDATED.value)
+                .filter(Feature.osm_type == osm_type)
+                .count()
+            )
+        return osm_stats
