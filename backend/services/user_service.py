@@ -2,9 +2,12 @@ import jwt
 from datetime import timedelta
 from flask import current_app
 from flask_httpauth import HTTPTokenAuth
+from sqlalchemy import or_, and_
 
 from backend.models.sql.user import User
 from backend.models.dtos.user_dto import UserLoginDTO, UserAllDTO
+from backend.models.sql.enum import FeatureStatus
+from backend.models.sql.features import Feature
 from backend.services.utills import timestamp
 from backend.errors import Unauthorized, NotFound
 
@@ -106,3 +109,24 @@ class UserService:
         if user is None:
             raise NotFound("USER_NOT_FOUND")
         return user
+
+    @staticmethod
+    def get_user_recent_activity(user_id: int, limit=5):
+        """Get recent activity for a user."""
+        query = Feature.query.filter(
+            or_(
+                and_(Feature.localized_by == user_id, Feature.status == FeatureStatus.LOCALIZED.value),
+                and_(Feature.validated_by == user_id, Feature.status == FeatureStatus.VALIDATED.value)
+            )
+        )
+        recent_activity = query.order_by(Feature.last_updated.desc()).limit(limit).all()
+        recent_activity_list = [
+            {
+                "feature_id": activity.id,
+                "challenge_id": activity.challenge_id,
+                "osm_type": activity.osm_type,
+                "status": FeatureStatus(activity.status).name.capitalize()
+            }
+            for activity in recent_activity
+        ]
+        return recent_activity_list

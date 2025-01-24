@@ -44,6 +44,13 @@ class UserInfoAPI(Resource):
         return user.as_dto().dict()
 
 
+class UserRecentActivityAPI(Resource):
+    @auth.login_required
+    def get(self, user_id):
+        limit = request.args.get("limit", 5)
+        return UserService.get_user_recent_activity(user_id, limit)
+
+
 class UserTokenExpiryAPI(Resource):
     @auth.login_required
     def get(self):

@@ -87,6 +87,7 @@ def create_app(config=EnvironmentConfig):
         UserTokenExpiryAPI,
         UserRoleApi,
         UserInfoAPI,
+        UserRecentActivityAPI,
     )
     from backend.api.translate import TranslateTextAPI
     from backend.api.statistics import (
@@ -138,6 +139,10 @@ def create_app(config=EnvironmentConfig):
     api.add_resource(UserStatSAPI, "/user/<int:user_id>/stats/")
     api.add_resource(UserOSMStatsAPI, "/user/<int:user_id>/osm-stats/")
     api.add_resource(UserInfoAPI, "/user/<string:username>/")
+    api.add_resource(
+        UserRecentActivityAPI, "/user/<int:user_id>/recent-activity/"
+    )
+
     api.add_resource(
         ChallengeContributorsStatsAPI, "/challenge/<int:challenge_id>/user-stats/"
     )
