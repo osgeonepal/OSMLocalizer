@@ -103,8 +103,8 @@ export const ContributionRadarChart = ({ userStats }) => {
   return (
     <div className="ps-2 pe-2">
       <h5 className="mt-4 mb-4 card-title">Contribution Summary</h5>
-    <div style={{ width: "350px", height: "350px", margin: "0 auto" }}>
-      <Radar data={data} options={options} />
+      <div style={{ width: "350px", height: "350px", margin: "0 auto" }}>
+        <Radar data={data} options={options} />
       </div>
     </div>
   );
@@ -157,7 +157,7 @@ const UserEditProfile = ({ userInfo }) => {
   return (
     <div className="card-footer text-center">
       <div className="d-flex justify-content-between align-items-center">
-        {editEmail || userInfo?.email==null ? (
+        {editEmail || userInfo?.email == null ? (
           <input
             name="email"
             type="email"
@@ -178,10 +178,7 @@ const UserEditProfile = ({ userInfo }) => {
             >
               Save
             </button>
-            <button
-              className="btn btn-sm btn-link"
-              onClick={onEditEmail}
-            >
+            <button className="btn btn-sm btn-link" onClick={onEditEmail}>
               Cancel
             </button>
           </div>
@@ -267,6 +264,65 @@ export const UserStatsSection = ({ osmStats }) => {
   );
 };
 
+
+export const UserRecentActivity = ({ recentActivity }) => {
+  const activity_type_icons = {
+    Localized: "bi bi-pencil-square",
+    Validated: "bi bi-check2-circle",
+  };
+  return (
+    <div className="border border-0 flex-grow-1">
+      <h5 className="card-title mt-4 mb-4">Recent Activity</h5>
+      <div>
+        {recentActivity ? (
+          <ul className="list-group list-group-flush">
+            {recentActivity.map((activity) => (
+              <li
+                className="list-group-item d-flex justify-content-between align-items-center"
+                key={activity.feature_id}
+              >
+                <span>
+                  <i className={`text-primary ${activity_type_icons[activity.status]}`} /> {""}
+                  {activity.status} {activity.osm_type}{" "}
+                  <a
+                    className="fw-bold text-decoration-none"
+                    href={`https://openstreetmap.org/${activity.osm_type}/${activity.feature_id}`}
+                    target="_blank"
+                  >
+                    {activity.feature_id}
+                  </a>{" "}
+                  on challenge{" "}
+                  <a
+                    className="fw-bold text-decoration-none"
+                    href={`/challenge/${activity.challenge_id}`}
+                  >
+                    #{activity.challenge_id}.
+                  </a>
+                </span>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p>No recent activity</p>
+        )}
+      </div>
+    </div>
+  );
+};
+
+ContributionRadarChart.propTypes = {
+  userStats: PropTypes.shape({
+    total_skipped: PropTypes.number,
+    total_validated_by_me: PropTypes.number,
+    total_invalidated_by_me: PropTypes.number,
+    total_localized: PropTypes.number,
+  }),
+};
+
+TopContributedProjects.propTypes = {
+  userChallengeData: PropTypes.arrayOf(PropTypes.array),
+};
+
 UserInfoSection.propTypes = {
   userInfo: PropTypes.shape({
     picture_url: PropTypes.string,
@@ -291,13 +347,13 @@ UserStatsCard.propTypes = {
 };
 
 UserStatsSection.propTypes = {
-  osmStats: PropTypes.object,
+  osmStats: PropTypes.shape({
+    node: PropTypes.object,
+    way: PropTypes.object,
+    relation: PropTypes.object,
+  }),
 };
 
-TopContributedProjects.propTypes = {
-  userChallengeData: PropTypes.object,
-};
-
-ContributionRadarChart.propTypes = {
-  userStats: PropTypes.object,
+UserRecentActivity.propTypes = {
+  recentActivity: PropTypes.arrayOf(PropTypes.object),
 };
