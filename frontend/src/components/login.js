@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useDetectClickOutside } from "react-detect-click-outside";
 
 import { fetchLocalJSONAPI } from "../utills/fetch";
@@ -7,7 +8,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { authActions } from "../store/store";
 import userAvatar from "../assets/icons/user_avatar.png";
 
-const createPopup = (title = "Authentication", location) => {
+const createPopup = (location, title = "Authentication") => {
   const width = 600;
   const height = 600;
   const left = window.innerWidth / 2 - width / 2;
@@ -76,6 +77,10 @@ const UserMenu = ({ username, user_picture, dispatch }) => {
   const onClick = () => {
     setIsDropdownOpen(!isDropdownOpen);
   };
+  const navigate = useNavigate();
+  const navigateToProfile = () => {
+    navigate(`/profile/${username}`);
+  };
   const ref = useDetectClickOutside({
     onTriggered: () => setIsDropdownOpen(false),
   });
@@ -92,8 +97,7 @@ const UserMenu = ({ username, user_picture, dispatch }) => {
         <span onClick={onClick}> {username} </span>
       </span>
       <ul className="dropdown-menu d-flex flex-column mt-1 p-1 rounded-0 ">
-        {/* <li><a className="dropdown-item" href="">Profile</a></li>
-          <li><a className="dropdown-item" href="">Settings</a></li> */}
+        <li><span className="dropdown-item" onClick={navigateToProfile}>Profile</span></li>
         <li>
           <span
             className="dropdown-item"

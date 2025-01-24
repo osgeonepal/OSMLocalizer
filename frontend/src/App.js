@@ -12,6 +12,7 @@ import AuthorizedView from "./views/authorized";
 import { handleLogin } from "./store/store";
 import { LoginView } from "./views/login";
 import { LoggedInRoute } from "./views/privateRoute";
+import UserProfile from "./views/profile";
 import HomeView from "./views/home";
 import ManagementSection from "./views/managementRoute";
 import AboutView from "./views/about";
@@ -46,6 +47,7 @@ function App() {
         {error && <ShowError error={error} setError={setError} />}
         <Routes>
           <Route path="/" element={<HomeView />} />
+          <Route path="/profile/:username" element={<UserProfile />} />
           <Route path="/challenges" element={<ChallengesView />} />
           <Route path="/manage" element={<ManagementSection />}>
             <Route path="challenge/:id" element={<UpdateChallengeView />} />
