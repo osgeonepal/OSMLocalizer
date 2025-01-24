@@ -188,3 +188,30 @@ class StatsService:
         for user in users:
             user_stats.append(StatsService.get_user_stats(user[0]))
         return ListUserStatsDTO(users=user_stats)
+
+    @staticmethod
+    def get_user_osm_stats(user_id: int):
+        """Get user osm stats in nodes, ways and relations"""
+        osm_stats = {"node": {}, "way": {}, "relation": {}}
+        for osm_type in osm_stats.keys():
+            osm_stats[osm_type]["localized"] = (
+                Feature.query.filter_by(localized_by=user_id)
+                .filter(Feature.osm_type == osm_type)
+                .count()
+            )
+        for osm_type in osm_stats.keys():
+            osm_stats[osm_type]["validated"] = (
+                Feature.query.filter_by(validated_by=user_id)
+                .filter_by(status=FeatureStatus.VALIDATED.value)
+                .filter(Feature.osm_type == osm_type)
+                .count()
+            )
+
+        for osm_type in osm_stats.keys():
+            osm_stats[osm_type]["invalidated"] = (
+                Feature.query.filter_by(localized_by=user_id)
+                .filter_by(status=FeatureStatus.INVALIDATED.value)
+                .filter(Feature.osm_type == osm_type)
+                .count()
+            )
+        return osm_stats
