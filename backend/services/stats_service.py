@@ -33,11 +33,14 @@ class StatsService:
     @staticmethod
     def get_user_challenegs_count(user_id: int):
         """Get number of hallenges the user has contributed to"""
-        return (
-            Feature.query.filter_by(localized_by=user_id)
+        contributed_challenges_count = (
+            Feature.query.filter(
+                or_(Feature.localized_by == user_id, Feature.validated_by == user_id)
+            )
             .distinct(Feature.challenge_id)
             .count()
         )
+        return contributed_challenges_count
 
     @staticmethod
     def get_user_stats_by_status(
@@ -76,7 +79,7 @@ class StatsService:
                 status=FeatureStatus.INVALIDATED.value, localized_by=user_id
             )
         else:
-            raise Exception("Invalid action")
+            raise ValueError("Invalid action: {}".format(action))
         if start_date:
             query = query.filter(Feature.last_updated >= start_date)
         if end_date:
