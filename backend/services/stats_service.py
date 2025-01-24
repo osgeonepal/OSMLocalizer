@@ -123,8 +123,36 @@ class StatsService:
         )
         if not challenge_id:
             stats_dto.total_challenges = total_challenges
+            top_challenges_contributed, total_contributions = StatsService.get_top_challenges_contributed(user_id)
+
+            stats_dto.top_challenges_contributed = top_challenges_contributed
+            stats_dto.total_contributions = total_contributions
 
         return stats_dto
+
+    @staticmethod
+    def get_top_challenges_contributed(user_id: int):
+        """Get top challenges contributed along with the number of contributions"""
+
+        query = Feature.query.filter(
+            or_(Feature.localized_by == user_id, Feature.validated_by == user_id)
+        )
+        challenges = (
+            query.with_entities(Feature.challenge_id, Challenge.name)
+            .join(Challenge, Feature.challenge_id == Challenge.id)
+            .distinct(Feature.challenge_id)
+            .all()
+        )
+        top_challenges = {}
+        for challenge in challenges:
+            challenge_id = challenge[0]
+            challenge_name = challenge[1]
+            count = query.filter_by(challenge_id=challenge_id).count()
+            top_challenges[challenge_name] = count
+        top_challenges = dict(
+            sorted(top_challenges.items(), key=lambda item: item[1], reverse=True)
+        )
+        return top_challenges, sum(top_challenges.values())
 
     @staticmethod
     def get_all_challenge_contributors(
