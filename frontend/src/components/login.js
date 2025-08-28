@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useDetectClickOutside } from "react-detect-click-outside";
 
 import { fetchLocalJSONAPI } from "../utills/fetch";
@@ -6,31 +7,6 @@ import { setItem, removeItem } from "../utills/localStorage";
 import { useDispatch, useSelector } from "react-redux";
 import { authActions } from "../store/store";
 import userAvatar from "../assets/icons/user_avatar.png";
-
-const createPopup = (title = "Authentication", location) => {
-  const width = 600;
-  const height = 600;
-  const left = window.innerWidth / 2 - width / 2;
-  const top = window.innerHeight / 2 - height / 2;
-  const popup = window.open(
-    location,
-    title,
-    `width=${width}, height=${height}, top=${top}, left=${left}`
-  );
-  if (window.focus) popup.focus();
-  return popup;
-};
-
-const setUserToStore = (response) => {
-  const user = response.user;
-  setItem("osm_token", response.osm_token);
-  setItem("jwt_token", response.jwt_token);
-  setItem("username", user.username);
-  setItem("user_id", user.id);
-  setItem("role", user.role);
-  setItem("picture_url", user.picture_url);
-  // window.location.reload();
-};
 
 const removeUserFromStore = () => {
   removeItem("osm_token");
@@ -41,29 +17,15 @@ const removeUserFromStore = () => {
   removeItem("picture_url");
 };
 
-const createLoginWindow = (dispatch, redirectTo) => {
-  const popup = createPopup("Login", "");
+const createLoginWindow = (redirectTo) => {
   const url = "auth/url/";
   fetchLocalJSONAPI(url, "GET")
     .then((response) => {
-      popup.location = response.url;
-
-      window.authComplete = (code, state) => {
-        if (response.state === state) {
-          popup.close();
-          const url = "auth/token/?code=" + code;
-          fetchLocalJSONAPI(url, "GET").then((response) => {
-            setUserToStore(response);
-            dispatch(authActions.login(response));
-            const params = new URLSearchParams({
-              redirectTo: redirectTo ? redirectTo : "/",
-            }).toString();
-
-            let redirectUri = "/authorized/?" + params;
-            window.location.href = redirectUri;
-          });
-        }
-      };
+      setItem("authState", response.state);
+      if (redirectTo) {
+        setItem("authRedirectTo", redirectTo);
+      }
+      window.location = response.url;
     })
     .catch((error) => {
       console.log(error);
@@ -75,6 +37,10 @@ const UserMenu = ({ username, user_picture, dispatch }) => {
   const picture_url = user_picture !== "null" ? user_picture : userAvatar;
   const onClick = () => {
     setIsDropdownOpen(!isDropdownOpen);
+  };
+  const navigate = useNavigate();
+  const navigateToProfile = () => {
+    navigate(`/profile/${username}`);
   };
   const ref = useDetectClickOutside({
     onTriggered: () => setIsDropdownOpen(false),
@@ -92,8 +58,11 @@ const UserMenu = ({ username, user_picture, dispatch }) => {
         <span onClick={onClick}> {username} </span>
       </span>
       <ul className="dropdown-menu d-flex flex-column mt-1 p-1 rounded-0 ">
-        {/* <li><a className="dropdown-item" href="">Profile</a></li>
-          <li><a className="dropdown-item" href="">Settings</a></li> */}
+        <li>
+          <span className="dropdown-item" onClick={navigateToProfile}>
+            Profile
+          </span>
+        </li>
         <li>
           <span
             className="dropdown-item"
@@ -138,7 +107,7 @@ const Login = (props) => {
         <button
           className="btn btn-primary"
           onClick={() => {
-            createLoginWindow(dispatch, props.redirectTo);
+            createLoginWindow(props.redirectTo);
           }}
         >
           Login
